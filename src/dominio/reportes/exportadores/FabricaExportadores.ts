@@ -9,23 +9,23 @@ import { ExportadorXLSX } from './ExportadorXLSX.js';
 /**
  * Fabrica de exportadores.
  *
- * ## Por que vive en su propio modulo y no como estatico de `Exportador`
+ * ## Por que vive en su propio módulo y no como estático de `Exportador`
  *
  * Poner la fabrica dentro de la clase base obliga a que esta importe a sus
  * cuatro subclases, y las subclases ya importan a la base para heredar de ella.
- * Ese ciclo **no es inocuo en modulos ES**: la clausula `extends` se evalua
- * cuando se ejecuta el cuerpo del modulo, no cuando se instancia la clase. Si
+ * Ese ciclo **no es inocuo en módulos ES**: la clausula `extends` se evalua
+ * cuando se ejecuta el cuerpo del módulo, no cuando se instancia la clase. Si
  * el grafo se entra por la base, las subclases se evaluan mientras el binding
  * `Exportador` sigue en su zona muerta temporal, y el programa revienta con
  * "Cannot access 'Exportador' before initialization" en tiempo de carga.
  *
- * Separar la fabrica rompe el ciclo (base <- subclases <- fabrica, un arbol) y
- * ademas respeta la responsabilidad unica: una abstraccion no tiene por que
- * conocer el catalogo de sus implementaciones.
+ * Separar la fabrica rompe el ciclo (base <- subclases <- fabrica, un árbol) y
+ * además respeta la responsabilidad única: una abstracción no tiene por que
+ * conocer el catálogo de sus implementaciones.
  *
  * El resto del sistema pide "exportame esto en xlsx" y nunca nombra una clase
- * concreta: ese es el punto de extension polimorfico del modulo de reportes.
- * Anadir un formato es anadir una clase y un caso aqui.
+ * concreta: ese es el punto de extensión polimórfico del módulo de reportes.
+ * Anadir un formato es anadir una clase y un caso aquí.
  */
 export class FabricaExportadores {
   static crear(formato: FormatoExportacion): Exportador {
@@ -39,9 +39,9 @@ export class FabricaExportadores {
       case 'pdf':
         return new ExportadorPDF();
       default:
-        // El tipo no protege en tiempo de ejecucion: `formato` llega de la
-        // cadena de consulta, asi que el caso "imposible" se valida igual.
-        throw new ErrorValidacion(`Formato de exportacion no soportado: "${String(formato)}".`, [
+        // El tipo no protege en tiempo de ejecución: `formato` llega de la
+        // cadena de consulta, así que el caso "imposible" se valida igual.
+        throw new ErrorValidacion(`Formato de exportación no soportado: "${String(formato)}".`, [
           { campo: 'formato', mensaje: 'Debe ser uno de: json, csv, xlsx, pdf.' },
         ]);
     }

@@ -4,9 +4,9 @@ import type { Rol, UsuarioDTO } from '../../compartido/tipos.js';
 
 export interface EstadoUsuario extends EstadoEntidad {
   email: string;
-  /** PBKDF2-SHA256 de la contrasena, en hexadecimal. Nunca la contrasena. */
+  /** PBKDF2-SHA256 de la contraseña, en hexadecimal. Nunca la contraseña. */
   hashContrasena: string;
-  /** Sal unica por usuario, en hexadecimal. */
+  /** Sal única por usuario, en hexadecimal. */
   salContrasena: string;
   rol: Rol;
   /** Empleado al que representa esta cuenta, si corresponde. */
@@ -15,11 +15,11 @@ export interface EstadoUsuario extends EstadoEntidad {
   debeCambiarContrasena: boolean;
   ultimoAcceso: string | null;
   intentosFallidos: number;
-  /** ISO hasta el que la cuenta esta bloqueada por intentos fallidos. */
+  /** ISO hasta el que la cuenta está bloqueada por intentos fallidos. */
   bloqueadoHasta: string | null;
 }
 
-/** Politica de bloqueo por fuerza bruta. */
+/** Política de bloqueo por fuerza bruta. */
 const MAX_INTENTOS = 5;
 const MINUTOS_BLOQUEO = 15;
 
@@ -28,25 +28,25 @@ const MINUTOS_BLOQUEO = 15;
  *
  * ## Por que `Usuario` no hereda de `Empleado`
  *
- * Es la confusion mas comun (y la que suelen cometer los diagramas generados por
+ * Es la confusión más común (y la que suelen cometer los diagramas generados por
  * IA): "un usuario es un empleado que entra al sistema", luego `Usuario extends
  * Empleado`. Rompe por los dos extremos:
  *
  * - Hay **empleados sin usuario**: un operario que no usa el sistema igual cobra
  *   y tiene horas cargadas por su supervisor.
  * - Hay **usuarios sin empleado**: la cuenta del auditor externo o la cuenta
- *   tecnica de administracion no corresponden a nadie en nomina.
+ *   técnica de administración no corresponden a nadie en nómina.
  *
  * Son dos conceptos con ciclos de vida independientes: dar de baja a alguien de
  * la empresa debe desactivar su cuenta, pero borrar una cuenta no borra a la
- * persona. La relacion correcta es una asociacion opcional 0..1 mediante
- * `empleadoId`, y eso es lo que se modela aqui.
+ * persona. La relación correcta es una asociación opcional 0..1 mediante
+ * `empleadoId`, y eso es lo que se modela aquí.
  *
  * ## Encapsulamiento del secreto
  *
- * El hash y la sal son privados y no tienen `getter` publico. La unica forma de
- * usarlos es `aEstado()`, que consume el repositorio, y la verificacion pasa por
- * `ServicioCripto`. La entidad nunca ve la contrasena en claro.
+ * El hash y la sal son privados y no tienen `getter` público. La única forma de
+ * usarlos es `aEstado()`, que consume el repositorio, y la verificación pasa por
+ * `ServicioCripto`. La entidad nunca ve la contraseña en claro.
  */
 export class Usuario extends Entidad<EstadoUsuario> {
   private _email: string;
@@ -103,9 +103,9 @@ export class Usuario extends Entidad<EstadoUsuario> {
   }
 
   /**
-   * Material para verificar la contrasena. Es `internal` por convencion: solo lo
-   * consume `ServicioAutenticacion`. Se expone como metodo y no como propiedades
-   * para que cualquier uso quede visible en una busqueda del codigo.
+   * Material para verificar la contraseña. Es `internal` por convención: solo lo
+   * consume `Servicioautenticación`. Se expone como método y no como propiedades
+   * para que cualquier uso quede visible en una búsqueda del código.
    */
   credencialesParaVerificar(): { hash: string; sal: string } {
     return { hash: this._hashContrasena, sal: this._salContrasena };
@@ -126,7 +126,7 @@ export class Usuario extends Entidad<EstadoUsuario> {
   /**
    * Suma un intento fallido y bloquea la cuenta al llegar al tope.
    * El bloqueo temporal (y no permanente) evita que un atacante deje fuera del
-   * sistema a un empleado legitimo simplemente fallando su contrasena.
+   * sistema a un empleado legítimo simplemente fallando su contraseña.
    */
   registrarIntentoFallido(ahora: Date = new Date()): void {
     this._intentosFallidos += 1;
@@ -178,12 +178,12 @@ export class Usuario extends Entidad<EstadoUsuario> {
 
   override validar(): void {
     if (!this._email.includes('@') || this._email.length < 5) {
-      throw new ErrorValidacion('El email del usuario no es valido.', [
-        { campo: 'email', mensaje: 'No es una direccion valida.' },
+      throw new ErrorValidacion('El email del usuario no es válido.', [
+        { campo: 'email', mensaje: 'No es una dirección válida.' },
       ]);
     }
     if (this._hashContrasena.length < 32 || this._salContrasena.length < 16) {
-      throw new ErrorValidacion('Las credenciales del usuario no son validas.');
+      throw new ErrorValidacion('Las credenciales del usuario no son válidas.');
     }
   }
 
@@ -203,7 +203,7 @@ export class Usuario extends Entidad<EstadoUsuario> {
     };
   }
 
-  /** Proyeccion publica. Nunca incluye hash, sal ni estado de bloqueo. */
+  /** Proyección pública. Nunca incluye hash, sal ni estado de bloqueo. */
   aDTO(): UsuarioDTO {
     return {
       id: this.id,

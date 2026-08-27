@@ -1,10 +1,10 @@
 /**
- * Generacion de identificadores.
+ * Generación de identificadores.
  *
- * Requisito: "se debe asignar automaticamente un ID unico a cada empleado".
+ * Requisito: "se debe asignar automáticamente un ID único a cada empleado".
  * Se usa `crypto.randomUUID()` (disponible tanto en Workers como en Node >=19),
  * de modo que el ID no sea adivinable ni revele el orden de alta (a diferencia
- * de un autoincremental, que filtra volumen de negocio y facilita enumeracion).
+ * de un autoincremental, que filtra volumen de negocio y facilita enumeración).
  */
 export function nuevoId(): string {
   return crypto.randomUUID();
@@ -18,14 +18,14 @@ export function tokenAleatorio(bytes = 32): string {
 }
 
 /**
- * Numero de legajo legible por humanos: `ECO-000123`.
+ * Número de legajo legible por humanos: `ECO-000123`.
  * El correlativo se persiste como contador aparte para no colisionar.
  */
 export function formatearLegajo(correlativo: number): string {
   return `ECO-${String(correlativo).padStart(6, '0')}`;
 }
 
-/** Codigo de proyecto legible: `PRY-0042`. */
+/** Código de proyecto legible: `PRY-0042`. */
 export function formatearCodigoProyecto(correlativo: number): string {
   return `PRY-${String(correlativo).padStart(4, '0')}`;
 }

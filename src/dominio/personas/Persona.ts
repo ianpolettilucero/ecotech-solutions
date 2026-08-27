@@ -2,7 +2,7 @@ import { Entidad, type EstadoEntidad } from '../base/Entidad.js';
 import type { SobreCifrado } from '../base/SobreCifrado.js';
 import { ErrorValidacion } from '../base/errores.js';
 
-/** Datos personales protegidos, en claro. Nunca se persisten asi. */
+/** Datos personales protegidos, en claro. Nunca se persisten así. */
 export interface DatosSensibles {
   documento: string;
   telefono: string;
@@ -18,12 +18,12 @@ export interface EstadoPersona extends EstadoEntidad {
   datosSensibles: SobreCifrado;
   /** HMAC del documento: permite detectar duplicados sin descifrar. */
   indiceDocumento: string;
-  /** HMAC del email personal, mismo proposito. */
+  /** HMAC del email personal, mismo propósito. */
   indiceEmailPersonal: string;
 }
 
 /**
- * Abstraccion de una persona fisica conocida por el sistema.
+ * Abstracción de una persona física conocida por el sistema.
  *
  * ## Por que existe esta clase y no solo `Empleado`
  *
@@ -31,18 +31,18 @@ export interface EstadoPersona extends EstadoEntidad {
  *
  * - Lo que hace de alguien una **persona** (identidad, contacto, domicilio) esta
  *   sujeto a normativa de datos personales: se cifra en reposo, se enmascara
- *   segun permisos y se audita cada acceso.
- * - Lo que hace de alguien un **empleado** (legajo, contrato, remuneracion,
- *   departamento) es informacion laboral, con otro ciclo de vida.
+ *   según permisos y se audita cada acceso.
+ * - Lo que hace de alguien un **empleado** (legajo, contrato, remuneración,
+ *   departamento) es información laboral, con otro ciclo de vida.
  *
- * Concentrar el bloque cifrado y los indices ciegos aqui garantiza que ninguna
+ * Concentrar el bloque cifrado y los índices ciegos aquí garantiza que ninguna
  * subclase futura (un contacto de cliente, un proveedor) pueda "olvidarse" de
- * proteger los datos: la proteccion viene heredada, no repetida.
+ * proteger los datos: la protección viene heredada, no repetida.
  *
  * `datosSensibles` se guarda **cifrado incluso en memoria**: la entidad nunca ve
- * el texto plano. Descifrar es una operacion asincronica y con permisos, y por
- * eso vive en la capa de servicio, no aqui. Asi la entidad permanece sincronica
- * y testeable sin criptografia.
+ * el texto plano. Descifrar es una operación asincrónica y con permisos, y por
+ * eso vive en la capa de servicio, no aquí. Así la entidad permanece sincrónica
+ * y testeable sin criptografía.
  */
 export abstract class Persona<E extends EstadoPersona = EstadoPersona> extends Entidad<E> {
   protected _nombre: string;
@@ -110,7 +110,7 @@ export abstract class Persona<E extends EstadoPersona = EstadoPersona> extends E
     this.tocar();
   }
 
-  /** Reemplaza el bloque cifrado y sus indices tras una edicion de datos. */
+  /** Reemplaza el bloque cifrado y sus índices tras una edición de datos. */
   actualizarDatosSensibles(
     sobre: SobreCifrado,
     indiceDocumento: string,
@@ -142,8 +142,8 @@ export abstract class Persona<E extends EstadoPersona = EstadoPersona> extends E
       ]);
     }
     if (!this._emailCorporativo.includes('@')) {
-      throw new ErrorValidacion('El email corporativo no es valido.', [
-        { campo: 'emailCorporativo', mensaje: 'No es una direccion valida.' },
+      throw new ErrorValidacion('El email corporativo no es válido.', [
+        { campo: 'emailCorporativo', mensaje: 'No es una dirección válida.' },
       ]);
     }
   }

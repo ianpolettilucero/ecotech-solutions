@@ -84,7 +84,7 @@ siembra en su lugar; véase [10 — Despliegue](10-despliegue.md).
 > **El sistema obliga a cambiar la contraseña en el primer ingreso.** Las cuatro
 > cuentas se siembran con la marca `debeCambiarContrasena`. Mientras esa marca
 > siga puesta, la aplicación desvía cualquier navegación a **Mi perfil** y avisa
-> «Debe cambiar la contrasena inicial antes de continuar.». No se puede usar
+> «Debe cambiar la contraseña inicial antes de continuar.». No se puede usar
 > ningún otro módulo hasta rotarla.
 
 ### 1.2 Cambio obligatorio de contraseña
@@ -114,13 +114,13 @@ la contraseña actual equivocada queda como `CAMBIO_CONTRASENA_FALLIDO`.
   dirección IP cada 5 minutos (`src/aplicacion/ServicioAutenticacion.ts`), y
   además bloquea la cuenta concreta durante 15 minutos tras 5 fallos seguidos
   (`src/dominio/seguridad/Usuario.ts`). En los dos casos
-  el mensaje que se ve es el mismo, «Email o contrasena incorrectos.», sin
+  el mensaje que se ve es el mismo, «Email o contraseña incorrectos.», sin
   distinguir si el email existe o si la cuenta está bloqueada: es deliberado.
   Quien necesita saber que una cuenta está bloqueada lo ve en la auditoría, en
   los asientos `LOGIN_CUENTA_BLOQUEADA` y `LOGIN_BLOQUEADO_POR_TASA`.
 - **Duración de la sesión.** Ocho horas (`DURACION_SESION_SEGUNDOS` en
   `src/dominio/seguridad/Sesion.ts`). Cuando caduca, la aplicación avisa «La
-  sesion expiro. Vuelva a ingresar.» y vuelve a la pantalla de ingreso. El
+  sesión expiro. Vuelva a ingresar.» y vuelve a la pantalla de ingreso. El
   trabajo sin guardar de un formulario abierto se pierde.
 - **Cambio de rol o baja en caliente.** El rol se revalida contra la cuenta real
   en cada petición: si RRHH cambia un rol o desactiva una cuenta, la sesión en
@@ -568,7 +568,7 @@ Qué hacer, en orden de preferencia:
 
 Otros dos rechazos del mismo módulo, con causa distinta:
 
-- «*… ya participa en el proyecto … Modifique esa asignacion en lugar de crear
+- «*… ya participa en el proyecto … Modifique esa asignación en lugar de crear
   una segunda*»: ya existe una asignación **vigente** de esa persona a ese
   proyecto. Edite la existente.
 - «*El proyecto … esta FINALIZADO y ya no admite incorporaciones*»: un proyecto
@@ -602,7 +602,7 @@ finalizado o cancelado, no. Si el trabajo realmente se hizo, hay que pasar el
 proyecto a En curso (**Proyectos → Cambiar estado**) y volver a cargar.
 
 Además, si el desplegable de proyectos aparece vacío al pulsar **Cargar horas**,
-el aviso es «No tiene ninguna asignacion vigente, de modo que no hay proyectos a
+el aviso es «No tiene ninguna asignación vigente, de modo que no hay proyectos a
 los que imputar horas.»: no está asignado a nada.
 
 ### «No puedo borrar el departamento»
@@ -669,9 +669,9 @@ Gerencia a alguien más; RRHH **no** puede aprobar horas.
 
 Mensajes vecinos del mismo módulo:
 
-- «*Solo se aprueban registros enviados. Este esta en estado BORRADOR.*»: el
+- «*Solo se aprueban registros enviados. Este está en estado BORRADOR.*»: el
   parte todavía no se envió. Primero **Enviar**.
-- «*El registro esta en estado ENVIADO y ya no admite ediciones. Para corregirlo,
+- «*El registro está en estado ENVIADO y ya no admite ediciones. Para corregirlo,
   un aprobador debe rechazarlo primero…*»: al enviarlo queda congelado para su
   autor. Pida el rechazo, corríjalo y vuelva a enviarlo.
 - «*No se puede eliminar un registro en estado APROBADO…*»: los partes revisados
@@ -682,7 +682,7 @@ Mensajes vecinos del mismo módulo:
 
 ### «Entré y no veo ningún módulo»
 
-Si la pantalla dice «Su usuario no tiene acceso a ningun modulo. Contacte con
+Si la pantalla dice «Su usuario no tiene acceso a ningún módulo. Contacte con
 Recursos Humanos.», la cuenta tiene un rol sin permisos efectivos. Es una
 situación anómala: los cuatro roles del sistema habilitan al menos el Panel y Mi
 perfil.

@@ -293,7 +293,7 @@ su apartado de compilación:
 | Comando de despliegue | `npx wrangler deploy` |
 | Directorio raíz | la raíz del repositorio |
 
-Con esa configuración, cada *merge* a `main` reconstruye `dist/` y publica. Los
+Con esa configuración, cada *merge* a `main` reconstruye `dist/` y pública. Los
 commits a otras ramas no despliegan a producción.
 
 > **No hay ningún workflow de GitHub Actions en el repositorio**: no existe
@@ -390,7 +390,7 @@ Cómo leer cada campo:
 | `almacen` | `"workers-kv"` | Es una constante; su presencia confirma que la respuesta viene de esta aplicación |
 | `sembrado` | `true` | Si es `false`, la siembra todavía no corrió. **Es normal en la primerísima llamada**: la siembra se dispara de forma perezosa en la primera petición a `/api/*`. Repita la llamada; si sigue en `false`, el binding `ECOTECH_KV` apunta a un namespace al que el Worker no puede escribir |
 | `cifradoConClaveDeDesarrollo` | **`false`** | Si es `true`, **el secreto `CLAVE_MAESTRA` no está definido o tiene menos de 32 caracteres**. Deténgase aquí: no cargue datos reales. Defina el secreto, redespliegue y —si ya hubo siembra— reinicie la siembra según el [apartado 8.3](#83-reiniciar-la-siembra) |
-| `advertencia` | `null` | Cuando `cifradoConClaveDeDesarrollo` es `true`, trae el texto «Defina el secret CLAVE_MAESTRA: los datos personales se estan cifrando con una clave publica.» |
+| `advertencia` | `null` | Cuando `cifradoConClaveDeDesarrollo` es `true`, trae el texto «Defina el secret CLAVE_MAESTRA: los datos personales se están cifrando con una clave pública.» |
 
 Comprobación en una línea, apta para un script de post-despliegue:
 

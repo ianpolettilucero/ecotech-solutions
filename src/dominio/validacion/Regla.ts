@@ -1,29 +1,29 @@
 import type { DetalleErrorCampo } from '../../compartido/tipos.js';
 
 /**
- * Reglas de validacion como jerarquia de clases.
+ * Reglas de validación como jerarquía de clases.
  *
- * Requisito: "implementa una rigurosa validacion de todas las entradas del
+ * Requisito: "implementa una rigurosa validación de todas las entradas del
  * usuario para prevenir ataques comunes".
  *
- * Cada regla es un objeto con una unica responsabilidad que sabe (a) si un
+ * Cada regla es un objeto con una única responsabilidad que sabe (a) si un
  * valor la cumple y (b) como normalizarlo. El esquema recorre la lista sin
- * saber que regla concreta esta aplicando: agregar `ReglaCUIT` no obliga a
+ * saber que regla concreta está aplicando: agregar `ReglaCUIT` no obliga a
  * modificar ni el esquema ni el router. Es polimorfismo puro, y sustituye a la
- * tipica cascada de `if` que se vuelve inmantenible.
+ * típica cascada de `if` que se vuelve inmantenible.
  */
 export abstract class Regla<E = unknown, S = E> {
   /**
    * Aplica la regla. Devuelve el valor normalizado o lanza `FalloRegla`.
-   * Se usa excepcion en vez de `boolean` para poder devolver mensajes precisos.
+   * Se usa excepción en vez de `boolean` para poder devolver mensajes precisos.
    */
   abstract aplicar(valor: E, campo: string): S;
 
-  /** Descripcion legible, usada por la documentacion de la API. */
+  /** Descripción legible, usada por la documentación de la API. */
   abstract describir(): string;
 }
 
-/** Fallo puntual de una regla; el esquema los agrega en un `ErrorValidacion`. */
+/** Fallo puntual de una regla; el esquema los agrega en un `Errorvalidación`. */
 export class FalloRegla extends Error {
   constructor(
     readonly campo: string,
@@ -49,12 +49,12 @@ const CARACTERES_CONTROL = /[\u0000-\u001F\u007F]/g;
  * Texto saneado.
  *
  * Recorta, normaliza a NFC y **elimina caracteres de control** (incluido el
- * byte nulo), que son el vehiculo habitual de inyeccion en logs, de
+ * byte nulo), que son el vehiculo habitual de inyección en logs, de
  * contrabando de cabeceras HTTP y de truncamiento en capas inferiores.
  *
- * No se escapa HTML aqui a proposito: el escape corresponde al punto de salida
+ * No se escapa HTML aquí a propósito: el escape corresponde al punto de salida
  * (el cliente pinta con `textContent`, nunca con `innerHTML`). Escapar en la
- * entrada corrompe el dato almacenado y produce el clasico "Jos&eacute;".
+ * entrada corrompe el dato almacenado y produce el clásico "Jos&eacute;".
  */
 export class ReglaTexto extends Regla<unknown, string> {
   constructor(
@@ -78,7 +78,7 @@ export class ReglaTexto extends Regla<unknown, string> {
       throw new FalloRegla(campo, `No puede superar los ${this.max} caracteres.`);
     }
     if (this.patron && limpio.length > 0 && !this.patron.test(limpio)) {
-      throw new FalloRegla(campo, this.descripcionPatron ?? 'El formato no es valido.');
+      throw new FalloRegla(campo, this.descripcionPatron ?? 'El formato no es válido.');
     }
     return limpio;
   }
@@ -88,48 +88,48 @@ export class ReglaTexto extends Regla<unknown, string> {
   }
 }
 
-/** Correo electronico. Valida forma y longitud, y normaliza a minusculas. */
+/** Correo electrónico. Valida forma y longitud, y normaliza a minúsculas. */
 export class ReglaEmail extends Regla<unknown, string> {
   private static readonly PATRON = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,24}$/;
 
   override aplicar(valor: unknown, campo: string): string {
     const texto = new ReglaTexto(5, 254).aplicar(valor, campo).toLowerCase();
     if (!ReglaEmail.PATRON.test(texto)) {
-      throw new FalloRegla(campo, 'Debe ser una direccion de correo valida.');
+      throw new FalloRegla(campo, 'Debe ser una dirección de correo válida.');
     }
     return texto;
   }
 
   override describir(): string {
-    return 'correo electronico';
+    return 'correo electrónico';
   }
 }
 
-/** Telefono en formato internacional laxo: digitos, espacios, `+`, `-`, `()`. */
+/** Teléfono en formato internacional laxo: digitos, espacios, `+`, `-`, `()`. */
 export class ReglaTelefono extends Regla<unknown, string> {
   private static readonly PATRON = /^\+?[0-9\s\-()]{7,20}$/;
 
   override aplicar(valor: unknown, campo: string): string {
     const texto = new ReglaTexto(7, 20).aplicar(valor, campo);
     if (!ReglaTelefono.PATRON.test(texto)) {
-      throw new FalloRegla(campo, 'Debe ser un telefono valido (7 a 20 digitos).');
+      throw new FalloRegla(campo, 'Debe ser un teléfono válido (7 a 20 dígitos).');
     }
     return texto;
   }
 
   override describir(): string {
-    return 'telefono';
+    return 'teléfono';
   }
 }
 
-/** Documento de identidad: alfanumerico, 6 a 20 caracteres. */
+/** Documento de identidad: alfanumérico, 6 a 20 caracteres. */
 export class ReglaDocumento extends Regla<unknown, string> {
   private static readonly PATRON = /^[A-Za-z0-9.-]{6,20}$/;
 
   override aplicar(valor: unknown, campo: string): string {
     const texto = new ReglaTexto(6, 20).aplicar(valor, campo);
     if (!ReglaDocumento.PATRON.test(texto)) {
-      throw new FalloRegla(campo, 'Debe ser un documento alfanumerico de 6 a 20 caracteres.');
+      throw new FalloRegla(campo, 'Debe ser un documento alfanumérico de 6 a 20 caracteres.');
     }
     return texto.toUpperCase();
   }
@@ -140,11 +140,11 @@ export class ReglaDocumento extends Regla<unknown, string> {
 }
 
 /**
- * Contrasena robusta.
+ * Contraseña robusta.
  *
- * Requisito: "sistema de autenticacion robusto con contrasenas seguras".
+ * Requisito: "sistema de autenticación robusto con contraseñas seguras".
  * Se exige longitud >= 12 y tres de las cuatro familias de caracteres, y se
- * rechazan las mas explotadas. El tope de 128 evita el DoS por PBKDF2 con
+ * rechazan las más explotadas. El tope de 128 evita el DoS por PBKDF2 con
  * entradas gigantes (cada intento cuesta 100.000 iteraciones de CPU).
  */
 export class ReglaContrasena extends Regla<unknown, string> {
@@ -174,22 +174,22 @@ export class ReglaContrasena extends Regla<unknown, string> {
     if (familias < 3) {
       throw new FalloRegla(
         campo,
-        'Debe combinar al menos tres de: minusculas, mayusculas, numeros y simbolos.',
+        'Debe combinar al menos tres de: minúsculas, mayúsculas, números y símbolos.',
       );
     }
     if (ReglaContrasena.PROHIBIDAS.has(valor.toLowerCase())) {
-      throw new FalloRegla(campo, 'Esta contrasena figura en listas publicas de filtraciones.');
+      throw new FalloRegla(campo, 'Esta contraseña figura en listas públicas de filtraciones.');
     }
     return valor;
   }
 
   override describir(): string {
-    return 'contrasena de 12+ caracteres combinando 3 familias de caracteres';
+    return 'contraseña de 12+ caracteres combinando 3 familias de caracteres';
   }
 }
 
 // ---------------------------------------------------------------------------
-// Reglas numericas, de fecha y de conjunto
+// Reglas numéricas, de fecha y de conjunto
 // ---------------------------------------------------------------------------
 
 export class ReglaNumero extends Regla<unknown, number> {
@@ -204,10 +204,10 @@ export class ReglaNumero extends Regla<unknown, number> {
   override aplicar(valor: unknown, campo: string): number {
     const numero = typeof valor === 'string' && valor.trim() !== '' ? Number(valor) : valor;
     if (typeof numero !== 'number' || !Number.isFinite(numero)) {
-      throw new FalloRegla(campo, 'Debe ser un numero.');
+      throw new FalloRegla(campo, 'Debe ser un número.');
     }
     if (this.entero && !Number.isInteger(numero)) {
-      throw new FalloRegla(campo, 'Debe ser un numero entero.');
+      throw new FalloRegla(campo, 'Debe ser un número entero.');
     }
     if (numero < this.min) throw new FalloRegla(campo, `No puede ser menor que ${this.min}.`);
     if (numero > this.max) throw new FalloRegla(campo, `No puede ser mayor que ${this.max}.`);
@@ -216,7 +216,7 @@ export class ReglaNumero extends Regla<unknown, number> {
   }
 
   override describir(): string {
-    return `numero entre ${this.min} y ${this.max}`;
+    return `número entre ${this.min} y ${this.max}`;
   }
 }
 
@@ -237,7 +237,7 @@ export class ReglaFecha extends Regla<unknown, string> {
     }
     const texto = valor.trim();
     const fecha = new Date(`${texto}T00:00:00Z`);
-    // Rechaza fechas imposibles como 2025-02-31, que `Date` normalizaria en silencio.
+    // Rechaza fechas imposibles como 2025-02-31, que `Date` normalizaría en silencio.
     if (Number.isNaN(fecha.getTime()) || fecha.toISOString().slice(0, 10) !== texto) {
       throw new FalloRegla(campo, 'No es una fecha real del calendario.');
     }
@@ -293,7 +293,7 @@ export class ReglaIdentificador extends Regla<unknown, string> {
 
   override aplicar(valor: unknown, campo: string): string {
     if (typeof valor !== 'string' || !ReglaIdentificador.PATRON.test(valor.trim())) {
-      throw new FalloRegla(campo, 'No es un identificador valido.');
+      throw new FalloRegla(campo, 'No es un identificador válido.');
     }
     return valor.trim().toLowerCase();
   }

@@ -17,15 +17,15 @@ import { VistaAuditoria } from './vistas/VistaAuditoria.js';
 import { VistaPerfil } from './vistas/VistaPerfil.js';
 
 /**
- * Armazon de la aplicacion.
+ * Armazón de la aplicación.
  *
- * Mantiene la sesion, arma el menu a partir de las vistas disponibles y despacha
- * la navegacion por fragmento (`#/empleados`). Se eligio el fragmento y no la
- * History API porque asi el enrutado no depende de que el servidor devuelva
+ * Mantiene la sesión, arma el menú a partir de las vistas disponibles y despacha
+ * la navegación por fragmento (`#/empleados`). Se eligio el fragmento y no la
+ * History API porque así el enrutado no depende de que el servidor devuelva
  * `index.html` en cada ruta profunda, y funciona igual si alguien comparte un
- * enlace o recarga la pagina.
+ * enlace o recarga la página.
  *
- * La aplicacion NO conoce ninguna vista concreta salvo en la lista de abajo:
+ * La aplicación NO conoce ninguna vista concreta salvo en la lista de abajo:
  * a partir de ahi trabaja contra el tipo abstracto `Vista`.
  */
 export class Aplicacion implements AplicacionBase {
@@ -63,12 +63,12 @@ export class Aplicacion implements AplicacionBase {
   // ---------------------------------------------------------------------------
 
   async iniciar(): Promise<void> {
-    // Si la cookie caduca a mitad de sesion, se vuelve al login sin dejar al
+    // Si la cookie caduca a mitad de sesión, se vuelve al login sin dejar al
     // usuario ante una pantalla que ya no puede refrescar.
     ClienteApi.alExpirarSesion = () => {
       this._sesion = null;
       ClienteApi.fijarTokenCsrf(null);
-      Notificador.aviso('La sesion expiro. Vuelva a ingresar.');
+      Notificador.aviso('La sesión expiro. Vuelva a ingresar.');
       void this.recargar();
     };
 
@@ -79,13 +79,13 @@ export class Aplicacion implements AplicacionBase {
     await this.recargar();
   }
 
-  /** Relee la sesion del servidor y repinta. */
+  /** Relee la sesión del servidor y repinta. */
   async recargar(): Promise<void> {
     try {
       this._sesion = await ClienteApi.get<SesionDTO>('/api/auth/sesion');
       ClienteApi.fijarTokenCsrf(this._sesion.tokenCsrf);
     } catch {
-      // Un 401 aqui es lo normal cuando todavia no se inicio sesion.
+      // Un 401 aquí es lo normal cuando todavía no se inicio sesión.
       this._sesion = null;
       ClienteApi.fijarTokenCsrf(null);
     }
@@ -124,10 +124,10 @@ export class Aplicacion implements AplicacionBase {
       return;
     }
 
-    // Obliga a rotar la contrasena sembrada antes de dejar operar. Se hace en el
-    // cliente por comodidad; el servidor no depende de esto para nada critico.
+    // Obliga a rotar la contraseña sembrada antes de dejar operar. Se hace en el
+    // cliente por comodidad; el servidor no depende de esto para nada crítico.
     if (this._sesion.usuario.debeCambiarContrasena && this.rutaActual() !== 'perfil') {
-      Notificador.aviso('Debe cambiar la contrasena inicial antes de continuar.');
+      Notificador.aviso('Debe cambiar la contraseña inicial antes de continuar.');
       this.navegar('perfil');
       return;
     }
@@ -138,7 +138,7 @@ export class Aplicacion implements AplicacionBase {
     if (!vista) {
       vaciar(this.raiz);
       this.raiz.appendChild(
-        div('vacio', 'Su usuario no tiene acceso a ningun modulo. Contacte con Recursos Humanos.'),
+        div('vacio', 'Su usuario no tiene acceso a ningún módulo. Contacte con Recursos Humanos.'),
       );
       return;
     }
@@ -156,7 +156,7 @@ export class Aplicacion implements AplicacionBase {
       contenido.appendChild(area);
     } catch (e) {
       vaciar(contenido);
-      const mensaje = e instanceof ErrorApi ? e.message : 'No se pudo cargar el modulo.';
+      const mensaje = e instanceof ErrorApi ? e.message : 'No se pudo cargar el módulo.';
       contenido.appendChild(div('vacio', mensaje));
       this.notificarError(mensaje);
     }
@@ -179,8 +179,8 @@ export class Aplicacion implements AplicacionBase {
         },
         elemento('span', { clase: 'nav-icono', texto: vista.icono }),
         // Se pintan los dos rotulos y la hoja de estilos elige cual se ve
-        // segun el ancho. Alternar con JavaScript exigiria escuchar el cambio
-        // de tamanio y volver a pintar el menu; asi es una regla de CSS.
+        // según el ancho. Alternar con JavaScript exigiría escuchar el cambio
+        // de tamaño y volver a pintar el menú; así es una regla de CSS.
         elemento('span', { clase: 'nav-texto', texto: vista.titulo }),
         elemento('span', { clase: 'nav-texto-corto', texto: vista.tituloCorto }),
       );
@@ -236,11 +236,11 @@ export class Aplicacion implements AplicacionBase {
     agregar(aplicacion, barraLateral, cabecera, elemento('main', { clase: 'contenido' }));
     this.raiz.appendChild(aplicacion);
 
-    // En el telefono la navegacion es una barra inferior que no muestra las
-    // nueve secciones a la vez, y cada vez que se pinta el armazon vuelve al
-    // principio. Se centra la seccion activa para que siempre se vea donde
+    // En el teléfono la navegación es una barra inferior que no muestra las
+    // nueve secciones a la vez, y cada vez que se pinta el armazón vuelve al
+    // principio. Se centra la sección activa para que siempre se vea donde
     // esta uno. En escritorio la barra es vertical y no desborda a lo ancho,
-    // de modo que asignar `scrollLeft` no tiene ningun efecto.
+    // de modo que asignar `scrollLeft` no tiene ningún efecto.
     const activo = nav.querySelector<HTMLElement>('.nav-item.activo');
     if (activo) {
       nav.scrollLeft = activo.offsetLeft - (nav.clientWidth - activo.offsetWidth) / 2;
@@ -251,12 +251,12 @@ export class Aplicacion implements AplicacionBase {
     try {
       await ClienteApi.post('/api/auth/logout');
     } catch {
-      // Aunque el servidor falle, se limpia el estado local: el usuario pidio salir.
+      // Aunque el servidor falle, se limpia el estado local: el usuario pidió salir.
     }
     this._sesion = null;
     ClienteApi.fijarTokenCsrf(null);
     window.location.hash = '';
-    Notificador.info('Sesion cerrada.');
+    Notificador.info('Sesión cerrada.');
     await this.pintar();
   }
 
@@ -277,8 +277,8 @@ export class Aplicacion implements AplicacionBase {
   }
 
   /**
-   * Ejecuta una accion contra la API y traduce cualquier fallo a una
-   * notificacion. Centralizarlo evita que cada vista repita el mismo try/catch
+   * Ejecuta una acción contra la API y traduce cualquier fallo a una
+   * notificación. Centralizarlo evita que cada vista repita el mismo try/catch
    * y, sobre todo, que alguna se lo olvide y el error muera en la consola.
    */
   async intentar<T>(accion: () => Promise<T>, mensajeExito?: string): Promise<T | null> {

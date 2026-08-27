@@ -28,8 +28,8 @@ import { registrarRutasSistema } from './rutas/sistema.js';
 /**
  * Tabla de rutas, construida una sola vez por isolate.
  *
- * Se arma a nivel de modulo y no por peticion porque el registro es puro (no
- * depende del entorno) y asi solo se paga en el arranque en frio.
+ * Se arma a nivel de módulo y no por petición porque el registro es puro (no
+ * depende del entorno) y así solo se paga en el arranque en frio.
  */
 const enrutador = new Enrutador();
 registrarRutasAutenticacion(enrutador);
@@ -41,25 +41,25 @@ registrarRutasTiempo(enrutador);
 registrarRutasReportes(enrutador);
 registrarRutasSistema(enrutador);
 
-/** Metodos que modifican estado y por tanto exigen defensa anti-CSRF. */
+/** Métodos que modifican estado y por tanto exigen defensa anti-CSRF. */
 const METODOS_MUTANTES = new Set(['POST', 'PUT', 'PATCH', 'DELETE']);
 
 /**
  * Punto de entrada del Worker.
  *
- * `wrangler.jsonc` esta configurado con `run_worker_first: ["/api/*"]`, de modo
- * que este codigo solo se ejecuta para la API; el resto de rutas las sirve
- * directamente el almacen de assets con reserva de SPA a `index.html`. Es la
- * configuracion mas barata: servir el frontend no consume ni una invocacion.
+ * `wrangler.jsonc` está configurado con `run_worker_first: ["/api/*"]`, de modo
+ * que este código solo se ejecuta para la API; el resto de rutas las sirve
+ * directamente el almacén de assets con reserva de SPA a `index.html`. Es la
+ * configuración más barata: servir el frontend no consume ni una invocación.
  */
 export default {
-  // `ExecutionContext` no se usa: las escrituras de auditoria se esperan en
-  // linea a proposito, porque un asiento perdido vale menos que un asiento
+  // `ExecutionContext` no se usa: las escrituras de auditoría se esperan en
+  // línea a propósito, porque un asiento perdido vale menos que un asiento
   // dudoso. Se mantiene en la firma porque el runtime la exige.
   async fetch(peticion: Request, entorno: Entorno, _contextoEjecucion: ExecutionContext): Promise<Response> {
     const url = new URL(peticion.url);
 
-    // Red de seguridad: si por un cambio de configuracion llegara aqui algo que
+    // Red de seguridad: si por un cambio de configuración llegara aquí algo que
     // no es de la API, se delega en los assets en vez de devolver un 404 de API.
     if (!url.pathname.startsWith('/api/')) {
       return aplicarCabecerasSeguridad(await entorno.ASSETS.fetch(peticion));
@@ -70,14 +70,14 @@ export default {
     try {
       // La siembra se ejecuta de forma perezosa: en Workers no hay un paso de
       // "post-despliegue" donde correr migraciones, y sin ella un despliegue
-      // limpio no tendria ningun usuario con el que entrar. Es idempotente.
+      // limpio no tendría ningún usuario con el que entrar. Es idempotente.
       //
-      // Su fallo NO aborta la peticion. Antes si lo hacia, y el resultado era el
-      // peor posible: un problema de infraestructura devolvia 500 en *todos* los
+      // Su fallo NO aborta la petición. Antes si lo hacia, y el resultado era el
+      // peor posible: un problema de infraestructura devolvía 500 en *todos* los
       // puntos, incluida la sonda de estado, que es justo la que hay que poder
       // consultar cuando algo va mal. Ahora el fallo se anota y `GET /api/salud`
       // lo explica; el resto de rutas fallara igual, pero por su cuenta y con su
-      // propio error, que es informacion util y no ruido.
+      // propio error, que es información útil y no ruido.
       try {
         await new Semilla(ctx).ejecutarSiHaceFalta();
       } catch (e) {
@@ -109,17 +109,17 @@ export default {
       const { ruta, parametros } = coincidencia;
 
       if (ruta.requiereSesion && !resuelto) {
-        throw new ErrorAutenticacion('Debe iniciar sesion para acceder a este recurso.');
+        throw new ErrorAutenticacion('Debe iniciar sesión para acceder a este recurso.');
       }
 
       if (METODOS_MUTANTES.has(peticion.method)) {
-        // Primera barrera: la peticion debe venir del mismo origen. No depende
-        // de que el cliente coopere, asi que cubre incluso a un cliente antiguo.
+        // Primera barrera: la petición debe venir del mismo origen. No depende
+        // de que el cliente coopere, así que cubre incluso a un cliente antiguo.
         if (!verificarOrigen(peticion)) {
-          throw new ErrorAutorizacion('Peticion rechazada: origen no permitido.');
+          throw new ErrorAutorizacion('Petición rechazada: origen no permitido.');
         }
-        // Segunda barrera: token de doble envio. Solo aplica cuando ya hay
-        // sesion; el login todavia no tiene ninguno que enviar.
+        // Segunda barrera: token de doble envío. Solo aplica cuando ya hay
+        // sesión; el login todavía no tiene ninguno que enviar.
         if (resuelto) {
           autenticacion.verificarCsrf(resuelto.sesion, peticion.headers.get(CABECERA_CSRF));
         }

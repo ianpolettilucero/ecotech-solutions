@@ -2,20 +2,20 @@ import { ErrorValidacion } from '../base/errores.js';
 import type { DetalleErrorCampo } from '../../compartido/tipos.js';
 import { FalloRegla, type Regla } from './Regla.js';
 
-/** Definicion de un campo dentro de un esquema. */
+/** Definición de un campo dentro de un esquema. */
 export interface CampoEsquema<S = unknown> {
   regla: Regla<unknown, S>;
   /** Si es opcional y viene ausente, se usa `porDefecto` (o se omite). */
   opcional?: boolean;
   porDefecto?: S;
-  /** Permite `null` explicito (util para desasignar un departamento). */
+  /** Permite `null` explicito (útil para desasignar un departamento). */
   admiteNulo?: boolean;
 }
 
 export type DefinicionEsquema = Record<string, CampoEsquema<never>>;
 
 /**
- * Validador de cuerpos de peticion.
+ * Validador de cuerpos de petición.
  *
  * Tres decisiones deliberadas de seguridad:
  *
@@ -25,7 +25,7 @@ export type DefinicionEsquema = Record<string, CampoEsquema<never>>;
  * 2. **Se acumulan todos los fallos** antes de responder, para que el
  *    formulario del cliente marque todos los campos de una vez.
  * 3. **Se rechazan claves peligrosas** (`__proto__`, `constructor`,
- *    `prototype`) para evitar contaminacion de prototipos al construir el
+ *    `prototype`) para evitar contaminación de prototipos al construir el
  *    objeto de salida.
  */
 export class Esquema<T extends Record<string, unknown>> {
@@ -35,11 +35,11 @@ export class Esquema<T extends Record<string, unknown>> {
 
   /**
    * Valida y normaliza. Devuelve un objeto nuevo con exclusivamente los campos
-   * declarados. Lanza `ErrorValidacion` con el detalle campo a campo.
+   * declarados. Lanza `Errorvalidación` con el detalle campo a campo.
    */
   validar(entrada: unknown): T {
     if (entrada === null || typeof entrada !== 'object' || Array.isArray(entrada)) {
-      throw new ErrorValidacion('El cuerpo de la peticion debe ser un objeto JSON.');
+      throw new ErrorValidacion('El cuerpo de la petición debe ser un objeto JSON.');
     }
 
     const bruto = entrada as Record<string, unknown>;
@@ -89,7 +89,7 @@ export class Esquema<T extends Record<string, unknown>> {
     }
 
     if (fallos.length > 0) {
-      throw new ErrorValidacion('Se encontraron errores de validacion.', fallos);
+      throw new ErrorValidacion('Se encontraron errores de validación.', fallos);
     }
 
     return { ...salida } as T;
@@ -107,7 +107,7 @@ export class Esquema<T extends Record<string, unknown>> {
     return new Esquema<Partial<T>>(definicionParcial);
   }
 
-  /** Documentacion legible del esquema, usada por `docs/07-api.md`. */
+  /** Documentación legible del esquema, usada por `docs/07-api.md`. */
   describir(): Record<string, string> {
     const salida: Record<string, string> = {};
     for (const [clave, campo] of Object.entries(this.definicion)) {
@@ -120,7 +120,7 @@ export class Esquema<T extends Record<string, unknown>> {
   }
 }
 
-/** Azucar sintactico para declarar campos con menos ruido. */
+/** Azucar sintáctico para declarar campos con menos ruido. */
 export function campo<S>(regla: Regla<unknown, S>, opciones: Omit<CampoEsquema<S>, 'regla'> = {}): CampoEsquema<S> {
   return { regla, ...opciones };
 }

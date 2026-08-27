@@ -15,7 +15,7 @@ export function registrarRutasTiempo(enrutador: Enrutador): void {
     const servicio = new ServicioRegistrosTiempo(api.ctx);
     // Los filtros llegan tal cual del cliente; es el servicio quien fuerza
     // `empleadoId` al del solicitante cuando este solo puede ver lo suyo. Esa
-    // comprobacion NO puede vivir aqui: la capa HTTP no conoce los permisos.
+    // comprobación NO puede vivir aquí: la capa HTTP no conoce los permisos.
     return json(
       await servicio.listar({
         empleadoId: consultaId(api, 'empleadoId'),

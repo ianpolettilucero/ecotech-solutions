@@ -1,13 +1,13 @@
 /**
  * Pantalla de acceso.
  *
- * No gestiona la sesion ni guarda nada: pide el login y, si sale bien, avisa a
- * la aplicacion para que se recargue. El token de sesion viaja en una cookie
- * `HttpOnly` que este codigo no puede leer, de modo que aqui no hay ningun
+ * No gestiona la sesión ni guarda nada: pide el login y, si sale bien, avisa a
+ * la aplicación para que se recargue. El token de sesión viaja en una cookie
+ * `HttpOnly` que este código no puede leer, de modo que aquí no hay ningún
  * secreto que un XSS pudiera robar.
  *
- * La aplicacion pinta esta vista fuera del armazon (no hay menu ni cabecera
- * mientras no haya sesion), asi que se dibuja la pantalla completa.
+ * La aplicación pinta esta vista fuera del armazón (no hay menú ni cabecera
+ * mientras no haya sesión), así que se dibuja la pantalla completa.
  */
 
 import type { Permiso, SesionDTO } from '../../compartido/tipos.js';
@@ -17,7 +17,7 @@ import { Vista } from '../Vista.js';
 import { Formulario } from '../componentes/Formulario.js';
 import type { CampoFormulario } from '../componentes/Formulario.js';
 
-/** Cuentas sembradas por la demostracion. */
+/** Cuentas sembradas por la demostración. */
 const CUENTAS_DEMO = [
   'admin@ecotech.com',
   'gerente@ecotech.com',
@@ -49,13 +49,13 @@ export class VistaLogin extends Vista {
   }
 
   override async render(contenedor: HTMLElement): Promise<void> {
-    // La aplicacion ya monta la vista dentro de un contenedor con esta clase;
-    // anadirla aqui hace que la pantalla tambien funcione montada suelta.
+    // La aplicación ya monta la vista dentro de un contenedor con esta clase;
+    // anadirla aquí hace que la pantalla también funcione montada suelta.
     contenedor.classList.add('pantalla-login');
 
     const campos: CampoFormulario[] = [
       { nombre: 'email', etiqueta: 'Email', tipo: 'email', requerido: true },
-      { nombre: 'contrasena', etiqueta: 'Contrasena', tipo: 'contrasena', requerido: true },
+      { nombre: 'contrasena', etiqueta: 'Contraseña', tipo: 'contrasena', requerido: true },
     ];
     const formulario = new Formulario(campos);
     const nodo = formulario.render();
@@ -63,7 +63,7 @@ export class VistaLogin extends Vista {
 
     const botonIngresar = elemento('button', {
       clase: 'boton boton-primario boton-bloque',
-      // `submit` y no `button`: con un boton de envio dentro del <form>, el
+      // `submit` y no `button`: con un botón de envío dentro del <form>, el
       // navegador dispara el mismo camino al pulsar Intro en cualquier campo.
       tipo: 'submit',
       texto: 'Ingresar',
@@ -73,7 +73,7 @@ export class VistaLogin extends Vista {
     let enviando = false;
 
     const enviar = async (): Promise<void> => {
-      // Dos envios a la vez dejarian dos peticiones compitiendo por la cookie.
+      // Dos envíos a la vez dejarian dos peticiones compitiendo por la cookie.
       if (enviando) return;
       enviando = true;
       botonIngresar.disabled = true;
@@ -88,10 +88,10 @@ export class VistaLogin extends Vista {
         });
       } catch (error) {
         // Los errores por campo se pintan bajo su input; el motivo general
-        // (credenciales incorrectas, cuenta bloqueada) va a la notificacion.
+        // (credenciales incorrectas, cuenta bloqueada) va a la notificación.
         formulario.mostrarErrores(error);
         this.app.notificarError(
-          error instanceof ErrorApi ? error.message : 'No se pudo iniciar sesion.',
+          error instanceof ErrorApi ? error.message : 'No se pudo iniciar sesión.',
         );
         enviando = false;
         botonIngresar.disabled = false;
@@ -99,10 +99,10 @@ export class VistaLogin extends Vista {
         return;
       }
 
-      // La sesion la lee y la guarda `Aplicacion` al recargar: esta vista no
-      // toca el estado de sesion ni conoce el token CSRF. El boton se queda
-      // deshabilitado a proposito, porque el repintado sustituye la pantalla.
-      this.app.notificarExito('Sesion iniciada. Bienvenido a EcoTech Solutions.');
+      // La sesión la lee y la guarda `Aplicación` al recargar: esta vista no
+      // toca el estado de sesión ni conoce el token CSRF. El botón se queda
+      // deshabilitado a propósito, porque el repintado sustituye la pantalla.
+      this.app.notificarExito('Sesión iniciada. Bienvenido a EcoTech Solutions.');
       await this.app.recargar();
     };
 
@@ -118,7 +118,7 @@ export class VistaLogin extends Vista {
         elemento('span', { clase: 'marca-icono', texto: 'E' }),
         elemento('h1', { clase: 'login-titulo', texto: 'EcoTech Solutions' }),
       ),
-      elemento('p', { clase: 'login-descripcion', texto: 'Sistema de Gestion Interna' }),
+      elemento('p', { clase: 'login-descripcion', texto: 'Sistema de Gestión Interna' }),
       nodo,
       this.avisoDemostracion(),
     );
@@ -130,16 +130,16 @@ export class VistaLogin extends Vista {
   /**
    * Recuadro con las credenciales sembradas.
    *
-   * Es informacion de una demostracion, no de produccion: por eso se muestra
+   * Es información de una demostración, no de producción: por eso se muestra
    * con el mismo estilo que el resto de avisos del sistema y se advierte que la
    * clave inicial caduca en el primer ingreso.
    *
    * Va dentro de un `<details>` plegado. Desplegado ocupa unos 250 px, que en un
-   * telefono de 568 px de alto empujaban el boton de ingresar fuera de la vista
+   * teléfono de 568 px de alto empujaban el botón de ingresar fuera de la vista
    * y obligaban a desplazarse antes de poder hacer nada. Plegado, la pantalla
-   * de acceso entra entera en cualquier telefono y las credenciales siguen a un
+   * de acceso entra entera en cualquier teléfono y las credenciales siguen a un
    * toque de distancia. `<details>` es el elemento nativo para esto: aporta el
-   * comportamiento y la semantica de accesibilidad sin una linea de JavaScript.
+   * comportamiento y la semántica de accesibilidad sin una línea de JavaScript.
    */
   private avisoDemostracion(): HTMLElement {
     const contenido = div(
@@ -156,7 +156,7 @@ export class VistaLogin extends Vista {
       'summary',
       {},
       elemento('span', { clase: 'aviso-icono', texto: 'i', datos: { 'aria-hidden': 'true' } }),
-      elemento('span', { texto: 'Credenciales de demostracion' }),
+      elemento('span', { texto: 'Credenciales de demostración' }),
     );
     agregar(plegable, resumen, contenido);
 

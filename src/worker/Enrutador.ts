@@ -2,14 +2,14 @@ import type { Contexto } from '../aplicacion/Contexto.js';
 import type { DatosSesion } from '../dominio/seguridad/Sesion.js';
 import { ErrorNoEncontrado } from '../dominio/base/errores.js';
 
-/** Todo lo que un manejador necesita para atender una peticion. */
+/** Todo lo que un manejador necesita para atender una petición. */
 export interface PeticionApi {
   peticion: Request;
   url: URL;
-  /** Parametros extraidos del patron de ruta, p.ej. `:id`. */
+  /** Parámetros extraidos del patron de ruta, p.ej. `:id`. */
   parametros: Record<string, string>;
   ctx: Contexto;
-  /** Sesion vigente, si la peticion venia autenticada. */
+  /** Sesión vigente, si la petición venía autenticada. */
   sesion: DatosSesion | null;
   /** Cabeceras extra que el manejador quiere anadir (p.ej. `Set-Cookie`). */
   cabecerasExtra: Record<string, string>;
@@ -21,22 +21,22 @@ type Metodo = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 
 interface Ruta {
   metodo: Metodo;
-  /** Segmentos del patron; los que empiezan por ':' son parametros. */
+  /** Segmentos del patron; los que empiezan por ':' son parámetros. */
   segmentos: string[];
   manejador: Manejador;
-  /** Si es `false`, la ruta se atiende sin sesion (login, salud). */
+  /** Si es `false`, la ruta se atiende sin sesión (login, salud). */
   requiereSesion: boolean;
 }
 
 /**
- * Enrutador minimo por segmentos.
+ * Enrutador mínimo por segmentos.
  *
  * Se implementa a mano en vez de traer un framework por dos razones: cada
- * dependencia aumenta el tamano del bundle del Worker (que tiene un limite
+ * dependencia aumenta el tamano del bundle del Worker (que tiene un límite
  * duro) y la superficie de ataque, y el enrutado que necesita esta API cabe en
- * cien lineas. La comparacion es por segmentos exactos, no por expresion
+ * cien líneas. La comparación es por segmentos exactos, no por expresión
  * regular, de modo que no existe la clase de fallos de coincidencia parcial que
- * suele acabar en salto de autorizacion.
+ * suele acabar en salto de autorización.
  */
 export class Enrutador {
   private readonly rutas: Ruta[] = [];
@@ -76,7 +76,7 @@ export class Enrutador {
     return this.registrar('DELETE', patron, manejador, opciones);
   }
 
-  /** Busca la ruta que atiende esta peticion. `null` si ninguna coincide. */
+  /** Busca la ruta que atiende esta petición. `null` si ninguna coincide. */
   resolver(
     metodo: string,
     ruta: string,
@@ -91,11 +91,11 @@ export class Enrutador {
   }
 
   /**
-   * Metodos registrados para esa ruta. Vacio si la ruta no existe en absoluto.
+   * Métodos registrados para esa ruta. Vacío si la ruta no existe en absoluto.
    *
    * Devuelve la lista y no un booleano porque la respuesta 405 debe incluir la
-   * cabecera `Allow`, y esa cabecera es lo unico que convierte el error en una
-   * pista util en vez de en un callejon sin salida.
+   * cabecera `Allow`, y esa cabecera es lo único que convierte el error en una
+   * pista útil en vez de en un callejon sin salida.
    */
   metodosDe(ruta: string): string[] {
     const segmentos = Enrutador.segmentar(ruta);
@@ -120,7 +120,7 @@ export class Enrutador {
       const real = reales[i];
       if (esperado === undefined || real === undefined) return null;
       if (esperado.startsWith(':')) {
-        // Se decodifica aqui una sola vez; los manejadores reciben el valor ya
+        // Se decodifica aquí una sola vez; los manejadores reciben el valor ya
         // legible y lo validan con `ReglaIdentificador` antes de usarlo.
         try {
           parametros[esperado.slice(1)] = decodeURIComponent(real);
@@ -135,7 +135,7 @@ export class Enrutador {
   }
 }
 
-/** Lanza el 404 estandar de la API cuando ninguna ruta coincide. */
+/** Lanza el 404 estándar de la API cuando ninguna ruta coincide. */
 export function rutaNoEncontrada(url: URL): never {
   throw new ErrorNoEncontrado(`la ruta ${url.pathname}`);
 }

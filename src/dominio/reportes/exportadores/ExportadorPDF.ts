@@ -4,19 +4,19 @@ import { Exportador } from './Exportador.js';
 /**
  * Generador de PDF escrito a mano.
  *
- * No hay librerias: el archivo se arma objeto por objeto (Catalogo -> Pages ->
+ * No hay librerías: el archivo se arma objeto por objeto (Catálogo -> Pages ->
  * Page -> Contents) con su tabla `xref` y su `trailer`. La consecuencia
  * importante es que los desplazamientos de la `xref` se miden en BYTES reales
  * del buffer, nunca en `String.length`, y que todo el cuerpo se escribe en
- * latin1: una sola secuencia UTF-8 de dos bytes desplazaria cada objeto
- * posterior y ningun lector abriria el documento.
+ * latin1: una sola secuencia UTF-8 de dos bytes desplazaría cada objeto
+ * posterior y ningún lector abriría el documento.
  */
 
 const VERSION_PDF = '1.7';
 
-// --- Geometria de pagina (puntos PostScript, 1 pt = 1/72") -----------------
-// A4 apaisado: una tabla de reporte tiene muchas mas columnas que filas
-// visibles, asi que el ancho vale mas que el alto.
+// --- Geometría de página (puntos PostScript, 1 pt = 1/72") -----------------
+// A4 apaisado: una tabla de reporte tiene muchas más columnas que filas
+// visibles, así que el ancho vale más que el alto.
 const ANCHO_PAGINA = 842;
 const ALTO_PAGINA = 595;
 
@@ -30,7 +30,7 @@ const Y_SEPARADOR = Y_META - 11;
 const Y_TABLA = Y_SEPARADOR - 10;
 
 const Y_PIE = 26;
-/** Ninguna fila puede bajar de aqui o pisaria el pie de pagina. */
+/** Ninguna fila puede bajar de aquí o pisaría el pie de página. */
 const Y_LIMITE_TABLA = Y_PIE + 16;
 
 const ALTO_CABECERA = 18;
@@ -43,8 +43,8 @@ const TAMANO_TABLA = 9;
 const TAMANO_PIE = 8;
 
 /**
- * Fraccion del cuerpo de fuente que ocupa una mayuscula en Helvetica (~0.72em).
- * Sirve para centrar la linea base dentro de la fila sin metricas reales.
+ * Fracción del cuerpo de fuente que ocupa una mayúscula en Helvetica (~0.72em).
+ * Sirve para centrar la línea base dentro de la fila sin métricas reales.
  */
 const ALTURA_MAYUSCULA = 0.72;
 
@@ -63,30 +63,30 @@ const ETIQUETA_TOTALES = 'TOTALES';
 const PIE_IZQUIERDA = 'EcoTech Solutions - Documento interno';
 const MENSAJE_SIN_DATOS = 'Sin registros para mostrar.';
 
-/** Filas de datos que entran por pagina, descontando cabecera y pie. */
+/** Filas de datos que entran por página, descontando cabecera y pie. */
 const FILAS_POR_PAGINA = Math.max(
   1,
   Math.floor((Y_TABLA - Y_LIMITE_TABLA - ALTO_CABECERA) / ALTO_FILA),
 );
 
-// --- Numeracion de objetos --------------------------------------------------
+// --- Numeración de objetos --------------------------------------------------
 const ID_CATALOGO = 1;
 const ID_PAGINAS = 2;
 const ID_FUENTE_NORMAL = 3;
 const ID_FUENTE_NEGRITA = 4;
 const ID_INFO = 5;
-/** Cada pagina consume dos objetos: el diccionario /Page y su flujo /Contents. */
+/** Cada página consume dos objetos: el diccionario /Page y su flujo /Contents. */
 const ID_PRIMERA_PAGINA = 6;
 const OBJETOS_POR_PAGINA = 2;
 
 // ---------------------------------------------------------------------------
-// Metricas de las fuentes base14
+// Métricas de las fuentes base14
 // ---------------------------------------------------------------------------
 
 /**
- * Anchos de glifo de Helvetica en milesimas de em, para los codigos 32..126.
+ * Anchos de glifo de Helvetica en milésimas de em, para los códigos 32..126.
  * Son los valores del AFM oficial: sin ellos no se puede saber si un texto
- * entra en su columna ni centrar el numero de pagina.
+ * entra en su columna ni centrar el número de página.
  */
 const ANCHOS_HELVETICA: readonly number[] = [
   278, 278, 355, 556, 556, 889, 667, 191, 333, 333,
@@ -117,29 +117,29 @@ const ANCHOS_HELVETICA_NEGRITA: readonly number[] = [
 
 const PRIMER_CODIGO_MEDIDO = 32;
 const ULTIMO_CODIGO_MEDIDO = 126;
-/** Ancho supuesto para lo que no esta tabulado (ligaduras, simbolos WinAnsi). */
+/** Ancho supuesto para lo que no está tabulado (ligaduras, símbolos WinAnsi). */
 const ANCHO_GLIFO_POR_DEFECTO = 500;
 
 /**
  * Anchos de la mitad alta de WinAnsi (0xA0..0xFF) deducidos de su letra base.
  *
- * Importa aqui mas que en otros sistemas: los datos son nombres en espanol, y
- * medir cada acentuada con el ancho por defecto desviaba hasta 222 milesimas
- * por glifo (una 'N con virgulilla' mide 722, no 500), asi que una celda en
- * mayusculas se juzgaba mas corta de lo que es y se pintaba invadiendo la
+ * Importa aquí más que en otros sistemas: los datos son nombres en español, y
+ * medir cada acentuada con el ancho por defecto desviaba hasta 222 milésimas
+ * por glifo (una 'N con virgulilla' mide 722, no 500), así que una celda en
+ * mayúsculas se juzgaba más corta de lo que es y se pintaba invadiendo la
  * columna vecina en vez de recortarse.
  *
  * En Helvetica el glifo acentuado mide exactamente lo que la letra sin acento,
  * de modo que descomponer en NFD da el ancho real sin arrastrar una segunda
- * tabla AFM. Se resuelve una sola vez al cargar el modulo: cada celda se mide
- * varias veces (demanda de ancho, recorte y alineacion a la derecha) y
- * normalizar por caracter costaria mas que la tabla entera.
+ * tabla AFM. Se resuelve una sola vez al cargar el módulo: cada celda se mide
+ * varias veces (demanda de ancho, recorte y alineación a la derecha) y
+ * normalizar por carácter costaría más que la tabla entera.
  */
 function deducirAnchosAltos(tabla: readonly number[]): ReadonlyMap<number, number> {
   const deducidos = new Map<number, number>();
   for (let codigo = 0xa0; codigo <= 0xff; codigo += 1) {
     const base = String.fromCharCode(codigo).normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-    // Las ligaduras y los simbolos no se descomponen en una letra unica: para
+    // Las ligaduras y los símbolos no se descomponen en una letra única: para
     // ellos el ancho por defecto sigue siendo la mejor conjetura disponible.
     if (base.length !== 1) continue;
     const codigoBase = base.charCodeAt(0);
@@ -154,13 +154,13 @@ const ANCHOS_ALTOS_HELVETICA = deducirAnchosAltos(ANCHOS_HELVETICA);
 const ANCHOS_ALTOS_HELVETICA_NEGRITA = deducirAnchosAltos(ANCHOS_HELVETICA_NEGRITA);
 
 // ---------------------------------------------------------------------------
-// Texto: WinAnsi, escapado y medicion
+// Texto: WinAnsi, escapado y medición
 // ---------------------------------------------------------------------------
 
 /**
- * Signos tipograficos frecuentes que no existen en Latin-1 y si tienen un
+ * Signos tipográficos frecuentes que no existen en Latin-1 y si tienen un
  * equivalente ASCII razonable. Llegan copiados desde Word o desde un editor
- * con comillas inteligentes, asi que reemplazarlos evita llenar el reporte de
+ * con comillas inteligentes, así que reemplazarlos evita llenar el reporte de
  * interrogantes.
  */
 const SUSTITUCIONES: Record<string, string> = {
@@ -180,16 +180,16 @@ const SUSTITUCIONES: Record<string, string> = {
   '\u2122': '(TM)',
 };
 
-/** `true` si el codigo se puede escribir tal cual bajo /WinAnsiEncoding. */
+/** `true` si el código se puede escribir tal cual bajo /WinAnsiEncoding. */
 function esImprimibleWinAnsi(codigo: number): boolean {
-  // 0x80..0x9F queda fuera a proposito: ahi WinAnsi y Latin-1 discrepan y el
-  // resultado seria un glifo distinto del que traia el dato.
+  // 0x80..0x9F queda fuera a propósito: ahi WinAnsi y Latin-1 discrepan y el
+  // resultado sería un glifo distinto del que traía el dato.
   return (codigo >= 0x20 && codigo <= 0x7e) || (codigo >= 0xa0 && codigo <= 0xff);
 }
 
 /**
  * Lleva cualquier cadena al repertorio /WinAnsiEncoding: lo que no existe en
- * la codificacion se translitera quitando diacriticos y, si aun asi no entra,
+ * la codificación se translitera quitando diacríticos y, si aun así no entra,
  * se degrada a '?' antes que corromper el flujo de contenido.
  */
 function aWinAnsi(texto: string): string {
@@ -197,17 +197,17 @@ function aWinAnsi(texto: string): string {
   for (const caracter of texto) {
     const codigo = caracter.codePointAt(0) ?? 0;
 
-    // Tabulaciones y saltos de linea romperian la fila de la tabla.
+    // Tabulaciones y saltos de línea romperian la fila de la tabla.
     if (codigo === 0x09 || codigo === 0x0a || codigo === 0x0d) {
       salida += ' ';
       continue;
     }
-    // La sustitucion se consulta ANTES del filtro de repertorio, y no despues,
-    // por un solo caracter: el espacio duro (U+00A0) que `Intl` intercala entre
-    // "ARS" y el importe si pertenece a WinAnsi, asi que preguntando primero
-    // por el repertorio jamas llegaba al mapa. Se colaba entonces un 0xA0 cuyo
-    // ancho no esta tabulado y cuyo glifo depende de una nota al pie de la
-    // especificacion; un espacio normal no depende de nada.
+    // La sustitución se consulta ANTES del filtro de repertorio, y no después,
+    // por un solo carácter: el espacio duro (U+00A0) que `Intl` intercala entre
+    // "ARS" y el importe si pertenece a WinAnsi, así que preguntando primero
+    // por el repertorio jamás llegaba al mapa. Se colaba entonces un 0xA0 cuyo
+    // ancho no está tabulado y cuyo glifo depende de una nota al pie de la
+    // especificación; un espacio normal no depende de nada.
     const sustituto = SUSTITUCIONES[caracter];
     if (sustituto !== undefined) {
       salida += sustituto;
@@ -236,7 +236,7 @@ function escaparCadena(texto: string): string {
   return texto.replace(/[\\()]/g, (caracter) => `\\${caracter}`);
 }
 
-/** Ancho de un caracter ya normalizado a WinAnsi, en puntos. */
+/** Ancho de un carácter ya normalizado a WinAnsi, en puntos. */
 function anchoCaracter(caracter: string, tamano: number, negrita: boolean): number {
   const codigo = caracter.charCodeAt(0);
   const tabla = negrita ? ANCHOS_HELVETICA_NEGRITA : ANCHOS_HELVETICA;
@@ -260,7 +260,7 @@ function anchoTexto(texto: string, tamano: number, negrita: boolean): number {
 function recortar(texto: string, anchoMaximo: number, tamano: number, negrita: boolean): string {
   if (anchoMaximo <= 0) return '';
 
-  // El ancho disponible llega de sumar y restar rellenos en coma flotante, asi
+  // El ancho disponible llega de sumar y restar rellenos en coma flotante, así
   // que un texto que encaja exacto puede quedar 0.000001 pt por encima. Sin
   // esta tolerancia una cabecera perfectamente medida acaba como "Acti...".
   const limite = anchoMaximo + TOLERANCIA_ANCHO;
@@ -286,10 +286,10 @@ function recortar(texto: string, anchoMaximo: number, tamano: number, negrita: b
 // ---------------------------------------------------------------------------
 
 /**
- * Cadena latin1 -> bytes, un byte por unidad de codigo.
+ * Cadena latin1 -> bytes, un byte por unidad de código.
  *
  * Deliberadamente NO se usa `TextEncoder`: codificaria en UTF-8 y cada
- * caracter no ASCII sumaria bytes invisibles que invalidarian la `xref`.
+ * carácter no ASCII sumaría bytes invisibles que invalidarian la `xref`.
  */
 function aBytesLatin1(texto: string): Uint8Array {
   const bytes = new Uint8Array(texto.length);
@@ -299,7 +299,7 @@ function aBytesLatin1(texto: string): Uint8Array {
   return bytes;
 }
 
-/** Numero para el flujo de contenido: sin notacion exponencial, que el PDF no admite. */
+/** Número para el flujo de contenido: sin notación exponencial, que el PDF no admite. */
 function num(valor: number): string {
   if (!Number.isFinite(valor)) return '0';
   const redondeado = Math.round(valor * 100) / 100;
@@ -327,10 +327,10 @@ function fechaPdf(iso: string): string {
 }
 
 // ---------------------------------------------------------------------------
-// Ordenes del flujo de contenido
+// Órdenes del flujo de contenido
 // ---------------------------------------------------------------------------
 
-/** Texto en una linea base dada. `g` fija el gris de relleno, que es el del texto. */
+/** Texto en una línea base dada. `g` fija el gris de relleno, que es el del texto. */
 function ordenTexto(
   x: number,
   y: number,
@@ -379,20 +379,20 @@ interface DisenoTabla {
   anchos: number[];
   /** Borde izquierdo acumulado de cada columna. */
   izquierdas: number[];
-  /** Numeros e importes se alinean a la derecha para poder compararlos a ojo. */
+  /** Números e importes se alinean a la derecha para poder compararlos a ojo. */
   derecha: boolean[];
 }
 
 /**
- * Reparte el ancho util entre las columnas.
+ * Reparte el ancho útil entre las columnas.
  *
- * El ancho que pide cada columna es el de su contenido mas largo, con un techo
- * por columna: sin el, una descripcion libre dejaria al resto en dos
- * milimetros. Solo las columnas de texto son elasticas, y es la decision de
+ * El ancho que pide cada columna es el de su contenido más largo, con un techo
+ * por columna: sin el, una descripción libre dejaría al resto en dos
+ * milimetros. Solo las columnas de texto son elasticas, y es la decisión de
  * fondo: un texto recortado sigue siendo legible, pero un importe o una fecha
- * a los que les falta el final no son "menos dato", son un dato falso. Asi que
+ * a los que les falta el final no son "menos dato", son un dato falso. Así que
  * lo rigido cobra primero y el sobrante se reparte entre el texto en
- * proporcion a lo que pedia. Si lo rigido no deja sitio suficiente se cae al
+ * proporción a lo que pedía. Si lo rigido no deja sitio suficiente se cae al
  * reparto proporcional puro, que al menos no descuadra la tabla.
  */
 function calcularAnchos(
@@ -414,8 +414,8 @@ function calcularAnchos(
     }
   }
 
-  // El techo evita que una descripcion libre de 400 caracteres se lleve media
-  // hoja solo porque "la pidio".
+  // El techo evita que una descripción libre de 400 caracteres se lleve media
+  // hoja solo porque "la pidió".
   const techo = Math.max(ANCHO_UTIL * 0.3, ANCHO_UTIL / cantidad);
   const acotadas = demandas.map((demanda) => Math.min(demanda, techo));
 
@@ -452,16 +452,16 @@ function calcularAnchos(
 /**
  * Reparto equitativo maximo-minimo ("water-filling").
  *
- * Es la correccion de un fallo real: repartir el ancho *en proporcion a la
+ * Es la corrección de un fallo real: repartir el ancho *en proporción a la
  * demanda* parece justo, pero encoge a todos por igual, incluidas las columnas
  * que ya cabian holgadas. Con once columnas y una de texto libre, el factor de
- * escala bajaba a 0,63 y un legajo de diez caracteres se imprimia como
- * "ECO-...": la tabla quedaba formalmente correcta y practicamente inservible.
+ * escala bajaba a 0,63 y un legajo de diez caracteres se imprimía como
+ * "ECO-...": la tabla quedaba formalmente correcta y prácticamente inservible.
  *
  * Este reparto, en cambio, atiende primero a quien pide poco. Recorre las
  * demandas de menor a mayor y da a cada columna la suya entera mientras no
- * supere la cuota que le tocaria a partes iguales del espacio que queda; en
- * cuanto una la supera, ella y todas las siguientes (que piden mas) se llevan
+ * supere la cuota que le tocaría a partes iguales del espacio que queda; en
+ * cuanto una la supera, ella y todas las siguientes (que piden más) se llevan
  * exactamente esa cuota. El resultado es que las columnas cortas salen intactas
  * y el recorte lo absorben unicamente las largas, que es donde no duele.
  */
@@ -472,8 +472,8 @@ function repartirEquitativo(
 ): number[] {
   const cantidad = demandas.length;
   if (cantidad === 0) return [];
-  // Si no hay sitio ni para el minimo, no queda mas que repartir a partes
-  // iguales: cualquier otra cosa descuadraria el ancho de la tabla.
+  // Si no hay sitio ni para el mínimo, no queda más que repartir a partes
+  // iguales: cualquier otra cosa descuadraría el ancho de la tabla.
   if (disponible <= cantidad * minimo) return demandas.map(() => disponible / cantidad);
 
   const orden = demandas
@@ -496,7 +496,7 @@ function repartirEquitativo(
   return salida;
 }
 
-/** Ordenes de texto de una fila completa, ya recortadas y alineadas. */
+/** Órdenes de texto de una fila completa, ya recortadas y alineadas. */
 function celdasDeFila(
   diseno: DisenoTabla,
   celdas: string[],
@@ -532,8 +532,8 @@ function celdasDeFila(
 // ---------------------------------------------------------------------------
 
 /**
- * Exportacion a PDF 1.7 con fuentes base14 (no incrustadas), pensada para
- * imprimir o adjuntar: A4 apaisado, cabecera de tabla repetida en cada pagina,
+ * Exportación a PDF 1.7 con fuentes base14 (no incrustadas), pensada para
+ * imprimir o adjuntar: A4 apaisado, cabecera de tabla repetida en cada página,
  * zebra para seguir la fila con la vista y totales al final del listado.
  */
 export class ExportadorPDF extends Exportador {
@@ -578,7 +578,7 @@ export class ExportadorPDF extends Exportador {
     for (let inicio = 0; inicio < cuerpo.length; inicio += FILAS_POR_PAGINA) {
       paginas.push(cuerpo.slice(inicio, inicio + FILAS_POR_PAGINA));
     }
-    // Un reporte vacio sigue siendo un documento: cabecera, mensaje y pie.
+    // Un reporte vacío sigue siendo un documento: cabecera, mensaje y pie.
     if (paginas.length === 0) paginas.push([]);
 
     const cuerposObjeto = this.construirObjetos(reporte, diseno, paginas);
@@ -587,8 +587,8 @@ export class ExportadorPDF extends Exportador {
 
   /**
    * Aplana el reporte a filas de texto ya formateadas. La fila de totales se
-   * suma al mismo flujo en vez de tratarse aparte: asi cae sola al final de la
-   * ultima pagina y, si esa pagina esta llena, la paginacion le abre una nueva
+   * suma al mismo flujo en vez de tratarse aparte: así cae sola al final de la
+   * última página y, si esa página esta llena, la paginación le abre una nueva
    * con su cabecera en lugar de dejarla fuera del papel.
    */
   private construirCuerpo(reporte: ReporteDTO): FilaTabla[] {
@@ -603,7 +603,7 @@ export class ExportadorPDF extends Exportador {
       cuerpo.push({
         celdas: reporte.columnas.map((columna, indice) =>
           // La etiqueta pisa la primera columna aunque tenga total propio: sin
-          // ella la ultima fila parece un registro mas del listado.
+          // ella la última fila parece un registro más del listado.
           indice === 0
             ? ETIQUETA_TOTALES
             : aWinAnsi(this.formatearCelda(reporte.totales[columna.clave] ?? null, columna)),
@@ -614,7 +614,7 @@ export class ExportadorPDF extends Exportador {
     return cuerpo;
   }
 
-  /** Cuerpos de todos los objetos, en orden estricto de numero de objeto. */
+  /** Cuerpos de todos los objetos, en orden estricto de número de objeto. */
   private construirObjetos(
     reporte: ReporteDTO,
     diseno: DisenoTabla,
@@ -659,7 +659,7 @@ export class ExportadorPDF extends Exportador {
     return objetos;
   }
 
-  /** Flujo de contenido de una pagina: cabecera, tabla y pie. */
+  /** Flujo de contenido de una página: cabecera, tabla y pie. */
   private contenidoPagina(
     reporte: ReporteDTO,
     diseno: DisenoTabla,
@@ -710,7 +710,7 @@ export class ExportadorPDF extends Exportador {
     );
     ordenes.push(ordenTexto(MARGEN_X, Y_PIE, PIE_IZQUIERDA, TAMANO_PIE, false, GRIS_TENUE));
 
-    const numeracion = `Pagina ${numeroPagina} de ${totalPaginas}`;
+    const numeracion = `Página ${numeroPagina} de ${totalPaginas}`;
     const xNumeracion = (ANCHO_PAGINA - anchoTexto(numeracion, TAMANO_PIE, false)) / 2;
     ordenes.push(ordenTexto(xNumeracion, Y_PIE, numeracion, TAMANO_PIE, false, GRIS_TENUE));
 
@@ -725,8 +725,8 @@ export class ExportadorPDF extends Exportador {
 
     const ordenes: string[] = [];
 
-    // La cabecera se repite en cada pagina: una tabla partida sin encabezados
-    // obliga a volver a la primera hoja para saber que columna se esta leyendo.
+    // La cabecera se repite en cada página: una tabla partida sin encabezados
+    // obliga a volver a la primera hoja para saber que columna se está leyendo.
     ordenes.push(
       ordenRectangulo(MARGEN_X, Y_TABLA - ALTO_CABECERA, ANCHO_UTIL, ALTO_CABECERA, GRIS_CABECERA),
     );
@@ -757,7 +757,7 @@ export class ExportadorPDF extends Exportador {
    * Escribe cabecera, objetos, `xref` y `trailer` midiendo los bytes emitidos.
    *
    * El contador se lleva sobre el buffer y no sobre las cadenas porque es la
-   * unica forma de que los desplazamientos de la `xref` apunten de verdad al
+   * única forma de que los desplazamientos de la `xref` apunten de verdad al
    * "N 0 obj" correspondiente.
    */
   private ensamblar(objetos: string[]): Uint8Array {
@@ -775,7 +775,7 @@ export class ExportadorPDF extends Exportador {
     // las herramientas de transferencia no lo traten como texto y lo mutilen.
     escribir('%\u00e2\u00e3\u00cf\u00d3\n');
 
-    // `objetos` viene en orden 1..N, asi que el i-esimo desplazamiento anotado
+    // `objetos` viene en orden 1..N, así que el i-esimo desplazamiento anotado
     // es exactamente el del objeto i+1 en la tabla.
     const desplazamientos: number[] = [];
     for (const objeto of objetos) {
@@ -814,14 +814,14 @@ function envolver(id: number, contenido: string): string {
 
 /**
  * Flujo sin comprimir. /Length se mide en bytes reales del cuerpo: si mintiera,
- * el lector cortaria el contenido a mitad de una orden de dibujo.
+ * el lector cortaría el contenido a mitad de una orden de dibujo.
  */
 function envolverFlujo(id: number, contenido: string): string {
   const longitud = aBytesLatin1(contenido).length;
   return `${id} 0 obj\n<< /Length ${longitud} >>\nstream\n${contenido}\nendstream\nendobj\n`;
 }
 
-/** Fuente base14: no se incrusta nada, el lector ya tiene las metricas. */
+/** Fuente base14: no se incrusta nada, el lector ya tiene las métricas. */
 function fuenteBase14(nombre: string): string {
   return (
     `<< /Type /Font /Subtype /Type1 /BaseFont /${nombre}` +

@@ -10,10 +10,10 @@ import type { Empleado } from '../dominio/personas/Empleado.js';
 import type { Rol, RolProyecto, TipoContrato } from '../compartido/tipos.js';
 
 /**
- * Contrasena del administrador en el primer arranque.
+ * Contraseña del administrador en el primer arranque.
  *
- * Se usa solo si NO esta definido el secret `CLAVE_ADMIN_INICIAL`. Es publica a
- * proposito (esta en el repositorio) porque su unica funcion es permitir el
+ * Se usa solo si NO está definido el secret `CLAVE_ADMIN_INICIAL`. Es pública a
+ * propósito (está en el repositorio) porque su única función es permitir el
  * primer acceso; el usuario queda marcado con `debeCambiarContrasena`, de modo
  * que el sistema obliga a reemplazarla antes de dejar operar. En un despliegue
  * real se define el secret y esta constante nunca llega a usarse.
@@ -42,23 +42,23 @@ interface PlantillaEmpleado {
 const DEPARTAMENTOS: { nombre: string; descripcion: string }[] = [
   {
     nombre: 'Desarrollo Sostenible',
-    descripcion: 'Disena e implementa las soluciones de eficiencia energetica de la empresa.',
+    descripcion: 'Diseña e implementa las soluciones de eficiencia energética de la empresa.',
   },
   {
-    nombre: 'Investigacion y Desarrollo',
-    descripcion: 'Investigacion aplicada en materiales y almacenamiento de energia.',
+    nombre: 'Investigación y Desarrollo',
+    descripcion: 'Investigación aplicada en materiales y almacenamiento de energía.',
   },
   {
     nombre: 'Ventas',
-    descripcion: 'Relacion comercial, licitaciones y seguimiento de clientes.',
+    descripcion: 'Relación comercial, licitaciones y seguimiento de clientes.',
   },
   {
     nombre: 'Recursos Humanos',
-    descripcion: 'Gestion de personal, contratacion y liquidacion de haberes.',
+    descripcion: 'Gestión de personal, contratación y liquidación de haberes.',
   },
   {
     nombre: 'Operaciones',
-    descripcion: 'Instalacion, puesta en marcha y mantenimiento en campo.',
+    descripcion: 'Instalación, puesta en marcha y mantenimiento en campo.',
   },
 ];
 
@@ -66,43 +66,43 @@ const EMPLEADOS: PlantillaEmpleado[] = [
   {
     nombre: 'Valeria', apellido: 'Sandoval', tipoContrato: 'ASALARIADO',
     departamento: 'Recursos Humanos', fechaInicioContrato: '2021-03-01',
-    documento: '28455901', telefono: '+54 261 4551200', direccion: 'Av. San Martin 1240, Mendoza',
+    documento: '28455901', telefono: '+54 261 4551200', direccion: 'Av. San Martín 1240, Mendoza',
     salarioMensual: 2450000, rol: 'ADMIN_RRHH',
   },
   {
-    nombre: 'Martin', apellido: 'Quiroga', tipoContrato: 'ASALARIADO',
+    nombre: 'Martín', apellido: 'Quiroga', tipoContrato: 'ASALARIADO',
     departamento: 'Desarrollo Sostenible', fechaInicioContrato: '2020-06-15',
     documento: '30122874', telefono: '+54 261 4778931', direccion: 'Sarmiento 455, Godoy Cruz',
     salarioMensual: 3100000, rol: 'GERENTE',
   },
   {
-    nombre: 'Lucia', apellido: 'Ferreyra', tipoContrato: 'ASALARIADO',
-    departamento: 'Investigacion y Desarrollo', fechaInicioContrato: '2019-09-02',
+    nombre: 'Lucía', apellido: 'Ferreyra', tipoContrato: 'ASALARIADO',
+    departamento: 'Investigación y Desarrollo', fechaInicioContrato: '2019-09-02',
     documento: '27998145', telefono: '+54 261 4330077', direccion: 'Belgrano 890, Ciudad',
     salarioMensual: 3350000, rol: 'GERENTE',
   },
   {
     nombre: 'Diego', apellido: 'Alcaraz', tipoContrato: 'ASALARIADO',
     departamento: 'Ventas', fechaInicioContrato: '2022-01-10',
-    documento: '33447120', telefono: '+54 261 4661188', direccion: 'Colon 210, Ciudad',
+    documento: '33447120', telefono: '+54 261 4661188', direccion: 'Colón 210, Ciudad',
     salarioMensual: 2200000,
   },
   {
     nombre: 'Camila', apellido: 'Bustos', tipoContrato: 'POR_HORAS',
     departamento: 'Desarrollo Sostenible', fechaInicioContrato: '2023-04-03',
-    documento: '38771402', telefono: '+54 261 4902233', direccion: 'Rivadavia 77, Maipu',
+    documento: '38771402', telefono: '+54 261 4902233', direccion: 'Rivadavia 77, Maipú',
     tarifaHora: 14500, rol: 'EMPLEADO',
   },
   {
     nombre: 'Federico', apellido: 'Aguirre', tipoContrato: 'POR_HORAS',
     departamento: 'Operaciones', fechaInicioContrato: '2023-08-21',
-    documento: '39120558', telefono: '+54 261 4118844', direccion: 'Las Heras 1502, Guaymallen',
+    documento: '39120558', telefono: '+54 261 4118844', direccion: 'Las Heras 1502, Guaymallén',
     tarifaHora: 12800,
   },
   {
-    nombre: 'Sofia', apellido: 'Miranda', tipoContrato: 'CONTRATISTA',
-    departamento: 'Investigacion y Desarrollo', fechaInicioContrato: '2024-02-05',
-    documento: '35608833', telefono: '+54 351 5221900', direccion: 'Independencia 45, Cordoba',
+    nombre: 'Sofía', apellido: 'Miranda', tipoContrato: 'CONTRATISTA',
+    departamento: 'Investigación y Desarrollo', fechaInicioContrato: '2024-02-05',
+    documento: '35608833', telefono: '+54 351 5221900', direccion: 'Independencia 45, Córdoba',
     tarifaHora: 21000, topeMensual: 2800000,
   },
   {
@@ -114,11 +114,11 @@ const EMPLEADOS: PlantillaEmpleado[] = [
   {
     nombre: 'Renata', apellido: 'Villalba', tipoContrato: 'ASALARIADO',
     departamento: 'Operaciones', fechaInicioContrato: '2022-11-07',
-    documento: '34210996', telefono: '+54 261 4553311', direccion: 'Mitre 330, Lujan de Cuyo',
+    documento: '34210996', telefono: '+54 261 4553311', direccion: 'Mitre 330, Luján de Cuyo',
     salarioMensual: 2050000,
   },
   {
-    nombre: 'Tomas', apellido: 'Ledesma', tipoContrato: 'POR_HORAS',
+    nombre: 'Tomás', apellido: 'Ledesma', tipoContrato: 'POR_HORAS',
     departamento: 'Ventas', fechaInicioContrato: '2025-01-13',
     documento: '41556200', telefono: '+54 261 4009911', direccion: 'San Lorenzo 12, Ciudad',
     tarifaHora: 11200,
@@ -136,36 +136,36 @@ const PROYECTOS: {
 }[] = [
   {
     nombre: 'Red de Paneles Solares Cuyo',
-    descripcion: 'Instalacion de 4 parques solares comunitarios en Mendoza y San Juan.',
+    descripcion: 'Instalación de 4 parques solares comunitarios en Mendoza y San Juan.',
     fechaInicio: '2026-02-02', fechaFinEstimada: '2026-12-18', estado: 'EN_CURSO',
     departamento: 'Desarrollo Sostenible', presupuestoHoras: 3200,
   },
   {
-    nombre: 'Baterias de Flujo de Vanadio',
-    descripcion: 'Investigacion de almacenamiento estacionario de larga duracion.',
+    nombre: 'Baterías de Flujo de Vanadio',
+    descripcion: 'Investigación de almacenamiento estacionario de larga duración.',
     fechaInicio: '2026-01-15', fechaFinEstimada: '2027-06-30', estado: 'EN_CURSO',
-    departamento: 'Investigacion y Desarrollo', presupuestoHoras: 4500,
+    departamento: 'Investigación y Desarrollo', presupuestoHoras: 4500,
   },
   {
-    nombre: 'Plataforma de Telemetria EcoView',
+    nombre: 'Plataforma de Telemetría EcoView',
     descripcion: 'Monitoreo remoto en tiempo real de las instalaciones desplegadas.',
     fechaInicio: '2026-03-10', fechaFinEstimada: '2026-11-30', estado: 'EN_CURSO',
     departamento: 'Desarrollo Sostenible', presupuestoHoras: 2600,
   },
   {
-    nombre: 'Certificacion ISO 14001',
-    descripcion: 'Adecuacion del sistema de gestion ambiental para la certificacion.',
+    nombre: 'Certificación ISO 14001',
+    descripcion: 'Adecuación del sistema de gestión ambiental para la certificación.',
     fechaInicio: '2026-05-04', fechaFinEstimada: '2026-10-30', estado: 'PLANIFICADO',
     departamento: 'Operaciones', presupuestoHoras: 800,
   },
   {
-    nombre: 'Licitacion Parque Eolico Patagonia',
-    descripcion: 'Preparacion de la oferta tecnica y economica para la licitacion nacional.',
+    nombre: 'Licitación Parque Eólico Patagonia',
+    descripcion: 'Preparación de la oferta técnica y económica para la licitación nacional.',
     fechaInicio: '2026-04-01', fechaFinEstimada: '2026-09-15', estado: 'PAUSADO',
     departamento: 'Ventas', presupuestoHoras: 600,
   },
   {
-    nombre: 'Auditoria Energetica Bodegas',
+    nombre: 'Auditoría Energética Bodegas',
     descripcion: 'Relevamiento de consumo y plan de eficiencia para 12 bodegas.',
     fechaInicio: '2025-08-01', fechaFinEstimada: '2026-01-31', estado: 'FINALIZADO',
     departamento: 'Operaciones', presupuestoHoras: 950,
@@ -174,27 +174,27 @@ const PROYECTOS: {
 
 const TAREAS_EJEMPLO = [
   'Relevamiento en sitio y toma de mediciones de consumo',
-  'Ajuste del modelo de simulacion de generacion fotovoltaica',
-  'Reunion de seguimiento con el equipo de instalacion',
-  'Documentacion tecnica del modulo de telemetria',
-  'Pruebas de integracion con el sistema de monitoreo',
-  'Analisis de resultados del ensayo de celdas',
-  'Preparacion del informe mensual para el cliente',
-  'Revision del pliego y armado de la oferta economica',
+  'Ajuste del modelo de simulación de generación fotovoltaica',
+  'Reunión de seguimiento con el equipo de instalación',
+  'Documentación técnica del módulo de telemetría',
+  'Pruebas de integración con el sistema de monitoreo',
+  'Análisis de resultados del ensayo de celdas',
+  'Preparación del informe mensual para el cliente',
+  'Revisión del pliego y armado de la oferta económica',
   'Mantenimiento preventivo de inversores',
-  'Capacitacion al personal operativo del cliente',
+  'Capacitación al personal operativo del cliente',
 ];
 
 /**
  * Siembra el sistema en el primer arranque.
  *
- * Se ejecuta de forma perezosa en la primera peticion en lugar de por un script
+ * Se ejecuta de forma perezosa en la primera petición en lugar de por un script
  * aparte: en Cloudflare Workers no hay un "post-deploy" donde correr migraciones,
- * y obligar a un paso manual haria que un despliegue limpio quedara sin usuario
+ * y obligar a un paso manual haría que un despliegue limpio quedara sin usuario
  * con el que entrar.
  *
  * Es **idempotente**: una marca en KV impide que se repita. Comprobarla cuesta
- * una lectura por peticion, que se sirve de la cache del isolate.
+ * una lectura por petición, que se sirve de la cache del isolate.
  */
 export class Semilla {
   constructor(private readonly ctx: Contexto) {}
@@ -279,7 +279,7 @@ export class Semilla {
     const renata = empleados.find((e) => e.apellido === 'Villalba');
     const diego = empleados.find((e) => e.apellido === 'Alcaraz');
     departamentosPorNombre.get('Desarrollo Sostenible')?.designarGerente(martin?.id ?? null);
-    departamentosPorNombre.get('Investigacion y Desarrollo')?.designarGerente(lucia?.id ?? null);
+    departamentosPorNombre.get('Investigación y Desarrollo')?.designarGerente(lucia?.id ?? null);
     departamentosPorNombre.get('Recursos Humanos')?.designarGerente(valeria?.id ?? null);
     departamentosPorNombre.get('Operaciones')?.designarGerente(renata?.id ?? null);
     departamentosPorNombre.get('Ventas')?.designarGerente(diego?.id ?? null);
@@ -300,7 +300,7 @@ export class Semilla {
         fechaInicio: plantilla.fechaInicio,
         fechaFinEstimada: plantilla.fechaFinEstimada,
         // Se persiste el estado final directamente: pasar por `cambiarEstado`
-        // exigiria recorrer la maquina de estados paso a paso solo para sembrar.
+        // exigiría recorrer la máquina de estados paso a paso solo para sembrar.
         estado: plantilla.estado,
         departamentoId: departamentosPorNombre.get(plantilla.departamento)?.id ?? null,
         presupuestoHoras: plantilla.presupuestoHoras,
@@ -317,7 +317,7 @@ export class Semilla {
     const proyectosAbiertos = proyectos.filter((p) => p.estaAbierto());
 
     empleados.forEach((empleado, indice) => {
-      // Cada empleado participa en 1 o 2 proyectos, repartiendo su dedicacion
+      // Cada empleado participa en 1 o 2 proyectos, repartiendo su dedicación
       // para no violar el tope del 100 % que valida ServicioAsignaciones.
       const cantidad = indice % 3 === 0 ? 2 : 1;
       for (let k = 0; k < cantidad; k++) {
@@ -343,7 +343,7 @@ export class Semilla {
       }
     });
 
-    // --- Registros de tiempo (ultimas 6 semanas) --------------------------
+    // --- Registros de tiempo (últimas 6 semanas) --------------------------
     const registros: RegistroTiempo[] = [];
     const proyectosConCarga = proyectos.filter((p) => p.admiteCargaDeHoras());
     let semilla = 7;
@@ -368,8 +368,8 @@ export class Semilla {
         const horas = Math.round((3 + pseudoAleatorio() * 5) * 4) / 4;
         const tarea = TAREAS_EJEMPLO[Math.floor(pseudoAleatorio() * TAREAS_EJEMPLO.length)];
         const ahora = new Date().toISOString();
-        // Lo antiguo queda aprobado; la ultima semana, pendiente de revision,
-        // para que el panel muestre trabajo real esperando aprobacion.
+        // Lo antiguo queda aprobado; la última semana, pendiente de revisión,
+        // para que el panel muestre trabajo real esperando aprobación.
         const aprobado = diasAtras > 7;
         registros.push(
           new RegistroTiempo({
@@ -427,7 +427,7 @@ export class Semilla {
       );
     }
 
-    // --- Persistencia (una escritura por coleccion) -----------------------
+    // --- Persistencia (una escritura por colección) -----------------------
     await this.ctx.departamentos.guardarVarias([...departamentosPorNombre.values()]);
     await this.ctx.empleados.guardarVarias(empleados);
     await this.ctx.proyectos.guardarVarias(proyectos);

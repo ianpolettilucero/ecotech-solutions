@@ -36,13 +36,13 @@ type FiltrosProyecto = {
 };
 
 /**
- * Esquemas a nivel de modulo: se construyen una vez y describen el contrato de
- * entrada en un solo lugar, en vez de quedar escondidos dentro de cada metodo.
+ * Esquemas a nivel de módulo: se construyen una vez y describen el contrato de
+ * entrada en un solo lugar, en vez de quedar escondidos dentro de cada método.
  *
- * El codigo NO figura aqui a proposito: lo asigna el servidor con un
- * correlativo, y aceptarlo del cliente permitiria falsificarlo o duplicarlo.
+ * El código NO figura aquí a propósito: lo asigna el servidor con un
+ * correlativo, y aceptarlo del cliente permitiría falsificarlo o duplicarlo.
  * El estado tampoco: un proyecto siempre nace PLANIFICADO y solo se mueve por
- * `cambiarEstado`, que valida la transicion.
+ * `cambiarEstado`, que valida la transición.
  */
 const ESQUEMA_PROYECTO = new Esquema<EntradaProyecto>({
   nombre: campo(new ReglaTexto(3, 120)),
@@ -53,7 +53,7 @@ const ESQUEMA_PROYECTO = new Esquema<EntradaProyecto>({
   presupuestoHoras: campo(new ReglaNumero(0, 100_000), { opcional: true, porDefecto: 0 }),
 });
 
-/** Actualizacion parcial: lo que no viene en el cuerpo no se toca. */
+/** Actualización parcial: lo que no viene en el cuerpo no se toca. */
 const ESQUEMA_PROYECTO_PARCIAL = ESQUEMA_PROYECTO.parcial();
 
 const ESQUEMA_ESTADO = new Esquema<{ estado: EstadoProyecto }>({
@@ -69,16 +69,16 @@ const ESQUEMA_FILTROS = new Esquema<FiltrosProyecto>({
 /**
  * Los identificadores llegan por la ruta, no por el cuerpo, pero son entrada de
  * usuario igual: se validan para que un id malformado devuelva un 400 con
- * detalle y no se use como clave de busqueda tal cual.
+ * detalle y no se use como clave de búsqueda tal cual.
  */
 const ESQUEMA_ID = new Esquema<{ id: string }>({
   id: campo(new ReglaIdentificador()),
 });
 
 /**
- * Normaliza texto para buscar: minusculas y sin marcas diacriticas, de modo que
- * "auditoria" encuentre tambien lo que se cargo con tilde. Se filtra en memoria
- * porque KV no ofrece indices de texto.
+ * Normaliza texto para buscar: minúsculas y sin marcas diacríticas, de modo que
+ * "auditoría" encuentre también lo que se cargo con tilde. Se filtra en memoria
+ * porque KV no ofrece índices de texto.
  */
 function normalizarBusqueda(texto: string): string {
   return texto
@@ -88,11 +88,11 @@ function normalizarBusqueda(texto: string): string {
 }
 
 /**
- * Gestion de proyectos.
+ * Gestión de proyectos.
  *
- * El ciclo de vida (la maquina de estados) vive en la entidad `Proyecto`; este
+ * El ciclo de vida (la máquina de estados) vive en la entidad `Proyecto`; este
  * servicio aporta lo que la entidad no puede saber por si sola: que el
- * departamento referenciado exista, que codigo correlativo le toca, y que
+ * departamento referenciado exista, que código correlativo le toca, y que
  * consecuencias tiene un borrado sobre las horas y asignaciones que dependen
  * del proyecto.
  */
@@ -103,7 +103,7 @@ export class ServicioProyectos {
   // Lectura
   // ---------------------------------------------------------------------------
 
-  /** Listado con filtro por estado, por departamento y busqueda libre. */
+  /** Listado con filtro por estado, por departamento y búsqueda libre. */
   async listar(filtros?: {
     estado?: EstadoProyecto;
     departamentoId?: string;
@@ -117,7 +117,7 @@ export class ServicioProyectos {
       if (estado !== undefined && proyecto.estado !== estado) return false;
       if (departamentoId !== undefined && proyecto.departamentoId !== departamentoId) return false;
       if (aguja === null) return true;
-      // El codigo entra en la busqueda: es como el usuario nombra el proyecto
+      // El código entra en la búsqueda: es como el usuario nombra el proyecto
       // en los correos ("como va el PRY-0007").
       return normalizarBusqueda(
         `${proyecto.codigo} ${proyecto.nombre} ${proyecto.descripcion}`,
@@ -138,9 +138,9 @@ export class ServicioProyectos {
   /**
    * Horas APROBADAS imputadas a cada proyecto, indexadas por id.
    *
-   * Solo cuentan las aprobadas: las que estan en borrador o pendientes todavia
-   * pueden cambiar, y mostrarlas en la barra de consumo de presupuesto daria
-   * una foto que se contradice sola al dia siguiente.
+   * Solo cuentan las aprobadas: las que están en borrador o pendientes todavía
+   * pueden cambiar, y mostrarlas en la barra de consumo de presupuesto daría
+   * una foto que se contradice sola al día siguiente.
    *
    * Basta `proyecto:leer` porque el resultado es un agregado por proyecto, sin
    * detalle por persona; el detalle nominal exige `tiempo:leer_todos` y se pide
@@ -180,9 +180,9 @@ export class ServicioProyectos {
     const validados = ESQUEMA_PROYECTO.validar(datos);
     const departamentoId = await this.resolverDepartamento(validados.departamentoId ?? null);
 
-    // El correlativo se reserva contra el almacen (no se calcula contando
+    // El correlativo se reserva contra el almacén (no se calcula contando
     // proyectos) para que borrar uno no haga que el siguiente reutilice su
-    // codigo y dos proyectos distintos compartan identificador en los informes.
+    // código y dos proyectos distintos compartan identificador en los informes.
     const codigo = formatearCodigoProyecto(
       await this.ctx.almacen.siguienteCorrelativo('proyecto'),
     );
@@ -242,10 +242,10 @@ export class ServicioProyectos {
   /**
    * Cambio de estado del ciclo de vida.
    *
-   * La transicion la decide la entidad contra su tabla de estados. Aqui no se
+   * La transición la decide la entidad contra su tabla de estados. Aquí no se
    * captura su `ErrorReglaNegocio`: que suba tal cual es lo correcto, porque el
    * router lo traduce a un 422 con el mensaje que enumera las transiciones
-   * validas. Atraparlo para relanzar otro error solo perderia informacion.
+   * validas. Atraparlo para relanzar otro error solo perdería información.
    */
   async cambiarEstado(id: string, estado: EstadoProyecto): Promise<ProyectoDTO> {
     this.ctx.exigirPermiso('proyecto:editar');
@@ -271,13 +271,13 @@ export class ServicioProyectos {
    * Baja de un proyecto.
    *
    * **Trazabilidad por encima de la limpieza.** Si hay horas imputadas o
-   * asignaciones (aunque esten cerradas), borrar la fila dejaria huerfanos los
+   * asignaciones (aunque esten cerradas), borrar la fila dejaría huerfanos los
    * partes de horas ya aprobados y los informes de periodos cerrados dejarian
-   * de cuadrar: nadie podria explicar a que se dedicaron esas horas pagadas.
+   * de cuadrar: nadie podría explicar a que se dedicaron esas horas pagadas.
    * En ese caso el proyecto se CANCELA, que es la forma correcta de decir "esto
-   * ya no corre" sin reescribir el pasado, y el motivo queda en la auditoria.
+   * ya no corre" sin reescribir el pasado, y el motivo queda en la auditoría.
    *
-   * El borrado fisico se reserva al unico caso en que no destruye historia: un
+   * El borrado físico se reserva al único caso en que no destruye historia: un
    * proyecto que se creo por error y al que nunca se le imputo nada.
    *
    * Si el proyecto ya estaba FINALIZADO y tiene horas, `cambiarEstado` lanza
@@ -306,7 +306,7 @@ export class ServicioProyectos {
         entidad: 'Proyecto',
         entidadId: proyecto.id,
         detalle:
-          `${proyecto.codigo}: borrado sustituido por cancelacion desde ${estadoPrevio}; ` +
+          `${proyecto.codigo}: borrado sustituido por cancelación desde ${estadoPrevio}; ` +
           `dependen ${horas} registros de tiempo y ${asignaciones} asignaciones`,
         exito: true,
       });
@@ -335,9 +335,9 @@ export class ServicioProyectos {
    * Integridad referencial del departamento responsable.
    *
    * La entidad guarda solo el id y no puede comprobar que exista; la
-   * comprobacion necesita otro repositorio y por eso vive en el servicio. Se
-   * admiten departamentos inactivos: un proyecto historico puede seguir
-   * colgando de una unidad que ya se disolvio, y romper ese vinculo falsearia
+   * comprobación necesita otro repositorio y por eso vive en el servicio. Se
+   * admiten departamentos inactivos: un proyecto histórico puede seguir
+   * colgando de una unidad que ya se disolvio, y romper ese vinculo falsearía
    * los informes de periodos cerrados.
    */
   private async resolverDepartamento(departamentoId: string | null): Promise<string | null> {
@@ -346,7 +346,7 @@ export class ServicioProyectos {
     const existe = await this.ctx.departamentos.existe(departamentoId);
     if (!existe) {
       throw new ErrorValidacion('El departamento indicado no existe.', [
-        { campo: 'departamentoId', mensaje: 'No corresponde a ningun departamento registrado.' },
+        { campo: 'departamentoId', mensaje: 'No corresponde a ningún departamento registrado.' },
       ]);
     }
     return departamentoId;

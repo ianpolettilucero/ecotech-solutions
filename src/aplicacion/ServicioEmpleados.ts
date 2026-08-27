@@ -30,11 +30,11 @@ export type FiltrosEmpleados = {
 };
 
 // ---------------------------------------------------------------------------
-// Esquemas de validacion
+// Esquemas de validación
 //
-// Se declaran como constantes de modulo y no dentro de los metodos por dos
+// Se declaran como constantes de módulo y no dentro de los métodos por dos
 // motivos: se construyen una sola vez por isolate (los `RegExp` de las reglas
-// no se recompilan en cada peticion) y quedan disponibles para documentar la
+// no se recompilan en cada petición) y quedan disponibles para documentar la
 // API con `describir()` sin ejecutar el servicio.
 // ---------------------------------------------------------------------------
 
@@ -67,7 +67,7 @@ const ESQUEMA_CREAR = new Esquema<DatosEmpleadoEntrada>({
   telefono: campo(new ReglaTelefono()),
   direccion: campo(new ReglaTexto(5, 200)),
   emailPersonal: campo(new ReglaEmail()),
-  // Los economicos son opcionales en el esquema porque cuales son obligatorios
+  // Los económicos son opcionales en el esquema porque cuales son obligatorios
   // depende de la modalidad; eso lo decide `exigirCamposEconomicos`.
   salarioMensual: campo(new ReglaNumero(0.01, 100_000_000), { opcional: true }),
   tarifaHora: campo(new ReglaNumero(0.01, 1_000_000), { opcional: true }),
@@ -75,8 +75,8 @@ const ESQUEMA_CREAR = new Esquema<DatosEmpleadoEntrada>({
 });
 
 /**
- * Actualizacion parcial. `tipoContrato` sigue admitido a proposito: si se
- * excluyera del esquema, intentar cambiarlo devolveria un generico "campo no
+ * Actualización parcial. `tipoContrato` sigue admitido a propósito: si se
+ * excluyera del esquema, intentar cambiarlo devolvería un genérico "campo no
  * reconocido" en vez del error de negocio explicativo que se lanza en
  * `actualizar`.
  */
@@ -105,7 +105,7 @@ interface ClavesUnicidad {
 }
 
 /**
- * Comprueba que vengan los campos economicos que exige la modalidad.
+ * Comprueba que vengan los campos económicos que exige la modalidad.
  *
  * La lista de campos la aporta `FabricaEmpleados.camposRequeridos`, de modo que
  * agregar una modalidad de contrato nueva no obliga a tocar este servicio.
@@ -124,7 +124,7 @@ function exigirCamposEconomicos(
   }
   if (faltantes.length > 0) {
     throw new ErrorValidacion(
-      `Faltan datos economicos propios de un contrato ${tipo}.`,
+      `Faltan datos económicos propios de un contrato ${tipo}.`,
       faltantes,
     );
   }
@@ -133,9 +133,9 @@ function exigirCamposEconomicos(
 /**
  * Casos de uso sobre empleados.
  *
- * Concentra lo que la entidad no puede resolver por si sola: autorizacion,
- * criptografia, integridad referencial con otros agregados y traza de
- * auditoria. La entidad sigue validando sus propios invariantes; el servicio
+ * Concentra lo que la entidad no puede resolver por si sola: autorización,
+ * criptografía, integridad referencial con otros agregados y traza de
+ * auditoría. La entidad sigue validando sus propios invariantes; el servicio
  * valida los que dependen del resto del sistema.
  */
 export class ServicioEmpleados {
@@ -149,12 +149,12 @@ export class ServicioEmpleados {
    * Listado filtrado.
    *
    * `texto` busca por nombre, apellido, legajo y email corporativo, y de forma
-   * deliberada **nunca** por documento, telefono, direccion o email personal:
+   * deliberada **nunca** por documento, teléfono, dirección o email personal:
    * esos datos viven dentro de un sobre AES-GCM y no existe forma de mirar
-   * dentro sin descifrarlo entero. Hacerlo por cada empleado en cada busqueda
-   * seria caro y, peor aun, el tiempo de respuesta variaria segun cuantos
-   * sobres se abren, que es un canal lateral por temporizacion. Para buscar por
-   * documento exacto esta el indice ciego (HMAC), que es lo que usa el control
+   * dentro sin descifrarlo entero. Hacerlo por cada empleado en cada búsqueda
+   * sería caro y, peor aun, el tiempo de respuesta variaría según cuantos
+   * sobres se abren, que es un canal lateral por temporización. Para buscar por
+   * documento exacto esta el índice ciego (HMAC), que es lo que usa el control
    * de duplicados.
    */
   async listar(filtros?: FiltrosEmpleados): Promise<EmpleadoDTO[]> {
@@ -181,11 +181,11 @@ export class ServicioEmpleados {
 
     empleados.sort((a, b) => a.nombreCompleto().localeCompare(b.nombreCompleto(), 'es'));
 
-    // Decision de rendimiento: en el listado se enmascara SIEMPRE, incluso para
+    // Decisión de rendimiento: en el listado se enmascara SIEMPRE, incluso para
     // quien tiene 'empleado:leer_sensible'. Descifrar N sobres implica N
-    // operaciones de WebCrypto por peticion y una pantalla de listado no
+    // operaciones de WebCrypto por petición y una pantalla de listado no
     // necesita el domicilio de nadie. El dato en claro se entrega en `obtener`,
-    // que abre un unico sobre y queda registrado como acceso puntual.
+    // que abre un único sobre y queda registrado como acceso puntual.
     return empleados.map((empleado) => empleado.aDTO(null));
   }
 
@@ -203,16 +203,16 @@ export class ServicioEmpleados {
 
   /** Descifra el bloque sensible si el solicitante tiene permiso; si no, null. */
   async aDTOConSensibles(empleado: Empleado): Promise<EmpleadoDTO> {
-    // Excepcion de propiedad del dato: un empleado ve siempre su propia ficha
+    // Excepción de propiedad del dato: un empleado ve siempre su propia ficha
     // completa aunque su rol no tenga 'empleado:leer_sensible'. Negarle sus
-    // propios datos personales no protege a nadie y obligaria a darle un
-    // permiso que tambien abriria las fichas ajenas.
+    // propios datos personales no protege a nadie y obligaría a darle un
+    // permiso que también abriría las fichas ajenas.
     const esSuPropiaFicha = this.ctx.solicitante?.empleadoId === empleado.id;
     if (!esSuPropiaFicha && !this.ctx.puede('empleado:leer_sensible')) {
       return empleado.aDTO(null);
     }
     // Si el sobre fue manipulado, AES-GCM falla y el error se propaga: es
-    // deteccion de alteracion del almacen y no debe silenciarse.
+    // detección de alteración del almacén y no debe silenciarse.
     const sensibles = await this.ctx.cripto.descifrarObjeto<DatosSensibles>(
       empleado.datosSensibles,
     );
@@ -234,19 +234,19 @@ export class ServicioEmpleados {
     };
     exigirCamposEconomicos(entrada.tipoContrato, economicos);
 
-    // Este es exactamente el problema de "duplicidad de informacion de
-    // empleados" que motiva el sistema: en las hojas de calculo la misma
+    // Este es exactamente el problema de "duplicidad de información de
+    // empleados" que motiva el sistema: en las hojas de cálculo la misma
     // persona terminaba cargada dos veces con el documento escrito distinto.
-    // Se comprueba antes de escribir nada, y por indice ciego (HMAC) para no
-    // tener que descifrar la coleccion entera ni guardar el documento en claro.
+    // Se comprueba antes de escribir nada, y por índice ciego (HMAC) para no
+    // tener que descifrar la colección entera ni guardar el documento en claro.
     const indiceDocumento = await this.ctx.cripto.indiceCiego(entrada.documento);
     const indiceEmailPersonal = await this.ctx.cripto.indiceCiego(entrada.emailPersonal);
     await this.exigirUnicidad(
       {
         indiceDocumento,
         indiceEmailPersonal,
-        // `ReglaEmail` ya normaliza a minusculas, asi que la comparacion
-        // directa no distingue mayusculas.
+        // `ReglaEmail` ya normaliza a minúsculas, así que la comparación
+        // directa no distingue mayúsculas.
         emailCorporativo: entrada.emailCorporativo,
       },
       null,
@@ -255,8 +255,8 @@ export class ServicioEmpleados {
     const departamentoId = entrada.departamentoId ?? null;
     if (departamentoId !== null) await this.exigirDepartamentoValido(departamentoId);
 
-    // Los cuatro datos personales viajan en un unico sobre: se abren y se
-    // cierran juntos, y asi una sola operacion de cifrado cubre toda la ficha.
+    // Los cuatro datos personales viajan en un único sobre: se abren y se
+    // cierran juntos, y así una sola operación de cifrado cubre toda la ficha.
     const sobre = await this.ctx.cripto.cifrarObjeto({
       documento: entrada.documento,
       telefono: entrada.telefono,
@@ -266,7 +266,7 @@ export class ServicioEmpleados {
 
     const legajo = formatearLegajo(await this.ctx.almacen.siguienteCorrelativo('legajo'));
 
-    // La fabrica es el unico punto que conoce las clases concretas; aqui solo
+    // La fabrica es el único punto que conoce las clases concretas; aquí solo
     // se trabaja contra el tipo abstracto `Empleado`.
     const empleado = FabricaEmpleados.crear({
       id: nuevoId(),
@@ -305,11 +305,11 @@ export class ServicioEmpleados {
     const entrada = ESQUEMA_ACTUALIZAR.validar(datos);
 
     // La modalidad de contrato determina la clase concreta (asalariado, por
-    // horas, contratista) y con ella la formula de remuneracion. Cambiarla en
-    // caliente exigiria mutar el tipo del objeto ya persistido y dejaria la
-    // nomina de los periodos ya liquidados calculada con otra regla. El
+    // horas, contratista) y con ella la fórmula de remuneración. Cambiarla en
+    // caliente exigiría mutar el tipo del objeto ya persistido y dejaría la
+    // nómina de los periodos ya liquidados calculada con otra regla. El
     // procedimiento correcto es dar de baja el contrato y crear uno nuevo, que
-    // ademas deja dos asientos de auditoria en vez de uno ambiguo.
+    // además deja dos asientos de auditoría en vez de uno ambiguo.
     if (entrada.tipoContrato !== undefined && entrada.tipoContrato !== empleado.tipoContrato) {
       throw new ErrorReglaNegocio(
         'No se puede cambiar el tipo de contrato de un empleado existente. ' +
@@ -331,7 +331,7 @@ export class ServicioEmpleados {
 
     if (cambiaSensibles) {
       // El sobre es indivisible: para modificar un solo campo hay que abrirlo,
-      // mezclar con lo que ya habia y volver a cerrarlo con un IV nuevo.
+      // mezclar con lo que ya había y volver a cerrarlo con un IV nuevo.
       const actuales = await this.ctx.cripto.descifrarObjeto<DatosSensibles>(
         empleado.datosSensibles,
       );
@@ -347,7 +347,7 @@ export class ServicioEmpleados {
     }
 
     if (cambiaSensibles || cambiaEmailCorporativo) {
-      // Se excluye al propio empleado: de lo contrario chocaria consigo mismo.
+      // Se excluye al propio empleado: de lo contrario chocaría consigo mismo.
       await this.exigirUnicidad(
         { indiceDocumento, indiceEmailPersonal, emailCorporativo: emailCorporativoDestino },
         empleado.id,
@@ -379,7 +379,7 @@ export class ServicioEmpleados {
       entrada.tarifaHora !== undefined ||
       entrada.topeMensual !== undefined
     ) {
-      // Cada subclase toma solo los parametros que le competen e ignora los
+      // Cada subclase toma solo los parámetros que le competen e ignora los
       // nulos, de modo que enviar los tres es seguro: el que no aplica se
       // descarta y el ausente no pisa el valor vigente.
       empleado.actualizarRemuneracion({
@@ -396,7 +396,7 @@ export class ServicioEmpleados {
       entidad: 'Empleado',
       entidadId: empleado.id,
       // Se registran los campos tocados, nunca sus valores: un asiento de
-      // auditoria con el domicilio en claro anularia el cifrado en reposo.
+      // auditoría con el domicilio en claro anularía el cifrado en reposo.
       detalle: `Campos modificados: ${Object.keys(entrada).join(', ') || 'ninguno'}.`,
       exito: true,
     });
@@ -407,9 +407,9 @@ export class ServicioEmpleados {
   /**
    * Baja del empleado.
    *
-   * Es una **baja logica**: `desactivar()` marca el registro como inactivo pero
-   * lo conserva. Un borrado fisico dejaria huerfanas las horas ya cargadas y
-   * las asignaciones historicas, y los informes de periodos ya cerrados
+   * Es una **baja lógica**: `desactivar()` marca el registro como inactivo pero
+   * lo conserva. Un borrado físico dejaría huerfanas las horas ya cargadas y
+   * las asignaciones históricas, y los informes de periodos ya cerrados
    * cambiarian retroactivamente, que es justamente lo que se busca evitar.
    *
    * Efecto en cascada sobre los agregados que lo referencian, para no dejar
@@ -417,8 +417,8 @@ export class ServicioEmpleados {
    * 1. cualquier departamento que dirigiera queda con la gerencia vacante;
    * 2. sus asignaciones a proyectos se cierran con fecha de hoy (no se borran:
    *    explican las horas imputadas hasta hoy);
-   * 3. su cuenta de acceso, si tenia una, se desactiva; de nada sirve dar de
-   *    baja a alguien si conserva la sesion.
+   * 3. su cuenta de acceso, si tenía una, se desactiva; de nada sirve dar de
+   *    baja a alguien si conserva la sesión.
    */
   async eliminar(id: string): Promise<void> {
     this.ctx.exigirPermiso('empleado:eliminar');
@@ -438,7 +438,7 @@ export class ServicioEmpleados {
       (asignacion) => asignacion.empleadoId === empleado.id && asignacion.activa,
     );
     for (const asignacion of asignaciones) {
-      // Una asignacion con fecha de alta futura no puede cerrarse antes de
+      // Una asignación con fecha de alta futura no puede cerrarse antes de
       // empezar; en ese caso se cierra en su propia fecha de inicio.
       asignacion.desasignar(hoy < asignacion.fechaAsignacion ? asignacion.fechaAsignacion : hoy);
     }
@@ -458,7 +458,7 @@ export class ServicioEmpleados {
       entidad: 'Empleado',
       entidadId: empleado.id,
       detalle:
-        `Baja logica de ${empleado.nombreCompleto()} (legajo ${empleado.legajo}). ` +
+        `Baja lógica de ${empleado.nombreCompleto()} (legajo ${empleado.legajo}). ` +
         `Gerencias liberadas: ${departamentos.length}; asignaciones cerradas: ${asignaciones.length}; ` +
         `cuenta desactivada: ${usuario !== null ? 'si' : 'no'}.`,
       exito: true,
@@ -510,11 +510,11 @@ export class ServicioEmpleados {
   }
 
   /**
-   * Nucleo del control de duplicados. Recorre la coleccion una sola vez
+   * Nucleo del control de duplicados. Recorre la colección una sola vez
    * comparando huellas HMAC (documento y email personal) y el email
    * corporativo en claro, que no es dato sensible.
    *
-   * @param idExcluido empleado que no debe compararse consigo mismo (edicion).
+   * @param idExcluido empleado que no debe compararse consigo mismo (edición).
    */
   private async exigirUnicidad(claves: ClavesUnicidad, idExcluido: string | null): Promise<void> {
     const otros = await this.ctx.empleados.listar((empleado) => empleado.id !== idExcluido);
@@ -526,7 +526,7 @@ export class ServicioEmpleados {
       }
       if (otro.emailCorporativo.toLowerCase() === claves.emailCorporativo) {
         throw new ErrorConflicto(
-          `El email corporativo ya esta en uso por el legajo ${otro.legajo}.`,
+          `El email corporativo ya está en uso por el legajo ${otro.legajo}.`,
         );
       }
       if (otro.indiceEmailPersonal === claves.indiceEmailPersonal) {
@@ -538,14 +538,14 @@ export class ServicioEmpleados {
   }
 
   /**
-   * Integridad referencial entre agregados: se comprueba aqui y no en la
+   * Integridad referencial entre agregados: se comprueba aquí y no en la
    * entidad, porque exige consultar otro repositorio y `Empleado` no debe
    * conocer la persistencia.
    */
   private async exigirDepartamentoValido(departamentoId: string): Promise<void> {
     const departamento = await this.ctx.departamentos.obtener(departamentoId);
     if (departamento === null || !departamento.activo) {
-      throw new ErrorValidacion('El departamento indicado no existe o esta inactivo.', [
+      throw new ErrorValidacion('El departamento indicado no existe o está inactivo.', [
         { campo: 'departamentoId', mensaje: 'No corresponde a un departamento activo.' },
       ]);
     }

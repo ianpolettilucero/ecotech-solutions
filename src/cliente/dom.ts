@@ -1,12 +1,12 @@
 /**
- * Ayudantes de construccion de DOM.
+ * Ayudantes de construcción de DOM.
  *
  * ## Por que no hay ni un `innerHTML` en todo el cliente
  *
  * Todo nodo de texto se crea con `textContent`. Es la defensa real contra XSS
- * almacenado: si alguien guarda `<img onerror=...>` en la descripcion de una
- * tarea, aqui se pinta como texto literal, no como marcado. Escapar cadenas a
- * mano funciona hasta que alguien olvida un sitio; no tener el metodo peligroso
+ * almacenado: si alguien guarda `<img onerror=...>` en la descripción de una
+ * tarea, aquí se pinta como texto literal, no como marcado. Escapar cadenas a
+ * mano funciona hasta que alguien olvida un sitio; no tener el método peligroso
  * a mano hace que ese olvido sea imposible.
  */
 
@@ -149,23 +149,23 @@ export const ETIQUETAS: Readonly<Record<string, string>> = Object.freeze({
   ENVIADO: 'Enviado',
   APROBADO: 'Aprobado',
   RECHAZADO: 'Rechazado',
-  LIDER_TECNICO: 'Lider tecnico',
+  LIDER_TECNICO: 'Líder técnico',
   DESARROLLADOR: 'Desarrollador',
   ANALISTA: 'Analista',
-  DISENADOR: 'Disenador',
+  DISENADOR: 'Diseñador',
   QA: 'QA',
   CONSULTOR: 'Consultor',
-  ADMIN_RRHH: 'Administracion de RRHH',
+  ADMIN_RRHH: 'Administración de RRHH',
   GERENTE: 'Gerencia',
   EMPLEADO: 'Empleado',
-  AUDITOR: 'Auditoria',
+  AUDITOR: 'Auditoría',
 });
 
 export function etiqueta(clave: string): string {
   return ETIQUETAS[clave] ?? clave;
 }
 
-/** Clase de insignia segun el estado, para colorear de forma coherente. */
+/** Clase de insignia según el estado, para colorear de forma coherente. */
 export function claseInsignia(estado: string): string {
   switch (estado) {
     case 'APROBADO':

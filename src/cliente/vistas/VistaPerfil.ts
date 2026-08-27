@@ -1,8 +1,8 @@
 /**
  * Perfil del usuario.
  *
- * Reune en un solo sitio lo que la sesion ya sabe: la cuenta, la ficha de
- * empleado vinculada, si la hay, y los permisos efectivos del rol. Esa ultima
+ * Reune en un solo sitio lo que la sesión ya sabe: la cuenta, la ficha de
+ * empleado vinculada, si la hay, y los permisos efectivos del rol. Esa última
  * tarjeta no es decorativa: hace visible el control de acceso, de modo que
  * cualquiera puede comprobar a que le da acceso su rol sin tener que descubrirlo
  * a base de encontrarse pantallas que no aparecen.
@@ -21,19 +21,19 @@ interface RespuestaDepartamentos {
   conteoEmpleados: Record<string, number>;
 }
 
-/** Longitud minima que exige el servidor para una contrasena nueva. */
+/** Longitud mínima que exige el servidor para una contraseña nueva. */
 const MINIMO_CONTRASENA = 12;
 
 /**
  * Que habilita cada permiso, en una frase.
  *
- * El codigo del permiso es preciso pero no se explica solo; el rotulo es lo que
+ * El código del permiso es preciso pero no se explica solo; el rotulo es lo que
  * permite a alguien de Recursos Humanos entender su propio rol sin leer la
- * matriz de autorizacion del servidor.
+ * matriz de autorización del servidor.
  */
 const DESCRIPCIONES: Readonly<Record<Permiso, string>> = Object.freeze({
   'empleado:leer': 'Consultar el listado y la ficha de los empleados.',
-  'empleado:leer_sensible': 'Ver los datos personales y la remuneracion sin enmascarar.',
+  'empleado:leer_sensible': 'Ver los datos personales y la remuneración sin enmascarar.',
   'empleado:crear': 'Dar de alta nuevos empleados.',
   'empleado:editar': 'Modificar la ficha de un empleado.',
   'empleado:eliminar': 'Dar de baja empleados.',
@@ -45,15 +45,15 @@ const DESCRIPCIONES: Readonly<Record<Permiso, string>> = Object.freeze({
   'proyecto:crear': 'Dar de alta nuevos proyectos.',
   'proyecto:editar': 'Modificar un proyecto y cambiar su estado.',
   'proyecto:eliminar': 'Dar de baja o cancelar proyectos.',
-  'asignacion:leer': 'Consultar quien participa en cada proyecto.',
+  'asignacion:leer': 'Consultar quién participa en cada proyecto.',
   'asignacion:gestionar': 'Asignar personas a proyectos y cerrar participaciones.',
   'tiempo:leer_propio': 'Ver sus propios partes de horas.',
-  'tiempo:leer_todos': 'Ver los partes de horas de toda la organizacion.',
-  'tiempo:registrar': 'Cargar, corregir y enviar a aprobacion sus horas.',
-  'tiempo:aprobar': 'Aprobar o rechazar los partes que envian otras personas.',
+  'tiempo:leer_todos': 'Ver los partes de horas de toda la organización.',
+  'tiempo:registrar': 'Cargar, corregir y enviar a aprobación sus horas.',
+  'tiempo:aprobar': 'Aprobar o rechazar los partes que envían otras personas.',
   'reporte:generar': 'Generar informes y exportarlos en PDF, Excel o CSV.',
-  'reporte:nomina': 'Generar el informe de nomina, que incluye importes.',
-  'auditoria:leer': 'Consultar la traza de auditoria del sistema.',
+  'reporte:nomina': 'Generar el informe de nómina, que incluye importes.',
+  'auditoria:leer': 'Consultar la traza de auditoría del sistema.',
   'usuario:gestionar': 'Administrar las cuentas de acceso y sus roles.',
 });
 
@@ -92,7 +92,7 @@ export class VistaPerfil extends Vista {
   override async render(contenedor: HTMLElement): Promise<void> {
     const sesion = this.app.sesion;
     if (!sesion) {
-      agregar(contenedor, estadoVacio('No hay una sesion activa.'));
+      agregar(contenedor, estadoVacio('No hay una sesión activa.'));
       return;
     }
 
@@ -131,8 +131,8 @@ export class VistaPerfil extends Vista {
       elemento('h3', { clase: 'tarjeta-titulo', texto: 'Cuenta' }),
       dato('Email', sesion.usuario.email),
       dato('Rol', etiqueta(sesion.usuario.rol)),
-      dato('Ultimo acceso', formatearFechaHora(sesion.usuario.ultimoAcceso)),
-      dato('La sesion expira', formatearFechaHora(sesion.expiraEn)),
+      dato('Último acceso', formatearFechaHora(sesion.usuario.ultimoAcceso)),
+      dato('La sesión expira', formatearFechaHora(sesion.expiraEn)),
     );
     if (sesion.usuario.debeCambiarContrasena) {
       agregar(
@@ -140,7 +140,7 @@ export class VistaPerfil extends Vista {
         elemento('p', {
           clase: 'texto-menor',
           texto:
-            'Su contrasena es la inicial que se le entrego. Cambiela ahora: mientras siga siendo la sembrada, no podra usar el resto de los modulos.',
+            'Su contraseña es la inicial que se le entregó. Cámbiela ahora: mientras siga siendo la sembrada, no podrá usar el resto de los módulos.',
         }),
       );
     }
@@ -160,7 +160,7 @@ export class VistaPerfil extends Vista {
       dato('Tipo de contrato', etiqueta(empleado.tipoContrato)),
       dato('Departamento', this.nombreDepartamento(empleado.departamentoId)),
       dato('Fecha de ingreso', formatearFecha(empleado.fechaInicioContrato)),
-      dato('Situacion', empleado.activo ? 'Activo' : 'Dado de baja'),
+      dato('Situación', empleado.activo ? 'Activo' : 'Dado de baja'),
     );
   }
 
@@ -172,8 +172,8 @@ export class VistaPerfil extends Vista {
       'tarjeta',
       elemento('h3', { clase: 'tarjeta-titulo', texto: 'Datos personales' }),
       dato('Documento', empleado.datosSensibles.documento),
-      dato('Telefono', empleado.datosSensibles.telefono),
-      dato('Direccion', empleado.datosSensibles.direccion),
+      dato('Teléfono', empleado.datosSensibles.telefono),
+      dato('Dirección', empleado.datosSensibles.direccion),
       dato('Email personal', empleado.datosSensibles.emailPersonal),
     );
     agregar(
@@ -190,27 +190,27 @@ export class VistaPerfil extends Vista {
   }
 
   // ---------------------------------------------------------------------------
-  // Cambio de contrasena
+  // Cambio de contraseña
   // ---------------------------------------------------------------------------
 
   private tarjetaContrasena(): HTMLElement {
     const formulario = new Formulario([
       {
         nombre: 'contrasenaActual',
-        etiqueta: 'Contrasena actual',
+        etiqueta: 'Contraseña actual',
         tipo: 'contrasena',
         requerido: true,
       },
       {
         nombre: 'contrasenaNueva',
-        etiqueta: 'Contrasena nueva',
+        etiqueta: 'Contraseña nueva',
         tipo: 'contrasena',
         requerido: true,
-        ayuda: `Al menos ${MINIMO_CONTRASENA} caracteres, combinando tres de estas familias: minusculas, mayusculas, numeros y simbolos.`,
+        ayuda: `Al menos ${MINIMO_CONTRASENA} caracteres, combinando tres de estas familias: minúsculas, mayúsculas, números y símbolos.`,
       },
       {
         nombre: 'contrasenaRepetida',
-        etiqueta: 'Repita la contrasena nueva',
+        etiqueta: 'Repita la contraseña nueva',
         tipo: 'contrasena',
         requerido: true,
       },
@@ -218,10 +218,10 @@ export class VistaPerfil extends Vista {
 
     return div(
       'tarjeta',
-      elemento('h3', { clase: 'tarjeta-titulo', texto: 'Cambiar contrasena' }),
+      elemento('h3', { clase: 'tarjeta-titulo', texto: 'Cambiar contraseña' }),
       formulario.render(),
       botonera(
-        boton('Cambiar contrasena', () => void this.cambiarContrasena(formulario), 'primario'),
+        boton('Cambiar contraseña', () => void this.cambiarContrasena(formulario), 'primario'),
       ),
     );
   }
@@ -232,10 +232,10 @@ export class VistaPerfil extends Vista {
 
     const nueva = String(valores['contrasenaNueva'] ?? '');
     const repetida = String(valores['contrasenaRepetida'] ?? '');
-    // La repeticion no viaja al servidor: es un control de la interfaz para
-    // evitar guardar una clave mal tecleada que despues nadie podria adivinar.
+    // La repetición no viaja al servidor: es un control de la interfaz para
+    // evitar guardar una clave mal tecleada que después nadie podría adivinar.
     if (nueva !== repetida) {
-      this.app.notificarError('La contrasena nueva y su repeticion no coinciden.');
+      this.app.notificarError('La contraseña nueva y su repetición no coinciden.');
       return;
     }
 
@@ -244,14 +244,14 @@ export class VistaPerfil extends Vista {
         contrasenaActual: valores['contrasenaActual'],
         contrasenaNueva: nueva,
       });
-      this.app.notificarExito('Contrasena actualizada.');
-      // Se relee la sesion: al rotar la clave sembrada desaparece la obligacion
+      this.app.notificarExito('Contraseña actualizada.');
+      // Se relee la sesión: al rotar la clave sembrada desaparece la obligación
       // de cambiarla, y con ella el desvio forzoso a esta pantalla.
       await this.app.recargar();
     } catch (e) {
       formulario.mostrarErrores(e);
       this.app.notificarError(
-        e instanceof ErrorApi ? e.message : 'No se pudo cambiar la contrasena.',
+        e instanceof ErrorApi ? e.message : 'No se pudo cambiar la contraseña.',
       );
     }
   }
@@ -283,14 +283,14 @@ export class VistaPerfil extends Vista {
       ),
       elemento('p', {
         clase: 'texto-menor texto-tenue',
-        texto: `Su rol es ${etiqueta(sesion.usuario.rol)}. Todo lo que no figure en esta lista lo rechaza el servidor, aunque se llegue a la direccion a mano.`,
+        texto: `Su rol es ${etiqueta(sesion.usuario.rol)}. Todo lo que no figure en esta lista lo rechaza el servidor, aunque se llegue a la dirección a mano.`,
       }),
       lista,
     );
   }
 
   // ---------------------------------------------------------------------------
-  // Catalogo
+  // Catálogo
   // ---------------------------------------------------------------------------
 
   private async cargarDepartamentos(): Promise<DepartamentoDTO[]> {

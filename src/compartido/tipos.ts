@@ -1,16 +1,16 @@
 /**
  * Tipos compartidos entre el Worker (servidor) y el cliente (SPA).
  *
- * Solo contiene *contratos de transporte* (DTOs). La logica de negocio vive en
+ * Solo contiene *contratos de transporte* (DTOs). La lógica de negocio vive en
  * `src/dominio`. Mantener este archivo libre de dependencias permite que tanto
- * el bundle del Worker como el del navegador lo importen sin arrastrar codigo.
+ * el bundle del Worker como el del navegador lo importen sin arrastrar código.
  */
 
 // ---------------------------------------------------------------------------
 // Roles y permisos
 // ---------------------------------------------------------------------------
 
-/** Roles del sistema. Se modelan como union de literales (no `enum`) para que
+/** Roles del sistema. Se modelan como unión de literales (no `enum`) para que
  *  el tipo sobreviva al borrado de tipos de esbuild y sea serializable. */
 export const ROLES = ['ADMIN_RRHH', 'GERENTE', 'EMPLEADO', 'AUDITOR'] as const;
 export type Rol = (typeof ROLES)[number];
@@ -99,7 +99,7 @@ export interface EmpleadoDTO {
   datosSensibles: DatosSensiblesDTO;
   /** `true` cuando `datosSensibles` viene enmascarado por falta de permisos. */
   sensiblesEnmascarados: boolean;
-  /** Parametros de remuneracion; enmascarados igual que los datos sensibles. */
+  /** Parámetros de remuneración; enmascarados igual que los datos sensibles. */
   salarioMensual: number | null;
   tarifaHora: number | null;
   topeMensual: number | null;
@@ -252,7 +252,7 @@ export interface ReporteDTO {
 }
 
 // ---------------------------------------------------------------------------
-// Panel / metricas
+// Panel / métricas
 // ---------------------------------------------------------------------------
 
 export interface MetricasPanelDTO {

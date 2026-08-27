@@ -5,7 +5,7 @@ import { consulta, consultaBooleana, idDeRuta } from './comun.js';
 
 export function registrarRutasDepartamentos(enrutador: Enrutador): void {
   // Se devuelve el conteo junto con la lista en una sola respuesta: la vista lo
-  // necesita siempre, y separarlo obligaria al cliente a encadenar dos viajes.
+  // necesita siempre, y separarlo obligaría al cliente a encadenar dos viajes.
   enrutador.get('/api/departamentos', async (api) => {
     const servicio = new ServicioDepartamentos(api.ctx);
     const [departamentos, conteoEmpleados] = await Promise.all([

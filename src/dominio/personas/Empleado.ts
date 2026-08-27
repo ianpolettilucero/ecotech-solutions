@@ -2,7 +2,7 @@ import { Persona, type EstadoPersona } from './Persona.js';
 import { ErrorReglaNegocio, ErrorValidacion } from '../base/errores.js';
 import type { DatosSensiblesDTO, EmpleadoDTO, TipoContrato } from '../../compartido/tipos.js';
 
-/** Parametros economicos; cuales aplican depende de la subclase. */
+/** Parámetros económicos; cuales aplican depende de la subclase. */
 export interface ParametrosRemuneracion {
   salarioMensual: number | null;
   tarifaHora: number | null;
@@ -31,23 +31,23 @@ export const HORAS_JORNADA_MENSUAL = 160;
  * La empresa remunera de tres maneras distintas (sueldo fijo, por hora con
  * recargo por extras, y contratista con tope mensual). La alternativa ingenua
  * es una sola clase `Empleado` con un campo `tipo` y un `switch` dentro de
- * `calcularSueldo()`. Ese `switch` reaparece luego en el generador de nomina, en
+ * `calcularSueldo()`. Ese `switch` reaparece luego en el generador de nómina, en
  * el validador de altas y en los informes: cada modalidad nueva obliga a
  * encontrar y tocar todos esos puntos, y el que se olvide produce un error de
- * calculo silencioso.
+ * cálculo silencioso.
  *
- * Aqui `calcularRemuneracionMensual` es **abstracto**: cada subclase encierra su
- * propia formula, y el motor de nomina recorre una lista de `Empleado` sin saber
- * de que tipo es cada uno. Agregar una modalidad es agregar una clase; ningun
- * codigo existente cambia (principio abierto/cerrado).
+ * Aquí `calcularRemuneracionMensual` es **abstracto**: cada subclase encierra su
+ * propia fórmula, y el motor de nómina recorre una lista de `Empleado` sin saber
+ * de que tipo es cada uno. Agregar una modalidad es agregar una clase; ningún
+ * código existente cambia (principio abierto/cerrado).
  *
  * ## Lo que deliberadamente NO es una subclase
  *
  * `Gerente` NO hereda de `Empleado`. Ser gerente es un **rol que se ocupa**, no
  * una naturaleza: una persona lo asume y lo deja sin dejar de ser el mismo
- * empleado, y en herencia eso obligaria a destruir y recrear el objeto (con su
- * id, su historial y sus horas). Se modela como la asociacion
- * `Departamento --gerente--> Empleado`. El detalle esta justificado en
+ * empleado, y en herencia eso obligaría a destruir y recrear el objeto (con su
+ * id, su historial y sus horas). Se modela como la asociación
+ * `Departamento --gerente--> Empleado`. El detalle está justificado en
  * `docs/04-justificacion-diseno.md`.
  */
 export abstract class Empleado extends Persona<EstadoEmpleado> {
@@ -65,29 +65,29 @@ export abstract class Empleado extends Persona<EstadoEmpleado> {
   }
 
   // ---------------------------------------------------------------------------
-  // Contrato polimorfico: lo que cada modalidad resuelve a su manera
+  // Contrato polimórfico: lo que cada modalidad resuelve a su manera
   // ---------------------------------------------------------------------------
 
   /** Discriminante persistido; la fabrica lo usa para rehidratar la subclase. */
   abstract get tipoContrato(): TipoContrato;
 
   /**
-   * Remuneracion bruta del mes.
+   * Remuneración bruta del mes.
    * @param horasTrabajadas horas aprobadas del periodo (las no aprobadas no pagan).
    */
   abstract calcularRemuneracionMensual(horasTrabajadas: number): number;
 
-  /** Explicacion legible de la formula, para la columna "Detalle" de la nomina. */
+  /** Explicación legible de la fórmula, para la columna "Detalle" de la nómina. */
   abstract descripcionRemuneracion(): string;
 
-  /** Proyeccion de los parametros economicos al estado persistido. */
+  /** Proyección de los parámetros económicos al estado persistido. */
   abstract parametrosRemuneracion(): ParametrosRemuneracion;
 
-  /** Reemplaza los parametros economicos validando los propios de la subclase. */
+  /** Reemplaza los parámetros económicos validando los propios de la subclase. */
   abstract actualizarRemuneracion(parametros: Partial<ParametrosRemuneracion>): void;
 
   // ---------------------------------------------------------------------------
-  // Comportamiento comun
+  // Comportamiento común
   // ---------------------------------------------------------------------------
 
   get legajo(): string {
@@ -112,8 +112,8 @@ export abstract class Empleado extends Persona<EstadoEmpleado> {
 
   /**
    * Requisito: "cada empleado solo puede pertenecer a un departamento a la vez".
-   * El invariante se cumple por construccion: hay un unico campo escalar, no una
-   * coleccion. Reasignar es reemplazar, nunca agregar.
+   * El invariante se cumple por construcción: hay un único campo escalar, no una
+   * colección. Reasignar es reemplazar, nunca agregar.
    */
   asignarADepartamento(departamentoId: string): void {
     if (!this._activo) {
@@ -129,8 +129,8 @@ export abstract class Empleado extends Persona<EstadoEmpleado> {
   }
 
   /**
-   * Baja logica, no fisica. Requisito de trazabilidad: si se borrara el registro,
-   * las horas y asignaciones historicas quedarian huerfanas y los informes de
+   * Baja lógica, no física. Requisito de trazabilidad: si se borrara el registro,
+   * las horas y asignaciones históricas quedarían huerfanas y los informes de
    * periodos cerrados cambiarian retroactivamente.
    */
   desactivar(): void {
@@ -149,7 +149,7 @@ export abstract class Empleado extends Persona<EstadoEmpleado> {
     this.tocar();
   }
 
-  /** Antiguedad en anios cumplidos a la fecha indicada (por defecto, hoy). */
+  /** Antigüedad en años cumplidos a la fecha indicada (por defecto, hoy). */
   antiguedadEnAnios(referencia: Date = new Date()): number {
     const inicio = new Date(`${this._fechaInicioContrato}T00:00:00Z`);
     if (Number.isNaN(inicio.getTime())) return 0;
@@ -164,7 +164,7 @@ export abstract class Empleado extends Persona<EstadoEmpleado> {
       throw new ErrorValidacion('El empleado debe tener un legajo asignado.');
     }
     if (!/^\d{4}-\d{2}-\d{2}$/.test(this._fechaInicioContrato)) {
-      throw new ErrorValidacion('La fecha de inicio de contrato no es valida.', [
+      throw new ErrorValidacion('La fecha de inicio de contrato no es válida.', [
         { campo: 'fechaInicioContrato', mensaje: 'Debe tener el formato AAAA-MM-DD.' },
       ]);
     }
@@ -183,7 +183,7 @@ export abstract class Empleado extends Persona<EstadoEmpleado> {
   }
 
   /**
-   * Proyeccion hacia la API.
+   * Proyección hacia la API.
    *
    * `sensibles` llega ya descifrado desde el servicio, o `null` cuando el
    * solicitante no tiene `empleado:leer_sensible`. En ese caso se devuelven

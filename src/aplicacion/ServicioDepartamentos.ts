@@ -21,10 +21,10 @@ type FiltrosDepartamento = {
 };
 
 /**
- * Esquemas declarados una sola vez a nivel de modulo.
+ * Esquemas declarados una sola vez a nivel de módulo.
  *
- * Construirlos dentro de cada metodo los recrearia en cada peticion y, sobre
- * todo, dispersaria el contrato de entrada por el cuerpo del servicio. Aqui el
+ * Construirlos dentro de cada método los recrearía en cada petición y, sobre
+ * todo, dispersaría el contrato de entrada por el cuerpo del servicio. Aquí el
  * contrato se lee de un vistazo y es el mismo objeto que documenta la API.
  */
 const ESQUEMA_DEPARTAMENTO = new Esquema<EntradaDepartamento>({
@@ -35,8 +35,8 @@ const ESQUEMA_DEPARTAMENTO = new Esquema<EntradaDepartamento>({
 
 /**
  * Variante para actualizaciones parciales: lo que no viene, no se toca. Un PUT
- * completo obligaria al cliente a reenviar el gerente en cada renombrado, con
- * el riesgo de borrarlo por omision.
+ * completo obligaría al cliente a reenviar el gerente en cada renombrado, con
+ * el riesgo de borrarlo por omisión.
  */
 const ESQUEMA_DEPARTAMENTO_PARCIAL = ESQUEMA_DEPARTAMENTO.parcial();
 
@@ -48,16 +48,16 @@ const ESQUEMA_FILTROS = new Esquema<FiltrosDepartamento>({
 /**
  * Los identificadores llegan por la ruta, no por el cuerpo, pero son entrada de
  * usuario igual. Se validan con un esquema para que un id malformado devuelva
- * un 400 con detalle y no se use como clave de busqueda tal cual.
+ * un 400 con detalle y no se use como clave de búsqueda tal cual.
  */
 const ESQUEMA_ID = new Esquema<{ id: string }>({
   id: campo(new ReglaIdentificador()),
 });
 
 /**
- * Normaliza texto para buscar: minusculas y sin marcas diacriticas, de modo que
- * "investigacion" encuentre tambien lo que se cargo con tilde. La busqueda es
- * en memoria porque KV no ofrece indices de texto y el volumen de una PyME
+ * Normaliza texto para buscar: minúsculas y sin marcas diacríticas, de modo que
+ * "investigación" encuentre también lo que se cargo con tilde. La búsqueda es
+ * en memoria porque KV no ofrece índices de texto y el volumen de una PyME
  * (decenas de departamentos) no lo justifica.
  */
 function normalizarBusqueda(texto: string): string {
@@ -68,14 +68,14 @@ function normalizarBusqueda(texto: string): string {
 }
 
 /**
- * Gestion de la estructura organizativa.
+ * Gestión de la estructura organizativa.
  *
  * Concentra las reglas que la entidad `Departamento` no puede sostener por si
  * sola porque exigen mirar otros agregados: la unicidad del nombre (necesita
  * ver el resto de departamentos) y que el gerente sea un empleado real y
- * activo (necesita el repositorio de empleados). Mantenerlas aqui deja a la
+ * activo (necesita el repositorio de empleados). Mantenerlas aquí deja a la
  * entidad libre de dependencias de infraestructura y por lo tanto testeable
- * sin almacen.
+ * sin almacén.
  */
 export class ServicioDepartamentos {
   constructor(private readonly ctx: Contexto) {}
@@ -84,7 +84,7 @@ export class ServicioDepartamentos {
   // Lectura
   // ---------------------------------------------------------------------------
 
-  /** Listado con filtro por estado y busqueda libre sobre nombre y descripcion. */
+  /** Listado con filtro por estado y búsqueda libre sobre nombre y descripción. */
   async listar(filtros?: { activo?: boolean; texto?: string }): Promise<DepartamentoDTO[]> {
     this.ctx.exigirPermiso('departamento:leer');
     const { activo, texto } = ESQUEMA_FILTROS.validar(filtros ?? {});
@@ -114,8 +114,8 @@ export class ServicioDepartamentos {
    * Cantidad de empleados activos por departamento, indexada por id.
    *
    * Se exige `departamento:leer` y no `empleado:leer` porque lo que se expone
-   * es un agregado de la estructura, sin un solo dato de persona; ademas todo
-   * rol que ve el organigrama ve tambien esta columna en el listado.
+   * es un agregado de la estructura, sin un solo dato de persona; además todo
+   * rol que ve el organigrama ve también esta columna en el listado.
    *
    * Se siembran en cero todos los departamentos existentes para que el cliente
    * no tenga que distinguir "sin empleados" de "clave ausente".
@@ -213,14 +213,14 @@ export class ServicioDepartamentos {
    * Baja de un departamento.
    *
    * **No hay borrado en cascada.** Si quedan empleados activos asignados, la
-   * operacion se rechaza en vez de dejarlos en el aire: hacer desaparecer en
+   * operación se rechaza en vez de dejarlos en el aire: hacer desaparecer en
    * silencio la pertenencia organizativa de gente que sigue trabajando
-   * descuadraria los informes por departamento sin que nadie lo hubiera
+   * descuadraría los informes por departamento sin que nadie lo hubiera
    * decidido, y es exactamente el tipo de perdida de datos que el sistema debe
-   * evitar. Reasignar personas es una decision de RRHH, no un efecto colateral
+   * evitar. Reasignar personas es una decisión de RRHH, no un efecto colateral
    * de un clic en "eliminar".
    *
-   * Cuando ya no queda nadie, la baja es *logica* (`desactivar`): los proyectos
+   * Cuando ya no queda nadie, la baja es *lógica* (`desactivar`): los proyectos
    * y las horas de periodos cerrados siguen apuntando a este id y necesitan
    * poder resolverlo para mostrarse.
    */
@@ -249,7 +249,7 @@ export class ServicioDepartamentos {
       accion: 'DEPARTAMENTO_DESACTIVADO',
       entidad: 'Departamento',
       entidadId: departamento.id,
-      detalle: `baja logica de "${departamento.nombre}" sin empleados activos`,
+      detalle: `baja lógica de "${departamento.nombre}" sin empleados activos`,
       exito: true,
     });
   }
@@ -266,8 +266,8 @@ export class ServicioDepartamentos {
    * Unicidad de nombre por su forma normalizada.
    *
    * Se compara contra todos los departamentos, incluidos los inactivos: un
-   * nombre dado de baja sigue reservado, porque reutilizarlo haria que dos
-   * unidades distintas se confundieran en los informes historicos. Para volver
+   * nombre dado de baja sigue reservado, porque reutilizarlo haría que dos
+   * unidades distintas se confundieran en los informes históricos. Para volver
    * a usarlo hay que reactivar el original.
    */
   private async exigirNombreDisponible(
@@ -290,9 +290,9 @@ export class ServicioDepartamentos {
    * Integridad referencial del gerente.
    *
    * La entidad guarda solo el id y no puede comprobar que exista; esa
-   * verificacion vive aqui porque requiere otro repositorio. Se exige ademas
+   * verificación vive aquí porque requiere otro repositorio. Se exige además
    * que el empleado este activo: designar gerente a alguien dado de baja
-   * dejaria un departamento dirigido por quien ya no trabaja en la empresa.
+   * dejaría un departamento dirigido por quien ya no trabaja en la empresa.
    */
   private async resolverGerente(gerenteId: string | null): Promise<string | null> {
     if (gerenteId === null) return null;
@@ -300,12 +300,12 @@ export class ServicioDepartamentos {
     const empleado = await this.ctx.empleados.obtener(gerenteId);
     if (!empleado) {
       throw new ErrorValidacion('El gerente indicado no existe.', [
-        { campo: 'gerenteId', mensaje: 'No corresponde a ningun empleado registrado.' },
+        { campo: 'gerenteId', mensaje: 'No corresponde a ningún empleado registrado.' },
       ]);
     }
     if (!empleado.activo) {
-      throw new ErrorValidacion('El gerente indicado no esta activo.', [
-        { campo: 'gerenteId', mensaje: 'El empleado esta dado de baja.' },
+      throw new ErrorValidacion('El gerente indicado no está activo.', [
+        { campo: 'gerenteId', mensaje: 'El empleado está dado de baja.' },
       ]);
     }
     return empleado.id;

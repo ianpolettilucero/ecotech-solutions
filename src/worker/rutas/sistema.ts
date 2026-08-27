@@ -23,17 +23,17 @@ export function registrarRutasSistema(enrutador: Enrutador): void {
   });
 
   /**
-   * Sonda de estado. Es publica, pero deliberadamente parca: revela si el
-   * sistema esta sembrado y si el cifrado usa la clave de desarrollo (una
-   * advertencia que debe ser imposible de pasar por alto), y nada mas. No
-   * expone versiones, rutas internas ni conteos, que serian reconocimiento
+   * Sonda de estado. Es pública, pero deliberadamente parca: revela si el
+   * sistema está sembrado y si el cifrado usa la clave de desarrollo (una
+   * advertencia que debe ser imposible de pasar por alto), y nada más. No
+   * expone versiones, rutas internas ni conteos, que serían reconocimiento
    * gratuito para un atacante.
    */
   enrutador.get(
     '/api/salud',
     async (api) => {
-      // Se comprueba el almacen por separado de la siembra: distinguir "KV no
-      // responde" de "KV responde pero esta vacio" es la mitad del diagnostico.
+      // Se comprueba el almacén por separado de la siembra: distinguir "KV no
+      // responde" de "KV responde pero está vacío" es la mitad del diagnóstico.
       let almacenAccesible = true;
       let errorAlmacen: string | null = null;
       let sembrado = false;
@@ -55,10 +55,10 @@ export function registrarRutasSistema(enrutador: Enrutador): void {
           sembrado,
           cifradoConClaveDeDesarrollo: api.ctx.usaClaveDeDesarrollo,
           advertencia: api.ctx.usaClaveDeDesarrollo
-            ? 'Defina el secret CLAVE_MAESTRA: los datos personales se estan cifrando con una clave publica.'
+            ? 'Defina el secret CLAVE_MAESTRA: los datos personales se están cifrando con una clave pública.'
             : null,
-          // El detalle solo se publica mientras el sistema NO esta sembrado.
-          // En ese estado no hay ningun dato que proteger todavia, y a cambio se
+          // El detalle solo se pública mientras el sistema NO está sembrado.
+          // En ese estado no hay ningún dato que proteger todavía, y a cambio se
           // puede diagnosticar el despliegue desde fuera. Una vez sembrado, el
           // detalle desaparece y queda solo en los registros del Worker.
           diagnostico: sembrado

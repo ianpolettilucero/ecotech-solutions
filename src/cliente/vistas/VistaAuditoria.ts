@@ -1,10 +1,10 @@
 /**
- * Traza de auditoria.
+ * Traza de auditoría.
  *
- * Es la unica pantalla que se lee de abajo arriba: no muestra el estado en que
+ * Es la única pantalla que se lee de abajo arriba: no muestra el estado en que
  * quedaron las cosas, sino como llegaron a estarlo. Por eso incluye los
  * intentos fallidos, que son justo los que no dejan rastro en el resto de la
- * aplicacion y los que mas dicen cuando algo va mal.
+ * aplicación y los que más dicen cuando algo va mal.
  */
 
 import type { Permiso, RegistroAuditoriaDTO } from '../../compartido/tipos.js';
@@ -28,7 +28,7 @@ const ENTIDADES: readonly { valor: string; texto: string }[] = [
   { valor: 'Empleado', texto: 'Empleado' },
   { valor: 'Departamento', texto: 'Departamento' },
   { valor: 'Proyecto', texto: 'Proyecto' },
-  { valor: 'AsignacionProyecto', texto: 'Asignacion a proyecto' },
+  { valor: 'AsignacionProyecto', texto: 'Asignación a proyecto' },
   { valor: 'RegistroTiempo', texto: 'Registro de tiempo' },
   { valor: 'Reporte', texto: 'Informe' },
   { valor: 'Usuario', texto: 'Usuario' },
@@ -46,7 +46,7 @@ export class VistaAuditoria extends Vista {
   }
 
   override get titulo(): string {
-    return 'Auditoria';
+    return 'Auditoría';
   }
 
   override get icono(): string {
@@ -66,19 +66,19 @@ export class VistaAuditoria extends Vista {
   override async render(contenedor: HTMLElement): Promise<void> {
     const introduccion = div(
       'tarjeta',
-      elemento('h2', { clase: 'tarjeta-titulo', texto: 'Quien hizo que, y cuando' }),
+      elemento('h2', { clase: 'tarjeta-titulo', texto: 'Quién hizo qué, y cuándo' }),
       elemento('p', {
         texto:
-          'Cada operacion que cambia algo deja aqui un asiento con su autor, el momento exacto, la entidad afectada y la direccion IP desde la que se pidio. Tambien quedan los intentos que NO prosperaron: un acceso denegado, un login fallido o una regla de negocio que corto la operacion. Esos son los que permiten distinguir un error honesto de un intento repetido, y por eso la traza no se puede borrar ni editar desde la aplicacion.',
+          'Cada operación que cambia algo deja aquí un asiento con su autor, el momento exacto, la entidad afectada y la dirección IP desde la que se pidió. También quedan los intentos que NO prosperaron: un acceso denegado, un login fallido o una regla de negocio que cortó la operación. Esos son los que permiten distinguir un error honesto de un intento repetido, y por eso la traza no se puede borrar ni editar desde la aplicación.',
       }),
     );
 
     const barra = filtros(
       campoFiltro(
-        'Accion',
-        buscador('Accion exacta, p.ej. LOGIN_FALLIDO', (valor) => {
-          // El servidor compara la accion completa, sin distinguir mayusculas:
-          // no es una busqueda por fragmento sino un filtro por clave cerrada.
+        'Acción',
+        buscador('Acción exacta, p.ej. LOGIN_FALLIDO', (valor) => {
+          // El servidor compara la acción completa, sin distinguir mayúsculas:
+          // no es una búsqueda por fragmento sino un filtro por clave cerrada.
           this.accion = valor;
           void this.refrescar();
         }),
@@ -138,7 +138,7 @@ export class VistaAuditoria extends Vista {
 
     vaciar(destino);
     if (!asientos) {
-      agregar(destino, estadoVacio('No se pudo cargar la traza de auditoria.'));
+      agregar(destino, estadoVacio('No se pudo cargar la traza de auditoría.'));
       return;
     }
     agregar(destino, VistaAuditoria.tabla().render(asientos));
@@ -147,10 +147,10 @@ export class VistaAuditoria extends Vista {
   private static tabla(): Tabla<RegistroAuditoriaDTO> {
     const columnas: ColumnaTabla<RegistroAuditoriaDTO>[] = [
       { titulo: 'Fecha y hora', celda: (a) => formatearFechaHora(a.creadoEn) },
-      // Un asiento sin usuario es una operacion previa a la autenticacion: un
-      // login fallido, por ejemplo. Se rotula como anonimo, no se deja vacio.
-      { titulo: 'Usuario', celda: (a) => a.emailUsuario ?? 'anonimo' },
-      { titulo: 'Accion', clase: 'texto-mono', celda: (a) => a.accion },
+      // Un asiento sin usuario es una operación previa a la autenticación: un
+      // login fallido, por ejemplo. Se rotula como anónimo, no se deja vacío.
+      { titulo: 'Usuario', celda: (a) => a.emailUsuario ?? 'anónimo' },
+      { titulo: 'Acción', clase: 'texto-mono', celda: (a) => a.accion },
       { titulo: 'Entidad', celda: (a) => VistaAuditoria.nombreEntidad(a.entidad) },
       { titulo: 'Resultado', celda: (a) => VistaAuditoria.marcaResultado(a.exito) },
       { titulo: 'Detalle', clase: 'celda-texto', celda: (a) => a.detalle },

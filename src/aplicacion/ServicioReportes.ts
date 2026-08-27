@@ -11,7 +11,7 @@ import type {
   TipoReporte,
 } from '../compartido/tipos.js';
 
-/** Limite de informes por usuario y ventana: generar un PDF cuesta CPU. */
+/** Límite de informes por usuario y ventana: generar un PDF cuesta CPU. */
 const MAX_INFORMES = 20;
 const VENTANA_INFORMES_SEGUNDOS = 60;
 
@@ -30,21 +30,21 @@ export interface ArchivoExportado {
  * a `Reporte.crear(tipo)` la instancia adecuada y le manda `generar(datos)`; el
  * resultado se lo pasa al exportador que devuelva `FabricaExportadores.crear`.
  * Ni un `if` sobre el tipo de informe ni sobre el formato de salida. Anadir un
- * informe nuevo (por ejemplo, rotacion de personal) o un formato nuevo (ODS) no
+ * informe nuevo (por ejemplo, rotación de personal) o un formato nuevo (ODS) no
  * toca este archivo.
  */
 export class ServicioReportes {
   constructor(private readonly ctx: Contexto) {}
 
   // ---------------------------------------------------------------------------
-  // Recoleccion de datos
+  // Recolección de datos
   // ---------------------------------------------------------------------------
 
   /**
    * Carga todo lo que cualquier informe pueda necesitar, en paralelo.
    *
-   * Se leen las cinco colecciones enteras a proposito: en un almacen clave-valor
-   * no hay `JOIN` ni indices secundarios, y filtrar en KV no es mas barato que
+   * Se leen las cinco colecciones enteras a propósito: en un almacén clave-valor
+   * no hay `JOIN` ni índices secundarios, y filtrar en KV no es más barato que
    * filtrar en memoria una vez que el documento ya viajo. Son cinco lecturas
    * fijas, independientes del informe, en lugar de una cascada de consultas.
    */
@@ -68,7 +68,7 @@ export class ServicioReportes {
     });
 
     // Los datos personales solo se descifran si el rol lo habilita. Sin permiso,
-    // el mapa va vacio y los informes imprimen la version enmascarada: el mismo
+    // el mapa va vacío y los informes imprimen la versión enmascarada: el mismo
     // informe sirve para RRHH y para gerencia sin duplicar clases.
     const sensibles = new Map<string, DatosSensiblesDTO>();
     if (this.ctx.puede('empleado:leer_sensible')) {
@@ -100,14 +100,14 @@ export class ServicioReportes {
   }
 
   // ---------------------------------------------------------------------------
-  // Generacion
+  // Generación
   // ---------------------------------------------------------------------------
 
-  /** Comprueba el permiso adicional que exige la nomina. */
+  /** Comprueba el permiso adicional que exige la nómina. */
   private exigirPermisoDeTipo(tipo: TipoReporte): void {
     if (tipo === 'nomina' && !this.ctx.puede('reporte:nomina')) {
       throw new ErrorAutorizacion(
-        'El informe de nomina expone remuneraciones y requiere el permiso reporte:nomina.',
+        'El informe de nómina expone remuneraciones y requiere el permiso reporte:nómina.',
       );
     }
   }
@@ -134,8 +134,8 @@ export class ServicioReportes {
     this.exigirPermisoDeTipo(tipo);
     const solicitante = this.ctx.exigirSolicitante();
 
-    // Un PDF de miles de filas es la operacion mas cara del sistema; sin este
-    // limite bastaria un bucle en la consola del navegador para agotar la cuota
+    // Un PDF de miles de filas es la operación más cara del sistema; sin este
+    // límite bastaría un bucle en la consola del navegador para agotar la cuota
     // de CPU del Worker.
     const limite = await this.ctx.limitador.consumir(
       `informes:${solicitante.usuarioId}`,
@@ -175,7 +175,7 @@ export class ServicioReportes {
   // ---------------------------------------------------------------------------
 
   /**
-   * Metricas del panel de inicio.
+   * Métricas del panel de inicio.
    *
    * No exige `reporte:generar`: son agregados sin datos personales, y todo rol
    * autenticado necesita ver el estado general al entrar.

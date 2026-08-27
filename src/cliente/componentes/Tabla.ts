@@ -1,9 +1,9 @@
 /**
- * Tabla de datos generica.
+ * Tabla de datos genérica.
  *
- * La tabla no sabe nada de empleados ni de proyectos: recibe la descripcion de
+ * La tabla no sabe nada de empleados ni de proyectos: recibe la descripción de
  * las columnas y una lista de filas del tipo que sea. Lo que cada celda
- * contiene lo decide la vista, que es quien conoce el dominio; asi una columna
+ * contiene lo decide la vista, que es quien conoce el dominio; así una columna
  * puede devolver texto plano o un nodo ya construido (una insignia, una
  * botonera) sin que este archivo tenga que enterarse.
  */
@@ -26,7 +26,7 @@ export class Tabla<T> {
   ) {}
 
   /**
-   * Pinta las filas. Con la lista vacia devuelve el estado vacio en lugar de
+   * Pinta las filas. Con la lista vacía devuelve el estado vacío en lugar de
    * una tabla con cabecera y nada debajo: una rejilla huerfana parece un fallo
    * de carga, mientras que un mensaje explica que no hay nada que mostrar.
    */
@@ -56,9 +56,9 @@ export class Tabla<T> {
           // En pantallas estrechas la tabla se reordena como una pila de fichas
           // y cada celda tiene que decir de que columna viene, porque la
           // cabecera deja de estar a la vista. El CSS lo pinta con `::before`
-          // desde este atributo. Es la unica forma de conservar el par
+          // desde este atributo. Es la única forma de conservar el par
           // etiqueta-valor sin duplicar el texto en el DOM ni obligar a cada
-          // vista a construir dos arboles distintos.
+          // vista a construir dos árboles distintos.
           datos: { 'data-etiqueta': columna.titulo },
         });
         // `agregar` resuelve los dos casos del contrato: una cadena se inserta
@@ -69,11 +69,11 @@ export class Tabla<T> {
       agregar(cuerpo, tr);
     }
 
-    // El contenedor es el que desplaza: sin el, una tabla ancha arrastraria el
-    // scroll horizontal a toda la pagina.
-    // `compacta` quita el ancho minimo pensado para tablas de muchas columnas.
+    // El contenedor es el que desplaza: sin el, una tabla ancha arrastraría el
+    // scroll horizontal a toda la página.
+    // `compacta` quita el ancho mínimo pensado para tablas de muchas columnas.
     // Sin ella, un desglose de tres columnas dentro de una tarjeta estrecha del
-    // panel se desplazaria en horizontal y escondaria justo las cifras.
+    // panel se desplazaría en horizontal y escondería justo las cifras.
     const tabla = elemento(
       'table',
       { clase: this.opciones.compacta === true ? 'tabla tabla-compacta' : 'tabla' },

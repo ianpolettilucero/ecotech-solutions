@@ -2,7 +2,7 @@ import { Reporte, type DatosReporte } from './Reporte.js';
 import type { ColumnaReporte, TipoReporte, ValorCelda } from '../../compartido/tipos.js';
 
 const COLUMNAS: readonly ColumnaReporte[] = [
-  { clave: 'codigo', titulo: 'Codigo', tipo: 'texto' },
+  { clave: 'codigo', titulo: 'Código', tipo: 'texto' },
   { clave: 'nombre', titulo: 'Proyecto', tipo: 'texto' },
   { clave: 'estado', titulo: 'Estado', tipo: 'texto' },
   { clave: 'departamento', titulo: 'Departamento', tipo: 'texto' },
@@ -16,7 +16,7 @@ const COLUMNAS: readonly ColumnaReporte[] = [
 
 const SIN_DEPARTAMENTO = 'Sin asignar';
 
-/** Lee una celda numerica ya construida; la ausente vale cero, nunca `NaN`. */
+/** Lee una celda numérica ya construida; la ausente vale cero, nunca `NaN`. */
 function celdaNumerica(fila: Record<string, ValorCelda>, clave: string): number {
   const valor = fila[clave];
   return typeof valor === 'number' ? valor : 0;
@@ -28,12 +28,12 @@ let Clase: (new () => Reporte) | undefined;
 /**
  * Estado de la cartera de proyectos y consumo de su presupuesto de horas.
  *
- * El porcentaje consumido no se calcula aqui: se le pide al propio `Proyecto`,
- * que es quien conoce su presupuesto y como se acota el resultado. Si manana la
+ * El porcentaje consumido no se calcula aquí: se le pide al propio `Proyecto`,
+ * que es quien conoce su presupuesto y como se acota el resultado. Si mañana la
  * empresa decide medir el avance de otra forma, se toca la entidad y este
  * reporte no cambia.
  *
- * Solo se imputan **horas aprobadas**: contar borradores o rechazos daria por
+ * Solo se imputan **horas aprobadas**: contar borradores o rechazos daría por
  * consumido un presupuesto que nadie ha validado.
  */
 export function crearReporteProyectos(): Reporte {

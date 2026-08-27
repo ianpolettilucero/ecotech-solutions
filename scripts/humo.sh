@@ -2,8 +2,8 @@
 # Prueba de humo de la API contra `wrangler dev`.
 # Recorre el flujo real: login, CSRF, CRUD, reglas de negocio, permisos y descargas.
 #
-# REQUIERE ESTADO RECIEN SEMBRADO: entra con la contrasena inicial de las cuentas
-# de demostracion. Si otra prueba la rotó antes (la suite de interfaz lo hace),
+# REQUIERE ESTADO RECIEN SEMBRADO: entra con la contraseña inicial de las cuentas
+# de demostración. Si otra prueba la rotó antes (la suite de interfaz lo hace),
 # todo fallara con 401. En local se parte de cero borrando `.wrangler/`.
 set -u
 BASE="${1:-http://127.0.0.1:8787}"
@@ -31,12 +31,12 @@ verificar "el sistema esta operativo" "operativo" "$(echo "$SALUD" | jq -r .dato
 verificar "el sistema quedo sembrado" "true" "$(echo "$SALUD" | jq -r .datos.sembrado)"
 
 echo "== Sin sesion =="
-verificar "GET /api/empleados sin sesion" "401" "$(estado "$BASE/api/empleados")"
-verificar "GET /api/panel sin sesion" "401" "$(estado "$BASE/api/panel")"
+verificar "GET /api/empleados sin sesión" "401" "$(estado "$BASE/api/empleados")"
+verificar "GET /api/panel sin sesión" "401" "$(estado "$BASE/api/panel")"
 verificar "ruta inexistente" "404" "$(estado "$BASE/api/no-existe")"
 # Una ruta que existe pero no para ese verbo debe dar 405, no 404: decir "no
-# existe" cuando existe manda a depurar en la direccion equivocada.
-verificar "metodo no permitido" "405" "$(estado -X DELETE "$BASE/api/salud")"
+# existe" cuando existe manda a depurar en la dirección equivocada.
+verificar "método no permitido" "405" "$(estado -X DELETE "$BASE/api/salud")"
 verificar "el 405 incluye la cabecera Allow" "1" \
   "$(curl -s -D - -o /dev/null -X DELETE "$BASE/api/salud" | grep -ci '^allow:')"
 
@@ -70,7 +70,7 @@ verificar "departamentos sembrados" "5" "$(echo "$DEPS" | jq '.datos.departament
 PRYS=$(c "$BASE/api/proyectos")
 verificar "proyectos sembrados" "6" "$(echo "$PRYS" | jq '.datos.proyectos | length')"
 PANEL=$(c "$BASE/api/panel")
-verificar "panel devuelve metricas" "true" "$(echo "$PANEL" | jq -r '.datos.totalEmpleados > 0')"
+verificar "panel devuelve métricas" "true" "$(echo "$PANEL" | jq -r '.datos.totalEmpleados > 0')"
 verificar "hay horas cargadas" "true" "$(echo "$PANEL" | jq -r '(.datos.horasPorProyecto | length) > 0')"
 
 echo "== Cifrado y permisos sobre datos personales =="
@@ -95,7 +95,7 @@ NUEVO='{"nombre":"Ana","apellido":"Prueba","emailCorporativo":"a.prueba@ecotech.
 ALTA=$(c -X POST -H 'Content-Type: application/json' -H "X-Token-CSRF: $CSRF" -d "$NUEVO" "$BASE/api/empleados")
 verificar "alta de empleado" "true" "$(echo "$ALTA" | jq -r .ok)"
 NUEVO_ID=$(echo "$ALTA" | jq -r .datos.id)
-verificar "legajo asignado automaticamente" "true" "$(echo "$ALTA" | jq -r '.datos.legajo | startswith("ECO-")')"
+verificar "legajo asignado automáticamente" "true" "$(echo "$ALTA" | jq -r '.datos.legajo | startswith("ECO-")')"
 verificar "documento duplicado rechazado" "409" \
   "$(estado -X POST -H 'Content-Type: application/json' -H "X-Token-CSRF: $CSRF" -d "$NUEVO" "$BASE/api/empleados")"
 verificar "no se puede cambiar el tipo de contrato" "422" \
@@ -106,8 +106,8 @@ PRY_CURSO=$(echo "$PRYS" | jq -r '[.datos.proyectos[] | select(.estado=="EN_CURS
 PRY_FIN=$(echo "$PRYS" | jq -r '[.datos.proyectos[] | select(.estado=="FINALIZADO")][0].id')
 ASIG=$(c -X POST -H 'Content-Type: application/json' -H "X-Token-CSRF: $CSRF" \
   -d "{\"empleadoId\":\"$NUEVO_ID\",\"proyectoId\":\"$PRY_CURSO\",\"rolProyecto\":\"DESARROLLADOR\",\"porcentajeDedicacion\":60}" "$BASE/api/asignaciones")
-verificar "asignacion creada" "true" "$(echo "$ASIG" | jq -r .ok)"
-verificar "asignacion duplicada rechazada" "409" \
+verificar "asignación creada" "true" "$(echo "$ASIG" | jq -r .ok)"
+verificar "asignación duplicada rechazada" "409" \
   "$(estado -X POST -H 'Content-Type: application/json' -H "X-Token-CSRF: $CSRF" \
      -d "{\"empleadoId\":\"$NUEVO_ID\",\"proyectoId\":\"$PRY_CURSO\",\"rolProyecto\":\"QA\",\"porcentajeDedicacion\":10}" "$BASE/api/asignaciones")"
 if [ "$PRY_FIN" != "null" ]; then
@@ -116,15 +116,15 @@ if [ "$PRY_FIN" != "null" ]; then
        -d "{\"empleadoId\":\"$NUEVO_ID\",\"proyectoId\":\"$PRY_FIN\",\"rolProyecto\":\"QA\",\"porcentajeDedicacion\":10}" "$BASE/api/asignaciones")"
 fi
 PRY_OTRO=$(echo "$PRYS" | jq -r "[.datos.proyectos[] | select(.estado==\"EN_CURSO\" and .id!=\"$PRY_CURSO\")][0].id")
-verificar "sobreasignacion (60+50>100) rechazada" "422" \
+verificar "sobreasignación (60+50>100) rechazada" "422" \
   "$(estado -X POST -H 'Content-Type: application/json' -H "X-Token-CSRF: $CSRF" \
      -d "{\"empleadoId\":\"$NUEVO_ID\",\"proyectoId\":\"$PRY_OTRO\",\"rolProyecto\":\"QA\",\"porcentajeDedicacion\":50}" "$BASE/api/asignaciones")"
 
 echo "== Reglas de negocio: proyectos =="
 PRY_PLAN=$(echo "$PRYS" | jq -r '[.datos.proyectos[] | select(.estado=="PLANIFICADO")][0].id')
-verificar "transicion PLANIFICADO -> FINALIZADO rechazada" "422" \
+verificar "transición PLANIFICADO -> FINALIZADO rechazada" "422" \
   "$(estado -X PUT -H 'Content-Type: application/json' -H "X-Token-CSRF: $CSRF" -d '{"estado":"FINALIZADO"}' "$BASE/api/proyectos/$PRY_PLAN/estado")"
-verificar "transicion PLANIFICADO -> EN_CURSO aceptada" "200" \
+verificar "transición PLANIFICADO -> EN_CURSO aceptada" "200" \
   "$(estado -X PUT -H 'Content-Type: application/json' -H "X-Token-CSRF: $CSRF" -d '{"estado":"EN_CURSO"}' "$BASE/api/proyectos/$PRY_PLAN/estado")"
 verificar "cuerpo JSON mal formado" "400" \
   "$(estado -X PUT -H 'Content-Type: application/json' -H "X-Token-CSRF: $CSRF" -d '{roto' "$BASE/api/proyectos/$PRY_PLAN/estado")"
@@ -149,7 +149,7 @@ verificar "content-type del PDF" "application/pdf" "$TIPO_PDF"
 
 echo "== Auditoria =="
 AUD=$(c "$BASE/api/auditoria?limite=50")
-verificar "la auditoria registro operaciones" "true" "$(echo "$AUD" | jq -r '(.datos | length) > 0')"
+verificar "la auditoría registro operaciones" "true" "$(echo "$AUD" | jq -r '(.datos | length) > 0')"
 verificar "registro el login exitoso" "true" "$(echo "$AUD" | jq -r '[.datos[] | select(.accion=="LOGIN_EXITOSO")] | length > 0')"
 verificar "registro los login fallidos" "true" "$(echo "$AUD" | jq -r '[.datos[] | select(.accion=="LOGIN_FALLIDO")] | length > 0')"
 verificar "registro el alta de empleado" "true" "$(echo "$AUD" | jq -r '[.datos[] | select(.accion|startswith("EMPLEADO"))] | length > 0')"
@@ -170,8 +170,8 @@ EMP_ID=$(echo "$SES_EMP" | jq -r .datos.usuario.empleadoId)
 verificar "login como empleado" "EMPLEADO" "$(echo "$SES_EMP" | jq -r .datos.usuario.rol)"
 verificar "el empleado NO puede crear empleados" "403" \
   "$(estado -X POST -H 'Content-Type: application/json' -H "X-Token-CSRF: $CSRF_EMP" -d "$NUEVO" "$BASE/api/empleados")"
-verificar "el empleado NO ve la auditoria" "403" "$(estado "$BASE/api/auditoria")"
-verificar "el empleado NO accede a la nomina" "403" "$(estado "$BASE/api/reportes/nomina?formato=json")"
+verificar "el empleado NO ve la auditoría" "403" "$(estado "$BASE/api/auditoria")"
+verificar "el empleado NO accede a la nómina" "403" "$(estado "$BASE/api/reportes/nomina?formato=json")"
 verificar "el empleado NO ve datos sensibles ajenos" "true" \
   "$(c "$BASE/api/empleados/$ID1" | jq -r '.datos.sensiblesEnmascarados')"
 HORAS_AJENAS=$(c "$BASE/api/registros-tiempo?empleadoId=$ID1")
@@ -183,7 +183,7 @@ c -X POST -H 'Content-Type: application/json' -H "X-Token-CSRF: $CSRF_EMP" -o /d
 SES_AUD=$(c -X POST -H 'Content-Type: application/json' \
   -d '{"email":"auditor@ecotech.com","contrasena":"EcoTech#2026Admin"}' "$BASE/api/auth/login")
 CSRF_AUD=$(echo "$SES_AUD" | jq -r .datos.tokenCsrf)
-verificar "el auditor SI lee la auditoria" "200" "$(estado "$BASE/api/auditoria")"
+verificar "el auditor SÍ lee la auditoría" "200" "$(estado "$BASE/api/auditoria")"
 verificar "el auditor NO crea proyectos" "403" \
   "$(estado -X POST -H 'Content-Type: application/json' -H "X-Token-CSRF: $CSRF_AUD" \
      -d '{"nombre":"Proyecto auditor","fechaInicio":"2026-01-01"}' "$BASE/api/proyectos")"

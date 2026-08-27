@@ -1,20 +1,20 @@
 import type { Rol } from '../../compartido/tipos.js';
 
 /**
- * Sesion activa, tal como se guarda en KV.
+ * Sesión activa, tal como se guarda en KV.
  *
  * ## Decisiones de seguridad
  *
- * - Se persiste el **hash** del token, no el token. Un volcado del almacen no
- *   permite suplantar a nadie: quien lo obtenga tendria que invertir SHA-256.
- * - La clave de KV incluye ese hash, de modo que validar una sesion es una sola
- *   lectura directa, sin recorrer una coleccion.
- * - Se apoya en el TTL nativo de KV: la sesion se borra sola al expirar y no
+ * - Se persiste el **hash** del token, no el token. Un volcado del almacén no
+ *   permite suplantar a nadie: quien lo obtenga tendría que invertir SHA-256.
+ * - La clave de KV incluye ese hash, de modo que validar una sesión es una sola
+ *   lectura directa, sin recorrer una colección.
+ * - Se apoya en el TTL nativo de KV: la sesión se borra sola al expirar y no
  *   hace falta una tarea de limpieza.
- * - Lleva su propio `tokenCsrf`, distinto del token de sesion, para el patron de
- *   doble envio (cookie + cabecera) en las peticiones que mutan datos.
- * - `rol` va desnormalizado aqui para poder autorizar sin leer el usuario en
- *   cada peticion; `ServicioAutenticacion` revalida contra el usuario real en
+ * - Lleva su propio `tokenCsrf`, distinto del token de sesión, para el patron de
+ *   doble envío (cookie + cabecera) en las peticiones que mutan datos.
+ * - `rol` va desnormalizado aquí para poder autorizar sin leer el usuario en
+ *   cada petición; `Servicioautenticación` revalida contra el usuario real en
  *   las operaciones sensibles, de modo que un cambio de rol no quede latente.
  */
 export interface DatosSesion {
@@ -25,14 +25,14 @@ export interface DatosSesion {
   tokenCsrf: string;
   creadaEn: string;
   expiraEn: string;
-  /** Huella del cliente: detecta reutilizacion del token desde otro origen. */
+  /** Huella del cliente: detecta reutilización del token desde otro origen. */
   huellaCliente: string | null;
 }
 
-/** Duracion de una sesion inactiva. */
+/** Duración de una sesión inactiva. */
 export const DURACION_SESION_SEGUNDOS = 8 * 60 * 60;
 
-/** Nombre de la cookie de sesion. El prefijo `__Host-` exige HTTPS,
+/** Nombre de la cookie de sesión. El prefijo `__Host-` exige HTTPS,
  *  `Path=/` y ausencia de `Domain`, e impide que un subdominio la sobrescriba. */
 export const NOMBRE_COOKIE_SESION = '__Host-ecotech_sesion';
 

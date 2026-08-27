@@ -1,19 +1,19 @@
 /**
  * Avisos efimeros (toasts).
  *
- * Se monta sobre la region `#notificaciones`, que vive fuera de `#app` para que
+ * Se monta sobre la región `#notificaciones`, que vive fuera de `#app` para que
  * volver a pintar una vista no la destruya: si el contenedor se recreara, el
- * lector de pantalla perderia la region viva y dejaria de anunciar los avisos.
+ * lector de pantalla perdería la región viva y dejaría de anunciar los avisos.
  */
 
 import { agregar, div, elemento } from '../dom.js';
 
 type TipoAviso = 'exito' | 'error' | 'aviso' | 'info';
 
-/** Cuantos avisos caben en pantalla antes de descartar el mas antiguo. */
+/** Cuantos avisos caben en pantalla antes de descartar el más antiguo. */
 const MAXIMO_VISIBLES = 4;
 
-/** Un error se lee entero, no de reojo: vive mas que el resto. */
+/** Un error se lee entero, no de reojo: vive más que el resto. */
 const DURACION: Readonly<Record<TipoAviso, number>> = Object.freeze({
   exito: 5000,
   error: 8000,
@@ -24,8 +24,8 @@ const DURACION: Readonly<Record<TipoAviso, number>> = Object.freeze({
 const TITULO: Readonly<Record<TipoAviso, string>> = Object.freeze({
   exito: 'Hecho',
   error: 'Error',
-  aviso: 'Atencion',
-  info: 'Informacion',
+  aviso: 'Atención',
+  info: 'Información',
 });
 
 const CLASE: Readonly<Record<TipoAviso, string>> = Object.freeze({
@@ -35,7 +35,7 @@ const CLASE: Readonly<Record<TipoAviso, string>> = Object.freeze({
   info: 'notificacion-info',
 });
 
-/** Duracion de la animacion de salida definida en la hoja de estilos. */
+/** Duración de la animación de salida definida en la hoja de estilos. */
 const SALIDA = 200;
 
 interface AvisoVisible {
@@ -64,7 +64,7 @@ export class Notificador {
 
   private static mostrar(tipo: TipoAviso, mensaje: string): void {
     // Una avalancha de avisos apilados tapa la interfaz y no se lee ninguno:
-    // por encima del maximo se retira el mas antiguo, que ya se leyo o ya no
+    // por encima del máximo se retira el más antiguo, que ya se leyo o ya no
     // interesa.
     while (Notificador.visibles.length >= MAXIMO_VISIBLES) {
       const antiguo = Notificador.visibles.shift();
@@ -96,14 +96,14 @@ export class Notificador {
       temporizador: window.setTimeout(() => Notificador.cerrar(nodo), DURACION[tipo]),
     };
     // Se cierra pulsando en cualquier punto del aviso, no solo en la cruz: el
-    // boton es la pista visual, pero el area util es la tarjeta entera.
+    // botón es la pista visual, pero el área útil es la tarjeta entera.
     nodo.addEventListener('click', () => Notificador.cerrar(nodo));
 
     Notificador.visibles.push(aviso);
     agregar(Notificador.raiz(), nodo);
   }
 
-  /** Cierra un aviso con la animacion de salida. */
+  /** Cierra un aviso con la animación de salida. */
   private static cerrar(nodo: HTMLElement): void {
     const indice = Notificador.visibles.findIndex((a) => a.nodo === nodo);
     if (indice < 0) return;
@@ -114,14 +114,14 @@ export class Notificador {
     window.setTimeout(() => nodo.remove(), SALIDA);
   }
 
-  /** Retirada inmediata, sin animacion, al hacer sitio para uno nuevo. */
+  /** Retirada inmediata, sin animación, al hacer sitio para uno nuevo. */
   private static retirar(aviso: AvisoVisible): void {
     window.clearTimeout(aviso.temporizador);
     aviso.nodo.remove();
   }
 
   /**
-   * Region de avisos. Si la pagina no la trae (una prueba, por ejemplo) se
+   * Región de avisos. Si la página no la trae (una prueba, por ejemplo) se
    * crea al vuelo: un aviso que no se puede pintar no debe tumbar la vista.
    */
   private static raiz(): HTMLElement {

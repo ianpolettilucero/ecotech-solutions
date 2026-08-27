@@ -1,8 +1,8 @@
 /**
- * Participacion de las personas en los proyectos.
+ * Participación de las personas en los proyectos.
  *
- * Una asignacion nunca se borra: se cierra con fecha. Las horas ya imputadas
- * bajo ella necesitan seguir teniendo un vinculo que las explique, asi que la
+ * Una asignación nunca se borra: se cierra con fecha. Las horas ya imputadas
+ * bajo ella necesitan seguir teniendo un vinculo que las explique, así que la
  * pantalla habla de "desasignar" y no de "eliminar", y muestra las cerradas
  * junto a las vigentes en lugar de esconderlas.
  */
@@ -49,10 +49,10 @@ interface RespuestaProyectos {
   horasPorProyecto: Record<string, number>;
 }
 
-/** Estados en los que un proyecto todavia admite incorporar gente. */
+/** Estados en los que un proyecto todavía admite incorporar gente. */
 const ESTADOS_ABIERTOS: readonly EstadoProyecto[] = ['PLANIFICADO', 'EN_CURSO', 'PAUSADO'];
 
-/** Dedicacion que se propone al asignar: la jornada completa. */
+/** Dedicación que se propone al asignar: la jornada completa. */
 const DEDICACION_POR_DEFECTO = 100;
 
 type Vigencia = 'activas' | 'cerradas' | 'todas';
@@ -66,9 +66,6 @@ export class VistaAsignaciones extends Vista {
     return 'Asignaciones';
   }
 
-  override get tituloCorto(): string {
-    return 'Asignar';
-  }
 
   override get icono(): string {
     return 'A';
@@ -86,8 +83,8 @@ export class VistaAsignaciones extends Vista {
   private lista: HTMLElement | null = null;
 
   override async render(contenedor: HTMLElement): Promise<void> {
-    // Los dos catalogos se piden en paralelo: son independientes y encadenarlos
-    // solo sumaria la latencia de uno a la del otro.
+    // Los dos catálogos se piden en paralelo: son independientes y encadenarlos
+    // solo sumaría la latencia de uno a la del otro.
     [this.empleados, this.proyectos] = await Promise.all([
       this.cargarEmpleados(),
       this.cargarProyectos(),
@@ -101,7 +98,7 @@ export class VistaAsignaciones extends Vista {
         elemento('p', {
           clase: 'texto-menor texto-tenue',
           texto:
-            'Quien participa en que proyecto, con que rol y con cuanta dedicacion. Las participaciones cerradas se conservan como historial.',
+            'Quién participa en qué proyecto, con qué rol y con cuánta dedicación. Las participaciones cerradas se conservan como historial.',
         }),
       ),
     );
@@ -188,12 +185,12 @@ export class VistaAsignaciones extends Vista {
       { titulo: 'Proyecto', celda: (a) => this.nombreProyecto(a.proyectoId) },
       { titulo: 'Rol', celda: (a) => insignia(a.rolProyecto) },
       {
-        titulo: 'Dedicacion',
+        titulo: 'Dedicación',
         clase: 'celda-numero',
         celda: (a) => `${formatearNumero(a.porcentajeDedicacion, 0)} %`,
       },
       { titulo: 'Desde', celda: (a) => formatearFecha(a.fechaAsignacion) },
-      // Una participacion vigente no tiene fecha de cierre todavia.
+      // Una participación vigente no tiene fecha de cierre todavía.
       { titulo: 'Hasta', celda: (a) => (a.activa ? '-' : formatearFecha(a.fechaDesasignacion)) },
       { titulo: 'Estado', celda: (a) => VistaAsignaciones.marcaVigencia(a) },
       { titulo: 'Acciones', clase: 'celda-acciones', celda: (a) => this.acciones(a) },
@@ -211,8 +208,8 @@ export class VistaAsignaciones extends Vista {
   }
 
   private acciones(asignacion: AsignacionDTO): Node {
-    // Una asignacion cerrada no se toca: reescribirla falsearia las horas que
-    // se imputaron bajo ella. El servidor lo rechaza, y aqui ni se ofrece.
+    // Una asignación cerrada no se toca: reescribirla falsearía las horas que
+    // se imputaron bajo ella. El servidor lo rechaza, y aquí ni se ofrece.
     if (!this.app.puede('asignacion:gestionar') || !asignacion.activa) {
       return elemento('span', { clase: 'texto-tenue', texto: '-' });
     }
@@ -266,7 +263,7 @@ export class VistaAsignaciones extends Vista {
       },
       {
         nombre: 'porcentajeDedicacion',
-        etiqueta: 'Dedicacion (%)',
+        etiqueta: 'Dedicación (%)',
         tipo: 'numero',
         valor: DEDICACION_POR_DEFECTO,
         ayuda: 'Parte de la jornada que ocupa este proyecto. La suma de las vigentes no puede pasar del 100 %.',
@@ -301,23 +298,23 @@ export class VistaAsignaciones extends Vista {
         porcentajeDedicacion: valores['porcentajeDedicacion'] ?? DEDICACION_POR_DEFECTO,
         fechaAsignacion: valores['fechaAsignacion'],
       });
-      this.app.notificarExito('Asignacion creada.');
+      this.app.notificarExito('Asignación creada.');
       await this.refrescar();
       return true;
     } catch (e) {
       formulario.mostrarErrores(e);
       // Cuando la suma de dedicaciones pasa del 100 %, el 422 ya explica cuanto
-      // queda disponible y en cuantos proyectos esta comprometido el resto. Ese
-      // texto es mas util que cualquier resumen que se pudiera escribir aqui.
+      // queda disponible y en cuantos proyectos está comprometido el resto. Ese
+      // texto es más útil que cualquier resumen que se pudiera escribir aquí.
       this.app.notificarError(
-        e instanceof ErrorApi ? e.message : 'No se pudo crear la asignacion.',
+        e instanceof ErrorApi ? e.message : 'No se pudo crear la asignación.',
       );
       return false;
     }
   }
 
   // ---------------------------------------------------------------------------
-  // Edicion
+  // Edición
   // ---------------------------------------------------------------------------
 
   private abrirEdicion(asignacion: AsignacionDTO): void {
@@ -346,16 +343,16 @@ export class VistaAsignaciones extends Vista {
       },
       {
         nombre: 'porcentajeDedicacion',
-        etiqueta: 'Dedicacion (%)',
+        etiqueta: 'Dedicación (%)',
         tipo: 'numero',
         valor: asignacion.porcentajeDedicacion,
-        ayuda: 'Al recalcular la disponibilidad no se cuenta la dedicacion actual de esta misma asignacion.',
+        ayuda: 'Al recalcular la disponibilidad no se cuenta la dedicación actual de esta misma asignación.',
       },
     ];
 
     const formulario = new Formulario(campos);
     Modal.abrir({
-      titulo: 'Editar asignacion',
+      titulo: 'Editar asignación',
       contenido: formulario.render(),
       textoAceptar: 'Guardar cambios',
       alAceptar: () => this.actualizar(asignacion, formulario),
@@ -371,13 +368,13 @@ export class VistaAsignaciones extends Vista {
         rolProyecto: valores['rolProyecto'],
         porcentajeDedicacion: valores['porcentajeDedicacion'] ?? asignacion.porcentajeDedicacion,
       });
-      this.app.notificarExito('Asignacion actualizada.');
+      this.app.notificarExito('Asignación actualizada.');
       await this.refrescar();
       return true;
     } catch (e) {
       formulario.mostrarErrores(e);
       this.app.notificarError(
-        e instanceof ErrorApi ? e.message : 'No se pudo actualizar la asignacion.',
+        e instanceof ErrorApi ? e.message : 'No se pudo actualizar la asignación.',
       );
       return false;
     }
@@ -390,9 +387,9 @@ export class VistaAsignaciones extends Vista {
   private async confirmarDesasignacion(asignacion: AsignacionDTO): Promise<void> {
     const confirmado = await Modal.confirmar(
       'Desasignar',
-      `Se cerrara con fecha ${formatearFecha(hoy())} la participacion de ` +
+      `Se cerrara con fecha ${formatearFecha(hoy())} la participación de ` +
         `${this.nombreEmpleado(asignacion.empleadoId)} en ${this.nombreProyecto(asignacion.proyectoId)}. ` +
-        'La asignacion no se borra: queda como historial de las horas ya imputadas.',
+        'La asignación no se borra: queda como historial de las horas ya imputadas.',
       true,
     );
     if (!confirmado) return;
@@ -400,13 +397,13 @@ export class VistaAsignaciones extends Vista {
     const consulta = ClienteApi.consulta({ fecha: hoy() });
     const hecho = await this.app.intentar(
       () => ClienteApi.borrar<AsignacionDTO>(`/api/asignaciones/${asignacion.id}${consulta}`),
-      'Participacion cerrada.',
+      'Participación cerrada.',
     );
     if (hecho) await this.refrescar();
   }
 
   // ---------------------------------------------------------------------------
-  // Catalogos
+  // Catálogos
   // ---------------------------------------------------------------------------
 
   private async cargarEmpleados(): Promise<EmpleadoDTO[]> {

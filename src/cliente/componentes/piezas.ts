@@ -4,8 +4,8 @@
  * Son funciones puras: reciben datos y devuelven un nodo ya construido, sin
  * guardar estado ni consultar la API. Existen para que las vistas no repitan
  * la misma marca una y otra vez y, sobre todo, para que una insignia o una
- * metrica se vean igual en todas las pantallas: si hay que cambiar el aspecto
- * de algo, se cambia aqui y cambia en toda la aplicacion.
+ * métrica se vean igual en todas las pantallas: si hay que cambiar el aspecto
+ * de algo, se cambia aquí y cambia en toda la aplicación.
  */
 
 import { agregar, claseInsignia, div, elemento, etiqueta } from '../dom.js';
@@ -13,7 +13,7 @@ import { agregar, claseInsignia, div, elemento, etiqueta } from '../dom.js';
 /** Milisegundos que espera el buscador antes de avisar del texto tecleado. */
 const RETARDO_BUSQUEDA = 300;
 
-/** Contador para generar identificadores unicos de control y etiqueta. */
+/** Contador para generar identificadores únicos de control y etiqueta. */
 let contadorId = 0;
 
 function idUnico(prefijo: string): string {
@@ -30,7 +30,7 @@ export function insignia(estado: string): HTMLElement {
   return elemento('span', { clase: claseInsignia(estado), texto: etiqueta(estado) });
 }
 
-/** Tarjeta de metrica del panel: rotulo, cifra grande y detalle opcional. */
+/** Tarjeta de métrica del panel: rotulo, cifra grande y detalle opcional. */
 export function tarjetaMetrica(titulo: string, valor: string, detalle?: string): HTMLElement {
   return div(
     'metrica',
@@ -40,7 +40,7 @@ export function tarjetaMetrica(titulo: string, valor: string, detalle?: string):
   );
 }
 
-/** Hueco que sustituye a una lista vacia. Nunca se deja una tabla sin filas. */
+/** Hueco que sustituye a una lista vacía. Nunca se deja una tabla sin filas. */
 export function estadoVacio(mensaje: string): HTMLElement {
   return div(
     'vacio',
@@ -62,9 +62,9 @@ export function cargando(): HTMLElement {
  * Anchuras del relleno de las barras de progreso.
  *
  * La CSP es `style-src 'self'` sin 'unsafe-inline': el atributo `style` esta
- * bloqueado, asi que la anchura no puede escribirse en linea. Se expresa como
+ * bloqueado, así que la anchura no puede escribirse en línea. Se expresa como
  * una clase `relleno-N` cuya regla se registra una sola vez por porcentaje en
- * una hoja construible; una hoja del CSSOM no es estilo en linea y la politica
+ * una hoja construible; una hoja del CSSOM no es estilo en línea y la política
  * no la bloquea. Si el navegador no las admite, la barra se queda sin relleno
  * visible pero el porcentaje sigue anunciado en `aria-valuetext`.
  */
@@ -93,7 +93,7 @@ function claseAnchura(porcentaje: number): string {
  *
  * El relleno se acota al 100 % para que no se desborde del carril, pero cuando
  * el porcentaje real lo supera se anade la clase 'excedido': un proyecto que se
- * ha pasado de presupuesto se distingue de uno justo al limite de un vistazo,
+ * ha pasado de presupuesto se distingue de uno justo al límite de un vistazo,
  * que es justo lo que se pierde si solo se recorta el valor.
  */
 export function barraProgreso(porcentaje: number): HTMLElement {
@@ -123,10 +123,10 @@ export function barraProgreso(porcentaje: number): HTMLElement {
 // Controles
 // ---------------------------------------------------------------------------
 
-/** Fila de botones de accion. */
+/** Fila de botones de acción. */
 export function botonera(...botones: HTMLElement[]): HTMLElement {
   // 'acciones' es el gancho que usan las vistas; 'grupo-botones' aporta la
-  // separacion y el ajuste de linea que ya define la hoja de estilos.
+  // separación y el ajuste de línea que ya define la hoja de estilos.
   return div('acciones grupo-botones', ...botones);
 }
 
@@ -137,7 +137,7 @@ export function boton(
 ): HTMLButtonElement {
   return elemento('button', {
     clase: `boton boton-${variante}`,
-    // Sin `type="button"` un boton dentro de un <form> lo enviaria al pulsarlo.
+    // Sin `type="button"` un botón dentro de un <form> lo enviaría al pulsarlo.
     tipo: 'button',
     texto,
     al: { click: () => alPulsar() },
@@ -175,16 +175,16 @@ export function selector(
   for (const opcion of opciones) {
     agregar(control, elemento('option', { valor: opcion.valor, texto: opcion.texto }));
   }
-  // Se asigna despues de tener las opciones: antes el navegador lo ignoraria.
+  // Se asigna después de tener las opciones: antes el navegador lo ignoraría.
   control.value = valorActual;
   return control;
 }
 
 /**
- * Campo de busqueda con retardo.
+ * Campo de búsqueda con retardo.
  *
- * Sin el retardo cada tecla lanzaria una peticion al servidor y las respuestas
- * podrian llegar desordenadas, dejando en pantalla el resultado de un texto que
+ * Sin el retardo cada tecla lanzaría una petición al servidor y las respuestas
+ * podrían llegar desordenadas, dejando en pantalla el resultado de un texto que
  * el usuario ya no tiene escrito.
  */
 export function buscador(marcador: string, alBuscar: (texto: string) => void): HTMLInputElement {

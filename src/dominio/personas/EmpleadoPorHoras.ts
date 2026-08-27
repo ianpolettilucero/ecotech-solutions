@@ -14,8 +14,8 @@ const COEFICIENTE_HORA_EXTRA = 1.5;
  * Empleado jornalizado: cobra por hora efectivamente trabajada y aprobada.
  *
  * Las horas por encima de la jornada mensual (160 h) se liquidan con recargo del
- * 50 %. Esta regla vive aqui y en ningun otro lugar: si manana cambia el
- * convenio, se toca una constante de esta clase y ni la nomina ni los informes
+ * 50 %. Esta regla vive aquí y en ningún otro lugar: si mañana cambia el
+ * convenio, se toca una constante de esta clase y ni la nómina ni los informes
  * se enteran.
  */
 export class EmpleadoPorHoras extends Empleado {

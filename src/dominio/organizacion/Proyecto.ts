@@ -16,9 +16,9 @@ export interface EstadoProyectoPersistido extends EstadoEntidad {
 /**
  * Transiciones permitidas del ciclo de vida de un proyecto.
  *
- * Se declara como tabla y no como cadena de `if`: la maquina de estados queda
- * legible de un vistazo y es imposible que dos metodos discrepen sobre que
- * transicion es valida. FINALIZADO y CANCELADO son terminales a proposito; para
+ * Se declara como tabla y no como cadena de `if`: la máquina de estados queda
+ * legible de un vistazo y es imposible que dos métodos discrepen sobre que
+ * transición es valida. FINALIZADO y CANCELADO son terminales a propósito; para
  * revivir un proyecto se crea uno nuevo, de modo que los informes de periodos
  * cerrados nunca cambien retroactivamente.
  */
@@ -33,7 +33,7 @@ const TRANSICIONES: Readonly<Record<EstadoProyecto, readonly EstadoProyecto[]>> 
 /**
  * Proyecto de la empresa.
  *
- * Concentra dos invariantes que las hojas de calculo no podian sostener: que la
+ * Concentra dos invariantes que las hojas de cálculo no podian sostener: que la
  * fecha de fin estimada nunca sea anterior al inicio, y que el estado solo
  * avance por transiciones legitimas.
  */
@@ -129,7 +129,7 @@ export class Proyecto extends Entidad<EstadoProyectoPersistido> {
     this.validar();
   }
 
-  /** Cambia de estado solo si la transicion figura en la tabla. */
+  /** Cambia de estado solo si la transición figura en la tabla. */
   cambiarEstado(nuevo: EstadoProyecto): void {
     if (nuevo === this._estado) return;
     const permitidas = TRANSICIONES[this._estado] ?? [];
@@ -155,7 +155,7 @@ export class Proyecto extends Entidad<EstadoProyectoPersistido> {
       ]);
     }
     if (!/^\d{4}-\d{2}-\d{2}$/.test(this._fechaInicio)) {
-      throw new ErrorValidacion('La fecha de inicio no es valida.', [
+      throw new ErrorValidacion('La fecha de inicio no es válida.', [
         { campo: 'fechaInicio', mensaje: 'Debe tener el formato AAAA-MM-DD.' },
       ]);
     }

@@ -4,7 +4,7 @@ import type { DepartamentoDTO } from '../../compartido/tipos.js';
 
 export interface EstadoDepartamento extends EstadoEntidad {
   nombre: string;
-  /** Nombre en minusculas y sin espacios repetidos: clave de unicidad. */
+  /** Nombre en minúsculas y sin espacios repetidos: clave de unicidad. */
   nombreNormalizado: string;
   descripcion: string;
   gerenteId: string | null;
@@ -14,12 +14,12 @@ export interface EstadoDepartamento extends EstadoEntidad {
 /**
  * Unidad organizativa de la empresa (Desarrollo Sostenible, I+D, Ventas, RRHH...).
  *
- * ## La gerencia es una asociacion, no una herencia
+ * ## La gerencia es una asociación, no una herencia
  *
  * `gerenteId` apunta a un `Empleado`. El gerente **sigue siendo un empleado
  * normal**: tiene legajo, carga horas y pertenece a un departamento (no
  * necesariamente al que dirige). Modelarlo como subclase `Gerente extends
- * Empleado` obligaria a recrear el objeto cada vez que alguien asume o deja el
+ * Empleado` obligaría a recrear el objeto cada vez que alguien asume o deja el
  * cargo, perdiendo su identidad y su historial.
  *
  * Se guarda el **identificador** y no la instancia para evitar ciclos de
@@ -42,7 +42,7 @@ export class Departamento extends Entidad<EstadoDepartamento> {
     this._activo = estado.activo;
   }
 
-  /** Normalizacion usada como clave de unicidad de nombre. */
+  /** Normalización usada como clave de unicidad de nombre. */
   static normalizarNombre(nombre: string): string {
     return nombre.trim().toLowerCase().replace(/\s+/g, ' ');
   }
@@ -122,7 +122,7 @@ export class Departamento extends Entidad<EstadoDepartamento> {
       ]);
     }
     if (this._descripcion.length > 500) {
-      throw new ErrorValidacion('La descripcion es demasiado larga.', [
+      throw new ErrorValidacion('La descripción es demasiado larga.', [
         { campo: 'descripcion', mensaje: 'No puede superar los 500 caracteres.' },
       ]);
     }

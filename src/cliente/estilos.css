@@ -1,21 +1,21 @@
 /* ==========================================================================
-   EcoTech Solutions - hoja de estilos unica del cliente.
-   La CSP del Worker es `style-src 'self'` sin 'unsafe-inline', asi que aqui
+   EcoTech Solutions - hoja de estilos única del cliente.
+   La CSP del Worker es `style-src 'self'` sin 'unsafe-inline', así que aquí
    vive TODO el estilo: no hay atributos `style` ni etiquetas <style> en el
-   HTML ni en el codigo que genera las vistas. Cualquier variacion visual se
-   expresa como clase o como variable CSS, nunca como estilo en linea.
+   HTML ni en el código que genera las vistas. Cualquier variación visual se
+   expresa como clase o como variable CSS, nunca como estilo en línea.
    Orden del archivo: tokens -> reset -> layout -> componentes -> utilidades.
    ========================================================================== */
 
 /* --------------------------------------------------------------------------
    1. Tokens de tema
-   La paleta clara se define completa aqui; la media query de modo oscuro solo
-   reasigna variables. Asi ningun componente necesita reglas duplicadas por
-   tema y un color nuevo se cambia en un unico sitio.
+   La paleta clara se define completa aquí; la media query de modo oscuro solo
+   reasigna variables. Así ningún componente necesita reglas duplicadas por
+   tema y un color nuevo se cambia en un único sitio.
    -------------------------------------------------------------------------- */
 :root {
   /* Informa al navegador para que los controles nativos (scrollbars, selects,
-     autocompletado) se pinten en el mismo tema que la aplicacion. */
+     autocompletado) se pinten en el mismo tema que la aplicación. */
   color-scheme: light;
   --fuente-base: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   --fuente-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
@@ -23,15 +23,15 @@
   --tamano-texto-menor: 0.8125rem;
   --tamano-texto-micro: 0.6875rem;
 
-  /* Verdes sobrios: el primario se usa en superficies grandes, asi que se
+  /* Verdes sobrios: el primario se usa en superficies grandes, así que se
      elige apagado para no cansar en jornadas largas de uso. */
   --color-primario: #2f7d4f;
   --color-primario-oscuro: #235f3c;
   --color-primario-claro: #4a9b6a;
   --color-primario-tenue: #e7f1ea;
   --color-primario-contraste: #ffffff;
-  /* Enlaces y elemento de navegacion activo: en modo oscuro el verde
-     oscuro se hunde en el fondo, asi que el token cambia de extremo. */
+  /* Enlaces y elemento de navegación activo: en modo oscuro el verde
+     oscuro se hunde en el fondo, así que el token cambia de extremo. */
   --color-enlace: var(--color-primario-oscuro);
 
   /* Neutros calidos: el fondo tira a hueso, no a gris azulado. */
@@ -123,18 +123,18 @@ html {
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
   /* El hueco de la barra de desplazamiento se reserva siempre. Sirve para dos
-     cosas: al pasar de una vista corta a una larga la pagina ya no se corre de
-     lado, y sobre todo el dialogo puede congelar el desplazamiento del fondo
-     (`overflow: hidden` sobre <html>) sin que la interfaz de detras salte. En
-     un movil, donde la barra flota sobre el contenido, no reserva nada. */
+     cosas: al pasar de una vista corta a una larga la página ya no se corre de
+     lado, y sobre todo el diálogo puede congelar el desplazamiento del fondo
+     (`overflow: hidden` sobre <html>) sin que la interfaz de detrás salte. En
+     un móvil, donde la barra flota sobre el contenido, no reserva nada. */
   scrollbar-gutter: stable;
 }
 body {
   min-block-size: 100dvh;
-  /* Ningun hijo puede ensanchar el documento: el desplazamiento horizontal es
+  /* Ningún hijo puede ensanchar el documento: el desplazamiento horizontal es
      siempre de un contenedor concreto (`.tabla-contenedor`), nunca de la
-     pagina entera. Se usa `clip` y no `hidden` porque `hidden` convertiria al
-     <body> en contenedor de desplazamiento y romperia el `position: sticky`
+     página entera. Se usa `clip` y no `hidden` porque `hidden` convertiría al
+     <body> en contenedor de desplazamiento y rompería el `position: sticky`
      de la cabecera y de la barra lateral. */
   max-inline-size: 100%;
   overflow-x: clip;
@@ -171,17 +171,17 @@ ul[class],
 ol[class] { padding-inline-start: 0; list-style: none; }
 ::selection { background-color: var(--color-primario-tenue); color: var(--color-texto); }
 
-/* Un anillo de foco unico y visible en cualquier superficie. Se aplica solo a
+/* Un anillo de foco único y visible en cualquier superficie. Se aplica solo a
    :focus-visible para no molestar al usuario de raton, pero nunca se elimina
-   el foco por completo: es la unica pista de navegacion por teclado. */
+   el foco por completo: es la única pista de navegación por teclado. */
 :focus-visible { outline: 2px solid var(--color-foco); outline-offset: 2px; border-radius: var(--radio-1); }
 :focus:not(:focus-visible) { outline: none; }
 
 /* --------------------------------------------------------------------------
-   3. Estructura de la aplicacion
+   3. Estructura de la aplicación
    Rejilla de dos columnas: barra lateral fija + (cabecera sobre contenido).
-   `minmax(0, 1fr)` es imprescindible: sin el, una tabla ancha ensancharia la
-   pista de la rejilla y arrastraria el scroll horizontal al <body>.
+   `minmax(0, 1fr)` es imprescindible: sin el, una tabla ancha ensancharía la
+   pista de la rejilla y arrastraría el scroll horizontal al <body>.
    -------------------------------------------------------------------------- */
 .aplicacion {
   display: grid;
@@ -204,8 +204,8 @@ ol[class] { padding-inline-start: 0; list-style: none; }
   background-color: var(--color-superficie);
   border-inline-end: 1px solid var(--color-borde);
 }
-/* El armazon de la SPA emite estos nombres para las piezas de la cabecera y
-   de la navegacion; se agrupan con los canonicos en lugar de duplicar reglas. */
+/* El armazón de la SPA emite estos nombres para las piezas de la cabecera y
+   de la navegación; se agrupan con los canonicos en lugar de duplicar reglas. */
 .marca,
 .barra-lateral-marca {
   display: flex;
@@ -251,7 +251,7 @@ ol[class] { padding-inline-start: 0; list-style: none; }
   gap: var(--esp-3);
   padding: var(--esp-2) var(--esp-3);
   border-radius: var(--radio-2);
-  /* Los elementos de navegacion son <button>, no enlaces: sin este reseteo
+  /* Los elementos de navegación son <button>, no enlaces: sin este reseteo
      arrastrarian el borde y el fondo nativos del control. */
   border: none;
   background: none;
@@ -272,7 +272,7 @@ ol[class] { padding-inline-start: 0; list-style: none; }
 }
 .enlace-nav-icono,
 .nav-icono { inline-size: 1.25rem; text-align: center; flex: none; }
-/* El rotulo abreviado solo existe para la barra inferior del telefono. */
+/* El rotulo abreviado solo existe para la barra inferior del teléfono. */
 .nav-texto-corto { display: none; }
 .pie-lateral {
   display: flex;
@@ -318,10 +318,10 @@ ol[class] { padding-inline-start: 0; list-style: none; }
   flex-direction: column;
   gap: var(--esp-5);
 }
-/* Envoltorio de la vista pintada dentro de `.contenido`: el armazon crea este
-   nodo y le cuelga el modulo entero, asi que la separacion vertical tiene que
-   repetirse aqui. Sin ella el `gap` de `.contenido` solo separaria a `.vista`
-   de nada, y las tarjetas del modulo quedarian pegadas unas a otras. */
+/* Envoltorio de la vista pintada dentro de `.contenido`: el armazón crea este
+   nodo y le cuelga el módulo entero, así que la separación vertical tiene que
+   repetirse aquí. Sin ella el `gap` de `.contenido` solo separaría a `.vista`
+   de nada, y las tarjetas del módulo quedarían pegadas unas a otras. */
 .vista {
   display: flex;
   flex-direction: column;
@@ -329,8 +329,8 @@ ol[class] { padding-inline-start: 0; list-style: none; }
   /* Igual que en `.contenido`: una tabla ancha no debe estirar la columna. */
   min-inline-size: 0;
 }
-/* Cabecera de modulo: rotulo a un lado, acciones al otro. Con `flex-wrap` los
-   botones bajan de linea antes que comprimir el titulo. */
+/* Cabecera de módulo: rotulo a un lado, acciones al otro. Con `flex-wrap` los
+   botones bajan de línea antes que comprimir el titulo. */
 .vista-cabecera,
 .seccion-titulo {
   display: flex;
@@ -343,7 +343,7 @@ ol[class] { padding-inline-start: 0; list-style: none; }
 .subtitulo { color: var(--color-texto-tenue); font-size: var(--tamano-texto-menor); }
 
 /* Bajo 900px la barra lateral se convierte en barra inferior de iconos: la
-   navegacion queda al alcance del pulgar y libera el ancho completo para las
+   navegación queda al alcance del pulgar y libera el ancho completo para las
    tablas, que es el contenido dominante del sistema. */
 @media (max-width: 899px) {
   .aplicacion {
@@ -369,12 +369,12 @@ ol[class] { padding-inline-start: 0; list-style: none; }
     box-shadow: var(--sombra-2);
   }
   /* La marca desaparece en la barra inferior. Hay que nombrar los dos alias
-     igual que en la regla de escritorio: el armazon emite
+     igual que en la regla de escritorio: el armazón emite
      `barra-lateral-marca`, de modo que ocultar solo `.marca` no ocultaba nada
      y el logotipo con el texto "EcoTech Solutions" se quedaba dentro de la
-     barra fija, comiendose mas de la mitad del ancho. Los nueve accesos
-     quedaban apretados en la franja sobrante y solo se veia el primero: el
-     menu era, en la practica, inservible en un telefono. */
+     barra fija, comiendose más de la mitad del ancho. Los nueve accesos
+     quedaban apretados en la franja sobrante y solo se veía el primero: el
+     menú era, en la práctica, inservible en un teléfono. */
   .marca,
   .barra-lateral-marca,
   .navegacion-grupo,
@@ -391,11 +391,11 @@ ol[class] { padding-inline-start: 0; list-style: none; }
   .enlace-nav,
   .nav-item {
     /* `inline-size: auto` es imprescindible: la barra vertical de escritorio
-       le da `inline-size: 100%`, y con `flex-basis: auto` ese 100% se resolvia
+       le da `inline-size: 100%`, y con `flex-basis: auto` ese 100% se resolvía
        contra la barra inferior. Cada acceso media el ancho entero de la
-       pantalla, de modo que solo se veia uno y los otros ocho quedaban a
-       2.700 px de desplazamiento lateral: el menu del telefono mostraba una
-       sola seccion. */
+       pantalla, de modo que solo se veía uno y los otros ocho quedaban a
+       2.700 px de desplazamiento lateral: el menú del teléfono mostraba una
+       sola sección. */
     flex: 0 0 auto;
     inline-size: auto;
     flex-direction: column;
@@ -413,13 +413,13 @@ ol[class] { padding-inline-start: 0; list-style: none; }
   .cabecera { padding-inline: var(--esp-4); }
   .contenido {
     padding: var(--esp-4);
-    /* Espacio para que la ultima fila no quede tapada por la barra inferior. */
+    /* Espacio para que la última fila no quede tapada por la barra inferior. */
     padding-block-end: calc(var(--altura-barra-inferior) + var(--esp-5));
     gap: var(--esp-4);
   }
   .vista { gap: var(--esp-4); }
   .vista-titulo { font-size: 1.125rem; }
-  /* En una columna estrecha el titulo y su boton no caben en la misma linea:
+  /* En una columna estrecha el titulo y su botón no caben en la misma línea:
      las acciones bajan y ocupan el ancho disponible en vez de encogerse. */
   /* Especificidad (0,2,0): gana a `.acciones` este donde este en el archivo. */
   .vista-cabecera > .acciones { inline-size: 100%; }
@@ -427,7 +427,7 @@ ol[class] { padding-inline-start: 0; list-style: none; }
 
 /* --------------------------------------------------------------------------
    4. Aviso sin JavaScript
-   Cubre la ventana entera para que el esqueleto de carga, que sin JS giraria
+   Cubre la ventana entera para que el esqueleto de carga, que sin JS giraría
    eternamente, no se vea por debajo.
    -------------------------------------------------------------------------- */
 .aviso-sin-js {
@@ -523,16 +523,16 @@ ol[class] { padding-inline-start: 0; list-style: none; }
    -------------------------------------------------------------------------- */
 .pantalla-login {
   display: grid;
-  /* `safe` es la diferencia entre centrar y recortar: cuando la tarjeta es mas
+  /* `safe` es la diferencia entre centrar y recortar: cuando la tarjeta es más
      alta que la ventana, un `center` a secas empuja su borde superior por
      encima del origen del contenedor, y esa zona NO se alcanza desplazandose.
-     Con `safe` el centrado se desactiva en cuanto habria desbordamiento y la
+     Con `safe` el centrado se desactiva en cuanto habría desbordamiento y la
      tarjeta se alinea al inicio, que si es accesible. */
   place-items: safe center;
   min-block-size: 100dvh;
   padding: var(--esp-5);
   /* Degradado muy sutil para que la tarjeta despegue del fondo sin recurrir a
-     una imagen: un asset mas seria otra peticion y otra entrada en la CSP. */
+     una imagen: un asset más sería otra petición y otra entrada en la CSP. */
   background-image: radial-gradient(circle at 50% 0%, var(--color-primario-tenue), transparent 60%);
 }
 .tarjeta-login {
@@ -542,11 +542,11 @@ ol[class] { padding-inline-start: 0; list-style: none; }
   inline-size: min(24rem, 100%);
   /* CORRECCION IMPORTANTE.
      Un elemento de rejilla nace con `min-inline-size: auto`, que equivale a su
-     ancho minimo intrinseco. Ese minimo gana sobre el `inline-size` declarado,
+     ancho mínimo intrinseco. Ese mínimo gana sobre el `inline-size` declarado,
      de modo que un texto indivisible lo bastante largo ensancha la tarjeta y la
-     saca de la pantalla. Aqui pasaba: los correos de demostracion
+     saca de la pantalla. Aquí pasaba: los correos de demostración
      ("empleado@ecotech.com,") daban un min-content de 301 px cuando en un
-     telefono de 320 px solo hay 272 disponibles, y la tarjeta sobresalia por la
+     teléfono de 320 px solo hay 272 disponibles, y la tarjeta sobresalía por la
      derecha. Ponerlo a 0 devuelve el mando al `inline-size`. */
   min-inline-size: 0;
   max-inline-size: 100%;
@@ -596,8 +596,8 @@ ol[class] { padding-inline-start: 0; list-style: none; }
   font-weight: 700;
 }
 
-/* `anywhere` (y no `break-word`) es lo que hace falta: es el unico valor que
-   ademas reduce el ancho minimo intrinseco, que es justo lo que empujaba la
+/* `anywhere` (y no `break-word`) es lo que hace falta: es el único valor que
+   además reduce el ancho mínimo intrinseco, que es justo lo que empujaba la
    tarjeta fuera de la pantalla. Afecta a correos, identificadores y rutas, que
    es donde no hay espacios donde cortar. */
 .tarjeta-login,
@@ -652,8 +652,8 @@ ol[class] { padding-inline-start: 0; list-style: none; }
 }
 
 /* Una tabla dentro de una tarjeta pega mejor a los bordes: el relleno del
-   cuerpo dejaria un marco que rompe la continuidad de la cabecera pegajosa.
-   Los navegadores sin `:has` solo pierden ese detalle estetico. */
+   cuerpo dejaría un marco que rompe la continuidad de la cabecera pegajosa.
+   Los navegadores sin `:has` solo pierden ese detalle estético. */
 .tarjeta:has(.tabla) .tarjeta-cuerpo { padding: 0; }
 .rejilla {
   display: grid;
@@ -686,8 +686,8 @@ ol[class] { padding-inline-start: 0; list-style: none; }
 .boton[disabled],
 .boton[aria-disabled='true'] { opacity: 0.55; cursor: not-allowed; transform: none; }
 
-/* Un boton que muestra su propio girador esta ejecutando la accion: se
-   neutraliza el puntero para no encadenar envios duplicados. */
+/* Un botón que muestra su propio girador está ejecutando la acción: se
+   neutraliza el puntero para no encadenar envíos duplicados. */
 .boton:has(.girador) { pointer-events: none; }
 .boton-primario { background-color: var(--color-primario); color: var(--color-primario-contraste); }
 .boton-primario:hover:not([disabled]) {
@@ -802,16 +802,16 @@ ol[class] { padding-inline-start: 0; list-style: none; }
 
 /* --------------------------------------------------------------------------
    11. Tablas
-   El contenedor es el unico que desplaza. Sin el, una tabla ancha empujaria el
-   <body> y toda la interfaz se desplazaria en horizontal.
+   El contenedor es el único que desplaza. Sin el, una tabla ancha empujaría el
+   <body> y toda la interfaz se desplazaría en horizontal.
    -------------------------------------------------------------------------- */
 .tabla-contenedor {
   inline-size: 100%;
   max-inline-size: 100%;
-  /* El eje horizontal es el que salva a la pagina: una tabla mas ancha que la
-     columna se desplaza aqui dentro y no empuja al <body>. El vertical va
-     tambien en `auto` porque la cabecera pegajosa se ancla al contenedor con
-     desplazamiento mas cercano, que debe ser este. El maximo solo actua cuando
+  /* El eje horizontal es el que salva a la página: una tabla más ancha que la
+     columna se desplaza aquí dentro y no empuja al <body>. El vertical va
+     también en `auto` porque la cabecera pegajosa se ancla al contenedor con
+     desplazamiento más cercano, que debe ser este. El máximo solo actua cuando
      la tabla es larga; las cortas se muestran enteras. */
   overflow-x: auto;
   overflow-y: auto;
@@ -820,15 +820,15 @@ ol[class] { padding-inline-start: 0; list-style: none; }
 }
 .tabla {
   inline-size: 100%;
-  /* Ancho minimo para que las celdas no se aplasten: por debajo de esto se
+  /* Ancho mínimo para que las celdas no se aplasten: por debajo de esto se
      prefiere desplazar el contenedor antes que partir palabras en cada
-     columna, que es lo que haria ilegible una tabla de doce campos. */
+     columna, que es lo que haría ilegible una tabla de doce campos. */
   min-inline-size: 44rem;
   border-collapse: collapse;
   font-size: var(--tamano-texto-menor);
 }
-/* Variante sin ancho minimo, para desgloses de pocas columnas dentro de una
-   tarjeta estrecha (el panel). Ahi el desplazamiento horizontal escondaria las
+/* Variante sin ancho mínimo, para desgloses de pocas columnas dentro de una
+   tarjeta estrecha (el panel). Ahi el desplazamiento horizontal escondería las
    cifras, que son justamente lo que se va a mirar. */
 .tabla-compacta { min-inline-size: 0; }
 
@@ -875,12 +875,12 @@ ol[class] { padding-inline-start: 0; list-style: none; }
   font-family: var(--fuente-mono);
   font-size: var(--tamano-texto-micro);
   color: var(--color-texto-tenue);
-  /* Un legajo o un codigo de proyecto es un identificador indivisible: partirlo
-     en dos lineas lo vuelve ilegible y engorda la fila sin motivo. */
+  /* Un legajo o un código de proyecto es un identificador indivisible: partirlo
+     en dos líneas lo vuelve ilegible y engorda la fila sin motivo. */
   white-space: nowrap;
 }
-/* Descripciones y detalles libres: el unico contenido que puede ser largo. Se
-   le permite partir en varias lineas dentro de un ancho acotado, en vez de
+/* Descripciones y detalles libres: el único contenido que puede ser largo. Se
+   le permite partir en varias líneas dentro de un ancho acotado, en vez de
    estirar la columna y empujar al resto de campos fuera de la vista. */
 .celda-texto {
   min-inline-size: 12rem;
@@ -889,9 +889,9 @@ ol[class] { padding-inline-start: 0; list-style: none; }
   overflow-wrap: anywhere;
 }
 /* La columna se encoge a lo que ocupen sus botones (`1%` es el idioma de las
-   tablas para "lo minimo posible"), pero los botones NO deben apilarse: con
-   `flex-wrap: wrap` heredado de `.acciones` cada fila crecia a tres lineas de
-   alto y el listado se volvia interminable. */
+   tablas para "lo mínimo posible"), pero los botones NO deben apilarse: con
+   `flex-wrap: wrap` heredado de `.acciones` cada fila crecía a tres líneas de
+   alto y el listado se volvía interminable. */
 .celda-acciones { inline-size: 1%; white-space: nowrap; text-align: end; }
 .celda-acciones .acciones,
 .celda-acciones .grupo-botones {
@@ -904,8 +904,8 @@ ol[class] { padding-inline-start: 0; list-style: none; }
    Una ficha de empleado tiene ocho columnas y una de proyecto diez: en una
    pantalla de portatil la tabla no entra y el contenedor se desplaza en
    horizontal, que es lo correcto (nunca se arrastra al <body>). El problema es
-   que asi la ultima columna, justo la de las acciones, quedaba fuera de la
-   vista: para pulsar "Editar" habia que descubrir primero que la tabla se
+   que así la última columna, justo la de las acciones, quedaba fuera de la
+   vista: para pulsar "Editar" había que descubrir primero que la tabla se
    desplazaba. Anclada, siempre esta donde se la busca.
 
    El fondo es obligatorio: sin el, las celdas que pasan por debajo se verian a
@@ -917,7 +917,7 @@ ol[class] { padding-inline-start: 0; list-style: none; }
   inset-inline-end: 0;
   z-index: 2;
   background-color: var(--color-superficie);
-  /* Sombra hacia la izquierda: indica que hay contenido oculto detras. */
+  /* Sombra hacia la izquierda: indica que hay contenido oculto detrás. */
   box-shadow: -6px 0 6px -6px rgb(0 0 0 / 0.18);
 }
 .tabla thead th.celda-acciones { z-index: 3; background-color: var(--color-superficie-alterna); }
@@ -926,12 +926,12 @@ ol[class] { padding-inline-start: 0; list-style: none; }
 }
 .tabla tbody tr:hover td.celda-acciones { background-color: var(--color-superficie-hover); }
 
-/* Cuando la tabla entra entera no hay nada detras que tapar, y la sombra seria
-   un adorno enganioso. `scroll-driven` no esta disponible en todos los motores,
-   asi que se acepta la sombra permanente como compromiso: es sutil y no estorba. */
+/* Cuando la tabla entra entera no hay nada detrás que tapar, y la sombra sería
+   un adorno engañoso. `scroll-driven` no está disponible en todos los motores,
+   así que se acepta la sombra permanente como compromiso: es sutil y no estorba. */
 
 /* --------------------------------------------------------------------------
-   12. Paginacion
+   12. Paginación
    -------------------------------------------------------------------------- */
 .paginacion {
   display: flex;
@@ -1016,7 +1016,7 @@ ol[class] { padding-inline-start: 0; list-style: none; }
 }
 
 /* --------------------------------------------------------------------------
-   14. Metricas del panel y barra de progreso
+   14. Métricas del panel y barra de progreso
    -------------------------------------------------------------------------- */
 .rejilla-metricas {
   display: grid;
@@ -1032,11 +1032,11 @@ ol[class] { padding-inline-start: 0; list-style: none; }
   border: 1px solid var(--color-borde);
   border-radius: var(--radio-3);
   box-shadow: var(--sombra-1);
-  /* Franja lateral con el color de la metrica; las variantes solo cambian
+  /* Franja lateral con el color de la métrica; las variantes solo cambian
      --color-acento en lugar de repetir la regla completa. */
   border-inline-start: 3px solid var(--color-acento, var(--color-primario));
 }
-/* El rotulo de la metrica: `.metrica-titulo` es el nombre que usan las vistas
+/* El rotulo de la métrica: `.metrica-titulo` es el nombre que usan las vistas
    nuevas y `.metrica-etiqueta` el que ya emiten las piezas comunes. */
 .metrica-titulo,
 .metrica-etiqueta {
@@ -1083,7 +1083,7 @@ ol[class] { padding-inline-start: 0; list-style: none; }
 }
 
 /* --------------------------------------------------------------------------
-   15. Estado vacio y aviso destacado
+   15. Estado vacío y aviso destacado
    -------------------------------------------------------------------------- */
 .vacio {
   display: flex;
@@ -1099,9 +1099,9 @@ ol[class] { padding-inline-start: 0; list-style: none; }
 .vacio-texto { max-inline-size: 32rem; font-size: var(--tamano-texto-menor); }
 
 /* Recuadro fijo dentro del contenido: permisos recortados, datos enmascarados
-   o credenciales de demostracion. Habla el mismo idioma que las insignias
+   o credenciales de demostración. Habla el mismo idioma que las insignias
    -franja lateral del color del mensaje sobre un fondo tenue del mismo tono-
-   para que se lea como un aviso del sistema y no como una tarjeta mas. */
+   para que se lea como un aviso del sistema y no como una tarjeta más. */
 .aviso-seguridad {
   display: flex;
   align-items: flex-start;
@@ -1113,8 +1113,8 @@ ol[class] { padding-inline-start: 0; list-style: none; }
   border-radius: var(--radio-2);
   font-size: var(--tamano-texto-menor);
 }
-/* El glifo inicial ('!' o 'i') va dentro de un disco: asi se lee como icono y
-   no como el primer caracter del texto que viene detras. */
+/* El glifo inicial ('!' o 'i') va dentro de un disco: así se lee como icono y
+   no como el primer carácter del texto que viene detrás. */
 .aviso-seguridad > span:first-child {
   display: grid;
   place-items: center;
@@ -1169,9 +1169,9 @@ ol[class] { padding-inline-start: 0; list-style: none; }
 .modal-cuerpo {
   padding: var(--esp-5);
   overflow-y: auto;
-  /* El gesto que llega al final del formulario se queda aqui en lugar de
-     encadenarse al documento. `Modal` ademas congela el fondo mientras el
-     dialogo esta abierto; esto cubre el rebote dentro del propio cuerpo. */
+  /* El gesto que llega al final del formulario se queda aquí en lugar de
+     encadenarse al documento. `Modal` además congela el fondo mientras el
+     diálogo esta abierto; esto cubre el rebote dentro del propio cuerpo. */
   overscroll-behavior-y: contain;
   display: flex;
   flex-direction: column;
@@ -1201,7 +1201,7 @@ ol[class] { padding-inline-start: 0; list-style: none; }
 /* --------------------------------------------------------------------------
    17. Notificaciones (toasts)
    El contenedor cubre una franja de la pantalla; `pointer-events: none` evita
-   que esa franja vacia intercepte clics sobre la interfaz que hay debajo.
+   que esa franja vacía intercepte clics sobre la interfaz que hay debajo.
    -------------------------------------------------------------------------- */
 #notificaciones {
   position: fixed;
@@ -1260,12 +1260,12 @@ ol[class] { padding-inline-start: 0; list-style: none; }
 
 /* --------------------------------------------------------------------------
    Ajustes de componente por debajo de 900px.
-   Van al final del archivo a proposito: estas reglas tienen la misma
-   especificidad que las base, asi que solo ganan si aparecen despues. Una
+   Van al final del archivo a propósito: estas reglas tienen la misma
+   especificidad que las base, así que solo ganan si aparecen después. Una
    media query no anade especificidad; unicamente acota cuando se aplica.
    -------------------------------------------------------------------------- */
 @media (max-width: 899px) {
-  /* Con una sola columna los rellenos generosos se comen el ancho util. */
+  /* Con una sola columna los rellenos generosos se comen el ancho útil. */
   .filtros { padding: var(--esp-3) var(--esp-4); }
   .filtros .campo,
   .filtros .campo-filtro { max-inline-size: none; }
@@ -1277,8 +1277,8 @@ ol[class] { padding-inline-start: 0; list-style: none; }
   .modal-cabecera,
   .modal-cuerpo,
   .modal-pie { padding-inline: var(--esp-4); }
-  /* El dialogo pasa a ocupar la ventana: en un movil una tarjeta centrada con
-     margenes deja el formulario en una columna demasiado estrecha. */
+  /* El diálogo pasa a ocupar la ventana: en un móvil una tarjeta centrada con
+     márgenes deja el formulario en una columna demasiado estrecha. */
   .modal-fondo { padding: var(--esp-2); }
   .modal,
   .modal-ancho { inline-size: 100%; max-block-size: calc(100dvh - var(--esp-4)); }
@@ -1288,7 +1288,7 @@ ol[class] { padding-inline-start: 0; list-style: none; }
      sin techo de altura, que en vertical es donde va justa la pantalla. */
   .tabla-contenedor { max-block-size: none; }
 
-  /* En movil los avisos suben por encima de la barra inferior de navegacion. */
+  /* En móvil los avisos suben por encima de la barra inferior de navegación. */
   #notificaciones {
     inset-block-start: auto;
     inset-block-end: calc(var(--altura-barra-inferior) + var(--esp-3));
@@ -1306,27 +1306,27 @@ ol[class] { padding-inline-start: 0; list-style: none; }
    17b. Pantallas estrechas: la tabla deja de ser una tabla
 
    Una ficha de empleado tiene ocho columnas y una de proyecto diez. En un
-   telefono de 390 px eso es una tabla de 1.300 px asomando por una ventana de
-   356: se veia el legajo, la columna de acciones anclada al borde, y nada mas.
+   teléfono de 390 px eso es una tabla de 1.300 px asomando por una ventana de
+   356: se veía el legajo, la columna de acciones anclada al borde, y nada más.
    El nombre de la persona quedaba fuera de la pantalla, de modo que la lista no
-   decia de quien era cada fila.
+   decía de quien era cada fila.
 
    Por debajo de 900 px cada fila pasa a ser una ficha apilada y cada celda
    muestra su etiqueta, que `Tabla.render` deja en `data-etiqueta`. Se lee en
-   vertical, que es como se sujeta un telefono, y no se pierde ninguna columna.
+   vertical, que es como se sujeta un teléfono, y no se pierde ninguna columna.
 
-   El corte es el mismo que el de la barra de navegacion a proposito: por debajo
-   de 900 px el sistema entero cambia de modo (menu abajo, listas en fichas), y
-   un unico umbral es mas facil de razonar y de mantener que dos. Una tablet en
-   vertical (768 px) tambien lo recibe, y hace falta: alli la tabla de proyectos
+   El corte es el mismo que el de la barra de navegación a propósito: por debajo
+   de 900 px el sistema entero cambia de modo (menú abajo, listas en fichas), y
+   un único umbral es más fácil de razonar y de mantener que dos. Una tablet en
+   vertical (768 px) también lo recibe, y hace falta: allí la tabla de proyectos
    pide 1.320 px sobre 734 disponibles.
 
    Nota de accesibilidad: al pasar la tabla a `display: block` se pierde su
-   semantica nativa, y la relacion entre cabecera y celda con ella. El par
+   semántica nativa, y la relación entre cabecera y celda con ella. El par
    etiqueta-valor se conserva visualmente mediante `::before`, que los lectores
    de pantalla actuales si anuncian. Es el compromiso habitual de este patron;
    la alternativa (mantener la tabla y desplazarla) deja el contenido
-   materialmente inaccesible en un movil, que es peor.
+   materialmente inaccesible en un móvil, que es peor.
    -------------------------------------------------------------------------- */
 @media (max-width: 899px) {
   /* Ya no hay nada que desplazar en horizontal. */
@@ -1355,7 +1355,7 @@ ol[class] { padding-inline-start: 0; list-style: none; }
     border-radius: var(--radio-2);
   }
   /* El rayado de filas no aporta nada cuando cada fila ya es una ficha
-     separada, y ademas competiria con el fondo propio de la tarjeta. */
+     separada, y además competiría con el fondo propio de la tarjeta. */
   .tabla tbody tr:nth-child(even) { background-color: var(--color-superficie); }
   .tabla tbody tr:last-child { margin-block-end: 0; }
 
@@ -1388,11 +1388,11 @@ ol[class] { padding-inline-start: 0; list-style: none; }
     text-transform: uppercase;
     color: var(--color-texto-tenue);
   }
-  /* Una celda sin contenido solo aportaria una etiqueta huerfana. */
+  /* Una celda sin contenido solo aportaría una etiqueta huerfana. */
   .tabla tbody td:empty { display: none; }
 
-  /* El anclaje al borde derecho es util cuando la tabla se desplaza; aqui solo
-     ocuparia espacio. Las acciones pasan a ser la ultima linea de la ficha. */
+  /* El anclaje al borde derecho es útil cuando la tabla se desplaza; aquí solo
+     ocuparía espacio. Las acciones pasan a ser la última línea de la ficha. */
   .tabla tbody td.celda-acciones,
   .tabla thead th.celda-acciones {
     position: static;
@@ -1404,9 +1404,9 @@ ol[class] { padding-inline-start: 0; list-style: none; }
   }
   .tabla tbody td.celda-acciones::before { content: none; }
   /* El fondo propio de la columna anclada (que en escritorio evita que las
-     celdas se transparenten por debajo) sobrevivia aqui como una banda de color
+     celdas se transparenten por debajo) sobrevivía aquí como una banda de color
      al pie de las fichas pares. Se anula con la misma especificidad (0,4,1) que
-     las reglas de escritorio, y despues de ellas en el archivo. */
+     las reglas de escritorio, y después de ellas en el archivo. */
   .tabla tbody tr:nth-child(even) td.celda-acciones,
   .tabla tbody tr:hover td.celda-acciones { background-color: transparent; }
   .celda-acciones .acciones,
@@ -1416,9 +1416,9 @@ ol[class] { padding-inline-start: 0; list-style: none; }
   /* Las cifras dejan de ir a la derecha por su cuenta: ya lo hace la celda. */
   .tabla tbody td.celda-numero { text-align: end; }
 
-  /* La cabecera de la aplicacion: el chip de usuario se comia el ancho y el
-     titulo de la vista acababa como "Empl...". En un movil el correo no aporta
-     (se sabe quien inicio sesion) y basta con el avatar, que sigue llevando al
+  /* La cabecera de la aplicación: el chip de usuario se comía el ancho y el
+     titulo de la vista acababa como "Empl...". En un móvil el correo no aporta
+     (se sabe quien inicio sesión) y basta con el avatar, que sigue llevando al
      perfil. */
   .usuario-datos { display: none; }
   .usuario-chip { padding: var(--esp-1); }
@@ -1427,7 +1427,7 @@ ol[class] { padding-inline-start: 0; list-style: none; }
 
 /* Tablet en vertical: las fichas se reparten de a dos.
 
-   Entre 600 y 900 px cada ficha ocupa el ancho completo y deja la mitad vacia
+   Entre 600 y 900 px cada ficha ocupa el ancho completo y deja la mitad vacía
    entre la etiqueta y su valor, con lo que un listado de diez empleados se
    convierte en una tirada larga de scroll. En dos columnas entra el doble por
    pantalla sin que ninguna ficha quede estrecha. Por debajo de 600 px no se
@@ -1440,7 +1440,7 @@ ol[class] { padding-inline-start: 0; list-style: none; }
     align-items: start;
   }
   .tabla tbody tr { margin-block-end: 0; }
-  /* El desglose del panel vive en una tarjeta estrecha: alli una sola columna
+  /* El desglose del panel vive en una tarjeta estrecha: allí una sola columna
      sigue siendo lo adecuado. */
   .tabla-compacta tbody { display: block; }
   .tabla-compacta tbody tr { margin-block-end: var(--esp-3); }
@@ -1448,7 +1448,7 @@ ol[class] { padding-inline-start: 0; list-style: none; }
 
 /* Muy estrecho (320-380 px): etiqueta arriba y valor debajo.
 
-   Con la etiqueta y el valor en la misma linea quedan ~150 px por lado, y un
+   Con la etiqueta y el valor en la misma línea quedan ~150 px por lado, y un
    correo o un nombre de departamento largo no entra ni partiendolo. Apilarlos
    le da al valor el ancho completo de la ficha. */
 @media (max-width: 380px) {
@@ -1465,16 +1465,16 @@ ol[class] { padding-inline-start: 0; list-style: none; }
 
 /* Login en pantallas chicas o bajas.
 
-   La tarjeta media 761 px en un telefono de 568 px de alto y 569 en apaisado
-   sobre 390: se podia desplazar, pero obligaba a hacerlo antes de ver el boton.
+   La tarjeta media 761 px en un teléfono de 568 px de alto y 569 en apaisado
+   sobre 390: se podía desplazar, pero obligaba a hacerlo antes de ver el botón.
    Se recorta el relleno, que es de donde sale la mayor parte de ese alto, sin
-   tocar el tamanio de los campos (que son los objetivos tactiles). */
+   tocar el tamaño de los campos (que son los objetivos tactiles). */
 @media (max-width: 400px) {
   .pantalla-login { padding: var(--esp-3); }
   .tarjeta-login { padding: var(--esp-4); gap: var(--esp-3); }
 }
 
-/* El alto es el eje critico en apaisado y con el teclado abierto, y no depende
+/* El alto es el eje crítico en apaisado y con el teclado abierto, y no depende
    del ancho: por eso la consulta va sobre `max-height` y no sobre el ancho. */
 @media (max-height: 640px) {
   .pantalla-login { padding-block: var(--esp-3); }
@@ -1483,9 +1483,9 @@ ol[class] { padding-inline-start: 0; list-style: none; }
   .login-descripcion { margin-block-end: 0; }
 }
 
-/* Telefonos: las tarjetas de metrica caben de a dos.
+/* Teléfonos: las tarjetas de métrica caben de a dos.
 
-   El minimo de 13rem del panel se pensó para escritorio; en 390 px obliga a una
+   El mínimo de 13rem del panel se pensó para escritorio; en 390 px obliga a una
    sola columna y convierte el resumen en seis pantallazos de scroll. Bajarlo a
    9.5rem permite dos por fila y el panel entra casi entero de un vistazo, que es
    justo para lo que sirve un panel. */
@@ -1497,13 +1497,13 @@ ol[class] { padding-inline-start: 0; list-style: none; }
   .metrica { padding: var(--esp-3); }
   .metrica-valor { font-size: 1.5rem; }
   .metrica-titulo { font-size: var(--tamano-texto-micro); }
-  /* Una etiqueta larga partida en tres lineas descuadra la fila de tarjetas. */
+  /* Una etiqueta larga partida en tres líneas descuadra la fila de tarjetas. */
   .metrica-detalle { font-size: var(--tamano-texto-micro); }
 }
 
 /* Pero no a cualquier precio: por debajo de 360 px cada ficha del panel se
-   queda en 138 px y la cifra ("307,75 h") parte en dos lineas, que es lo unico
-   que una metrica no puede permitirse. Ahi vuelve a una sola columna. */
+   queda en 138 px y la cifra ("307,75 h") parte en dos líneas, que es lo único
+   que una métrica no puede permitirse. Ahi vuelve a una sola columna. */
 @media (max-width: 359px) {
   .rejilla-metricas { grid-template-columns: minmax(0, 1fr); }
 }
@@ -1513,7 +1513,7 @@ ol[class] { padding-inline-start: 0; list-style: none; }
    -------------------------------------------------------------------------- */
 .oculto { display: none !important; }
 
-/* Visible solo para lectores de pantalla: se mantiene en el arbol de
+/* Visible solo para lectores de pantalla: se mantiene en el árbol de
    accesibilidad, a diferencia de `display: none`. */
 .solo-lectores {
   position: absolute;

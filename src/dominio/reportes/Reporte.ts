@@ -22,8 +22,8 @@ import type {
  *
  * Todos los campos son opcionales: un reporte sin filtros es el listado
  * completo. Las fechas llegan ya validadas por el esquema del servicio, de modo
- * que aqui se tratan como cadenas comparables (`AAAA-MM-DD` ordena
- * lexicograficamente igual que cronologicamente).
+ * que aquí se tratan como cadenas comparables (`AAAA-MM-DD` ordena
+ * lexicograficamente igual que cronológicamente).
  */
 export interface FiltrosReporte {
   desde?: string;
@@ -34,11 +34,11 @@ export interface FiltrosReporte {
 }
 
 /**
- * Fotografia de todo lo que un reporte puede necesitar, ya leida del almacen.
+ * Fotografía de todo lo que un reporte puede necesitar, ya leida del almacén.
  *
  * El servicio hace las lecturas y el descifrado; el reporte solo calcula. Esa
- * separacion es lo que permite construir un reporte en una prueba unitaria con
- * cuatro objetos en memoria, sin KV, sin criptografia y sin sesion.
+ * separación es lo que permite construir un reporte en una prueba unitaria con
+ * cuatro objetos en memoria, sin KV, sin criptografía y sin sesión.
  */
 export interface DatosReporte {
   empleados: Empleado[];
@@ -46,7 +46,7 @@ export interface DatosReporte {
   proyectos: Proyecto[];
   asignaciones: AsignacionProyecto[];
   registros: RegistroTiempo[];
-  /** Datos personales descifrados por empleado. Vacio si no hay permiso. */
+  /** Datos personales descifrados por empleado. Vacío si no hay permiso. */
   sensibles: Map<string, DatosSensiblesDTO>;
   generadoPor: string;
   filtros: FiltrosReporte;
@@ -57,23 +57,23 @@ export interface DatosReporte {
  *
  * ## Donde se ve el polimorfismo
  *
- * `generar` es un **metodo plantilla**: fija de una vez el algoritmo de un
+ * `generar` es un **método plantilla**: fija de una vez el algoritmo de un
  * reporte (cabecera, columnas, filas, totales) y delega en las subclases
  * unicamente los pasos que cambian. El servicio escribe
- * `Reporte.crear(tipo).generar(datos)` y **jamas menciona una clase concreta**:
- * no sabe si esta generando la nomina o el listado de proyectos, y no le hace
+ * `Reporte.crear(tipo).generar(datos)` y **jamás menciona una clase concreta**:
+ * no sabe si está generando la nómina o el listado de proyectos, y no le hace
  * falta. Agregar un reporte nuevo es escribir una subclase y sumar un caso a la
  * fabrica; ni el servicio, ni el router, ni los exportadores se enteran.
  *
- * La alternativa clasica -- un `generarReporte(tipo)` con un `switch` que arma
- * columnas y filas para cada caso -- concentra cinco reportes en una funcion de
- * varios cientos de lineas donde tocar uno arriesga romper los otros cuatro.
+ * La alternativa clásica -- un `generarReporte(tipo)` con un `switch` que arma
+ * columnas y filas para cada caso -- concentra cinco reportes en una función de
+ * varios cientos de líneas donde tocar uno arriesga romper los otros cuatro.
  *
  * ## Los reportes no conocen la infraestructura
  *
  * Ninguna subclase recibe el `Contexto` ni un repositorio: todo entra por
- * `DatosReporte`. Son objetos puros, sincronicos y deterministas salvo por la
- * marca de tiempo de generacion.
+ * `DatosReporte`. Son objetos puros, sincrónicos y deterministas salvo por la
+ * marca de tiempo de generación.
  */
 export abstract class Reporte {
   /** Discriminante que viaja en el DTO y elige el nombre del archivo exportado. */
@@ -82,13 +82,13 @@ export abstract class Reporte {
   /** Encabezado legible del documento. */
   abstract get titulo(): string;
 
-  /** Una linea explicando que muestra el reporte y con que criterio. */
+  /** Una línea explicando que muestra el reporte y con que criterio. */
   abstract get descripcion(): string;
 
   /**
-   * Definicion de columnas. El `tipo` de cada una gobierna el formato de salida
-   * en los cuatro exportadores, asi que declararlo mal (un importe como
-   * 'numero') se nota en el CSV y en el PDF, no aqui.
+   * Definición de columnas. El `tipo` de cada una gobierna el formato de salida
+   * en los cuatro exportadores, así que declararlo mal (un importe como
+   * 'número') se nota en el CSV y en el PDF, no aquí.
    */
   abstract get columnas(): ColumnaReporte[];
 
@@ -99,9 +99,9 @@ export abstract class Reporte {
    * Paso variable 2: la fila de cierre.
    *
    * Recibe las filas ya construidas para no recorrer los datos dos veces con
-   * criterios que podrian discrepar. Las claves deben coincidir con las de las
+   * criterios que podrían discrepar. Las claves deben coincidir con las de las
    * columnas: los exportadores alinean cada total bajo su columna leyendo
-   * `totales[columna.clave]`, y una clave inventada no se imprime en ningun
+   * `totales[columna.clave]`, y una clave inventada no se imprime en ningún
    * formato tabular.
    */
   protected abstract calcularTotales(
@@ -110,7 +110,7 @@ export abstract class Reporte {
   ): Record<string, ValorCelda>;
 
   /**
-   * Metodo plantilla: fija el algoritmo, las subclases rellenan los pasos.
+   * Método plantilla: fija el algoritmo, las subclases rellenan los pasos.
    *
    * Es concreto y deliberadamente corto. Que ninguna subclase pueda redefinirlo
    * garantiza que los cinco reportes salgan con la misma estructura de DTO, que
@@ -118,7 +118,7 @@ export abstract class Reporte {
    */
   generar(datos: DatosReporte): ReporteDTO {
     // Las filas se calculan una sola vez y se pasan a los totales: recalcularlas
-    // permitiria que el pie de pagina no cuadrase con el cuerpo del reporte.
+    // permitiría que el pie de página no cuadrase con el cuerpo del reporte.
     const filas = this.construirFilas(datos);
     return {
       tipo: this.tipo,
@@ -133,23 +133,23 @@ export abstract class Reporte {
   }
 
   /**
-   * Fabrica: unico punto del sistema que traduce un `TipoReporte` en una
-   * implementacion concreta.
+   * Fabrica: único punto del sistema que traduce un `TipoReporte` en una
+   * implementación concreta.
    *
-   * ## Por que las subclases se piden con una funcion y no con `new`
+   * ## Por que las subclases se piden con una función y no con `new`
    *
    * Base y subclases forman un ciclo de imports inevitable: la fabrica necesita
-   * conocerlas y ellas necesitan heredar de la base. En modulos ES ese ciclo
+   * conocerlas y ellas necesitan heredar de la base. En módulos ES ese ciclo
    * **no es inocuo**: la clausula `extends` se evalua al ejecutar el cuerpo del
-   * modulo, y el orden de evaluacion es en profundidad, asi que las subclases
+   * módulo, y el orden de evaluación es en profundidad, así que las subclases
    * corren *antes* que este archivo. Si declarasen su clase en el cuerpo del
-   * modulo, leerian `Reporte` mientras todavia esta en su zona muerta temporal
-   * y el programa reventaria al cargar con "Cannot access 'Reporte' before
-   * initialization" -- en el arranque del Worker, no en una peticion.
+   * módulo, leerian `Reporte` mientras todavía está en su zona muerta temporal
+   * y el programa reventaría al cargar con "Cannot access 'Reporte' before
+   * initialization" -- en el arranque del Worker, no en una petición.
    *
-   * Por eso cada subclase exporta una funcion constructora que declara su clase
+   * Por eso cada subclase exporta una función constructora que declara su clase
    * en la primera llamada: al cargarse no toca la base, y cuando la fabrica la
-   * invoca -- ya en tiempo de ejecucion -- la jerarquia esta completa. El ciclo
+   * invoca -- ya en tiempo de ejecución -- la jerarquía esta completa. El ciclo
    * queda, pero deja de importar.
    */
   static crear(tipo: TipoReporte): Reporte {
@@ -165,18 +165,18 @@ export abstract class Reporte {
       case 'nomina':
         return crearReporteNomina();
       default:
-        // El tipo no protege en tiempo de ejecucion: `tipo` llega de la cadena
-        // de consulta, asi que el caso "imposible" se valida igual.
+        // El tipo no protege en tiempo de ejecución: `tipo` llega de la cadena
+        // de consulta, así que el caso "imposible" se valida igual.
         throw new ErrorValidacion(`Tipo de reporte no soportado: "${String(tipo)}".`, [
           {
             campo: 'tipo',
-            mensaje: 'Debe ser uno de: empleados, departamentos, proyectos, horas, nomina.',
+            mensaje: 'Debe ser uno de: empleados, departamentos, proyectos, horas, nómina.',
           },
         ]);
     }
   }
 
-  /** Suma una serie de valores. Una lista vacia suma cero, no `NaN`. */
+  /** Suma una serie de valores. Una lista vacía suma cero, no `NaN`. */
   protected sumar(valores: number[]): number {
     return valores.reduce((acumulado, valor) => acumulado + valor, 0);
   }
@@ -186,7 +186,7 @@ export abstract class Reporte {
    *
    * Acumular horas o importes en coma flotante produce colas como
    * `160.00000000000003`, que en un reporte impreso parecen un error de
-   * calculo. Se redondea al final de cada agregacion, nunca en cada suma.
+   * cálculo. Se redondea al final de cada agregación, nunca en cada suma.
    */
   protected redondear(valor: number, decimales = 2): number {
     const factor = 10 ** decimales;

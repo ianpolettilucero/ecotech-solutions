@@ -4,15 +4,15 @@ import type { Repositorio } from './Repositorio.js';
 import type { AlmacenKV } from './AlmacenKV.js';
 
 /**
- * Implementacion generica del contrato `Repositorio` sobre Workers KV.
+ * Implementación genérica del contrato `Repositorio` sobre Workers KV.
  *
- * Es *generica* en dos ejes: el tipo de entidad `T` y su estado persistido `E`.
- * La reconstruccion (estado plano -> objeto de dominio) se delega en la funcion
+ * Es *genérica* en dos ejes: el tipo de entidad `T` y su estado persistido `E`.
+ * La reconstrucción (estado plano -> objeto de dominio) se delega en la función
  * `rehidratar` que recibe por constructor, de modo que una sola clase sirve a
- * empleados, proyectos, departamentos, etc., sin duplicar codigo de acceso.
+ * empleados, proyectos, departamentos, etc., sin duplicar código de acceso.
  *
- * Esto es composicion sobre herencia: en lugar de una subclase de repositorio
- * por entidad, se parametriza la unica que hay.
+ * Esto es composición sobre herencia: en lugar de una subclase de repositorio
+ * por entidad, se parametriza la única que hay.
  */
 export class RepositorioKV<T extends Entidad<E>, E extends EstadoEntidad>
   implements Repositorio<T, E>

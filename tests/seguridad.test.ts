@@ -17,13 +17,13 @@ import { Usuario } from '../src/dominio/seguridad/Usuario.js';
 
 const CLAVE = 'clave-maestra-de-prueba-suficientemente-larga-0001';
 
-describe('ServicioCripto: contrasenas', () => {
+describe('ServicioCripto: contraseñas', () => {
   it('deriva un hash verificable y distinto en cada alta', async () => {
     const cripto = new ServicioCripto(CLAVE);
     const a = await cripto.hashearContrasena('Contrasena#Segura1');
     const b = await cripto.hashearContrasena('Contrasena#Segura1');
-    // Misma contrasena, sal distinta -> hash distinto. Sin esto, dos empleados
-    // con la misma clave serian identificables en un volcado del almacen.
+    // Misma contraseña, sal distinta -> hash distinto. Sin esto, dos empleados
+    // con la misma clave serían identificables en un volcado del almacén.
     assert.notEqual(a.hash, b.hash);
     assert.notEqual(a.sal, b.sal);
     assert.equal(await cripto.verificarContrasena('Contrasena#Segura1', a.hash, a.sal), true);
@@ -41,9 +41,9 @@ describe('ServicioCripto: contrasenas', () => {
 
   it('no supera el techo de iteraciones que impone Workers', async () => {
     // El runtime de Cloudflare rechaza PBKDF2 por encima de 100.000 iteraciones
-    // con NotSupportedError. Miniflare NO aplica ese limite, asi que un valor
+    // con NotSupportedError. Miniflare NO aplica ese límite, así que un valor
     // mayor pasa en `wrangler dev` y aborta la siembra en el primer arranque en
-    // produccion. Esta prueba existe porque ya ocurrio.
+    // producción. Esta prueba existe porque ya ocurrio.
     assert.equal(ServicioCripto.MAXIMO_ITERACIONES_PBKDF2, 100_000);
     const cripto = new ServicioCripto(CLAVE);
     const { hash, sal } = await cripto.hashearContrasena('Contrasena#Segura1');
@@ -75,7 +75,7 @@ describe('ServicioCripto: cifrado de datos personales', () => {
     assert.notEqual(a.iv, b.iv);
   });
 
-  it('AES-GCM detecta la manipulacion del texto cifrado', async () => {
+  it('AES-GCM detecta la manipulación del texto cifrado', async () => {
     const cripto = new ServicioCripto(CLAVE);
     const sobre = await cripto.cifrar('dato sensible');
     const alterado = { ...sobre, ct: `${sobre.ct.slice(0, -4)}AAAA` };
@@ -89,8 +89,8 @@ describe('ServicioCripto: cifrado de datos personales', () => {
   });
 });
 
-describe('ServicioCripto: indice ciego', () => {
-  it('es deterministico y normaliza mayusculas y espacios', async () => {
+describe('ServicioCripto: índice ciego', () => {
+  it('es deterministico y normaliza mayúsculas y espacios', async () => {
     const cripto = new ServicioCripto(CLAVE);
     const a = await cripto.indiceCiego('Ana@Eco.com ');
     const b = await cripto.indiceCiego('ana@eco.com');
@@ -105,7 +105,7 @@ describe('ServicioCripto: indice ciego', () => {
     assert.equal(indice.length, 64);
   });
 
-  it('la comparacion en tiempo constante distingue bien', () => {
+  it('la comparación en tiempo constante distingue bien', () => {
     assert.equal(ServicioCripto.comparacionConstante('abc', 'abc'), true);
     assert.equal(ServicioCripto.comparacionConstante('abc', 'abd'), false);
     assert.equal(ServicioCripto.comparacionConstante('abc', 'abcd'), false);
@@ -113,29 +113,29 @@ describe('ServicioCripto: indice ciego', () => {
   });
 });
 
-describe('Validacion de entradas', () => {
+describe('Validación de entradas', () => {
   it('la regla de texto elimina caracteres de control', () => {
     const regla = new ReglaTexto(1, 50);
-    // Byte nulo intercalado: es el vehiculo clasico del truncamiento en capas
+    // Byte nulo intercalado: es el vehiculo clásico del truncamiento en capas
     // inferiores escritas en C.
     assert.equal(regla.aplicar('Ana\u0000Gomez', 'nombre'), 'AnaGomez');
     assert.equal(regla.aplicar('  hola  ', 'nombre'), 'hola');
-    // Un salto de linea en un campo que acaba en una cabecera HTTP permitiria
-    // inyectar cabeceras; se elimina antes de que llegue a ningun lado.
+    // Un salto de línea en un campo que acaba en una cabecera HTTP permitiría
+    // inyectar cabeceras; se elimina antes de que llegue a ningún lado.
     assert.equal(regla.aplicar('valor\r\nSet-Cookie: x=y', 'nombre'), 'valorSet-Cookie: x=y');
   });
 
-  it('la contrasena exige longitud y variedad', () => {
+  it('la contraseña exige longitud y variedad', () => {
     const regla = new ReglaContrasena();
     assert.throws(() => regla.aplicar('corta1!', 'c'), { name: 'FalloRegla' });
     assert.throws(() => regla.aplicar('todominusculas', 'c'), { name: 'FalloRegla' });
     assert.throws(() => regla.aplicar('ecotech12345', 'c'), { name: 'FalloRegla' });
     assert.equal(regla.aplicar('EcoTech#2026Admin', 'c'), 'EcoTech#2026Admin');
-    // Tope superior: PBKDF2 con una entrada gigante seria un DoS barato.
+    // Tope superior: PBKDF2 con una entrada gigante sería un DoS barato.
     assert.throws(() => regla.aplicar('A1!'.repeat(100), 'c'), { name: 'FalloRegla' });
   });
 
-  it('la fecha rechaza dias que no existen', () => {
+  it('la fecha rechaza días que no existen', () => {
     const regla = new ReglaFecha();
     assert.equal(regla.aplicar('2026-02-28', 'f'), '2026-02-28');
     assert.throws(() => regla.aplicar('2026-02-31', 'f'), { name: 'FalloRegla' });
@@ -143,7 +143,7 @@ describe('Validacion de entradas', () => {
     assert.throws(() => regla.aplicar('27/08/2026', 'f'), { name: 'FalloRegla' });
   });
 
-  it('la fecha sin futuro rechaza el manana', () => {
+  it('la fecha sin futuro rechaza el mañana', () => {
     const manana = new Date(Date.now() + 86_400_000).toISOString().slice(0, 10);
     assert.throws(() => new ReglaFecha(false).aplicar(manana, 'f'), { name: 'FalloRegla' });
   });
@@ -176,8 +176,8 @@ describe('Esquema: lista blanca estricta', () => {
   });
 
   it('rechaza campos no declarados: cierra el mass assignment', () => {
-    // Sin esto, un empleado podria ascenderse solo mandando {"rol":"ADMIN_RRHH"}
-    // en la peticion de editar su propio perfil.
+    // Sin esto, un empleado podría ascenderse solo mandando {"rol":"ADMIN_RRHH"}
+    // en la petición de editar su propio perfil.
     assert.throws(
       () => esquema.validar({ nombre: 'Ana', email: 'a@b.com', rol: 'ADMIN_RRHH' }),
       ErrorValidacion,
@@ -254,8 +254,8 @@ describe('Usuario: defensa contra fuerza bruta', () => {
     const usuario = nuevo();
     for (let i = 0; i < 5; i++) usuario.registrarIntentoFallido();
     const dentroDeUnaHora = new Date(Date.now() + 3_600_000);
-    // Si fuera permanente, cualquiera podria dejar fuera a un empleado legitimo
-    // simplemente fallando su contrasena cinco veces.
+    // Si fuera permanente, cualquiera podría dejar fuera a un empleado legítimo
+    // simplemente fallando su contraseña cinco veces.
     assert.equal(usuario.estaBloqueado(dentroDeUnaHora), false);
   });
 

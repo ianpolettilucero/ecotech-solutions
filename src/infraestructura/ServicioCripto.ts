@@ -2,14 +2,14 @@ import { ErrorInterno } from '../dominio/base/errores.js';
 
 import type { SobreCifrado } from '../dominio/base/SobreCifrado.js';
 
-// Se reexporta por comodidad de los llamadores, pero la definicion vive en el
+// Se reexporta por comodidad de los llamadores, pero la definición vive en el
 // dominio: es el dominio quien declara la forma de un dato protegido.
 export type { SobreCifrado };
 
 /**
- * Usos de clave de WebCrypto. Se declara aqui porque el tipo `KeyUsage` de la
- * libreria DOM no existe en los tipos del runtime de Workers, y este modulo se
- * compila contra estos ultimos.
+ * Usos de clave de WebCrypto. Se declara aquí porque el tipo `KeyUsage` de la
+ * librería DOM no existe en los tipos del runtime de Workers, y este módulo se
+ * compila contra estos últimos.
  */
 type UsoDeClave = 'encrypt' | 'decrypt' | 'sign' | 'verify' | 'deriveKey' | 'deriveBits';
 
@@ -32,8 +32,8 @@ function desdeBase64(texto: string): Uint8Array<ArrayBuffer> {
 /**
  * Bytes aleatorios sobre un `ArrayBuffer` concreto.
  *
- * Desde TypeScript 5.7 `Uint8Array` es generico en su buffer, y las firmas de
- * WebCrypto exigen `ArrayBuffer` y no `ArrayBufferLike` (que admitiria un
+ * Desde TypeScript 5.7 `Uint8Array` es genérico en su buffer, y las firmas de
+ * WebCrypto exigen `ArrayBuffer` y no `ArrayBufferLike` (que admitiría un
  * `SharedArrayBuffer`, no valido para estas operaciones). Construir el buffer
  * de forma explicita evita el ensanchamiento del tipo.
  */
@@ -48,20 +48,20 @@ function aHex(bytes: Uint8Array): string {
 }
 
 /**
- * Servicios criptograficos del sistema, todos sobre WebCrypto (nativo del
+ * Servicios criptográficos del sistema, todos sobre WebCrypto (nativo del
  * runtime de Workers, sin dependencias de terceros).
  *
  * Cubre tres requisitos distintos que conviene no confundir:
  *
- * 1. **Contrasenas** -> PBKDF2-SHA256 con sal por usuario. Es una funcion de
- *    *derivacion* lenta y de una sola via: ni siquiera el sistema puede
- *    recuperar la contrasena original.
+ * 1. **Contraseñas** -> PBKDF2-SHA256 con sal por usuario. Es una función de
+ *    *derivación* lenta y de una sola vía: ni siquiera el sistema puede
+ *    recuperar la contraseña original.
  * 2. **Datos personales** -> AES-256-GCM. Es cifrado *reversible* y autenticado:
  *    RRHH necesita volver a leer el domicilio de un empleado, pero un volcado
- *    del almacen KV no revela nada sin la clave, que vive en un secret del
+ *    del almacén KV no revela nada sin la clave, que vive en un secret del
  *    Worker y nunca en el repositorio.
- * 3. **Indices ciegos** -> HMAC-SHA256. Permite comprobar "ya existe un
- *    empleado con este documento" sin descifrar la coleccion entera ni guardar
+ * 3. **Índices ciegos** -> HMAC-SHA256. Permite comprobar "ya existe un
+ *    empleado con este documento" sin descifrar la colección entera ni guardar
  *    el documento en claro.
  */
 export class ServicioCripto {
@@ -77,20 +77,20 @@ export class ServicioCripto {
    *   NotSupportedError: Pbkdf2 failed: iteration counts above 100000
    *   are not supported (requested 210000)
    *
-   * No es una eleccion, es el techo de la plataforma. Conviene saber que el
-   * emulador local (Miniflare) NO aplica ese limite: con 210.000 todo funciona
-   * en `wrangler dev` y revienta en el primer arranque en produccion. Este
-   * proyecto lo descubrio asi, y por eso `tests/seguridad.test.ts` fija el valor
+   * No es una elección, es el techo de la plataforma. Conviene saber que el
+   * emulador local (Miniflare) NO aplica ese límite: con 210.000 todo funciona
+   * en `wrangler dev` y revienta en el primer arranque en producción. Este
+   * proyecto lo descubrio así, y por eso `tests/seguridad.test.ts` fija el valor
    * con una prueba: subirlo vuelve a romper el despliegue.
    *
-   * Lo que compensa la diferencia frente a la recomendacion son los controles
-   * que la rodean, no el numero: bloqueo de cuenta a los cinco intentos,
-   * limitador por IP, y una politica de contrasena de 12 caracteres minimos con
-   * tres familias. El analisis esta en `docs/06-seguridad.md`.
+   * Lo que compensa la diferencia frente a la recomendación son los controles
+   * que la rodean, no el número: bloqueo de cuenta a los cinco intentos,
+   * limitador por IP, y una política de contraseña de 12 caracteres mínimos con
+   * tres familias. El análisis está en `docs/06-seguridad.md`.
    */
   private static readonly ITERACIONES_PBKDF2 = 100_000;
 
-  /** Techo que impone el runtime de Workers. Superarlo aborta en produccion. */
+  /** Techo que impone el runtime de Workers. Superarlo aborta en producción. */
   static readonly MAXIMO_ITERACIONES_PBKDF2 = 100_000;
   private static readonly LONGITUD_SAL = 16;
   private static readonly LONGITUD_IV = 12;
@@ -98,18 +98,18 @@ export class ServicioCripto {
   constructor(private readonly claveMaestra: string) {
     if (!claveMaestra || claveMaestra.length < 32) {
       throw new ErrorInterno(
-        'La clave maestra de cifrado no esta configurada o es demasiado corta.',
+        'La clave maestra de cifrado no está configurada o es demasiado corta.',
       );
     }
   }
 
   // -------------------------------------------------------------------------
-  // Derivacion de claves de proposito especifico
+  // Derivación de claves de propósito específico
   // -------------------------------------------------------------------------
 
   /**
-   * Deriva por HKDF una subclave distinta para cada proposito. Reutilizar la
-   * misma clave para cifrar y para el indice ciego debilitaria ambos usos.
+   * Deriva por HKDF una subclave distinta para cada propósito. Reutilizar la
+   * misma clave para cifrar y para el índice ciego debilitaría ambos usos.
    */
   private async derivar(
     proposito: string,
@@ -153,7 +153,7 @@ export class ServicioCripto {
   }
 
   // -------------------------------------------------------------------------
-  // Cifrado simetrico autenticado de datos personales
+  // Cifrado simétrico autenticado de datos personales
   // -------------------------------------------------------------------------
 
   async cifrar(textoPlano: string): Promise<SobreCifrado> {
@@ -177,7 +177,7 @@ export class ServicioCripto {
       );
       return DECODIFICADOR.decode(plano);
     } catch {
-      // GCM falla si el texto fue alterado: es deteccion de manipulacion.
+      // GCM falla si el texto fue alterado: es detección de manipulación.
       throw new ErrorInterno('No se pudo descifrar un dato protegido.');
     }
   }
@@ -192,13 +192,13 @@ export class ServicioCripto {
   }
 
   // -------------------------------------------------------------------------
-  // Indice ciego
+  // Índice ciego
   // -------------------------------------------------------------------------
 
   /**
-   * Huella deterministica de un valor sensible, para comprobar unicidad sin
-   * almacenarlo en claro. Normaliza a minusculas y recorta espacios para que
-   * "Ana@Eco.com " y "ana@eco.com" colisionen a proposito.
+   * Huella determinística de un valor sensible, para comprobar unicidad sin
+   * almacenarlo en claro. Normaliza a minúsculas y recorta espacios para que
+   * "Ana@Eco.com " y "ana@eco.com" colisionen a propósito.
    */
   async indiceCiego(valor: string): Promise<string> {
     const clave = await this.obtenerClaveHmac();
@@ -211,17 +211,17 @@ export class ServicioCripto {
   }
 
   // -------------------------------------------------------------------------
-  // Contrasenas
+  // Contraseñas
   // -------------------------------------------------------------------------
 
-  /** Deriva `hash` y `sal` (ambos hexadecimales) para una contrasena nueva. */
+  /** Deriva `hash` y `sal` (ambos hexadecimales) para una contraseña nueva. */
   async hashearContrasena(contrasena: string): Promise<{ hash: string; sal: string }> {
     const sal = bytesAleatorios(ServicioCripto.LONGITUD_SAL);
     const hash = await this.pbkdf2(contrasena, sal);
     return { hash: aHex(hash), sal: aHex(sal) };
   }
 
-  /** Verificacion en tiempo constante contra ataques de temporizacion. */
+  /** Verificación en tiempo constante contra ataques de temporización. */
   async verificarContrasena(
     contrasena: string,
     hashEsperado: string,
@@ -262,14 +262,14 @@ export class ServicioCripto {
   // Utilidades
   // -------------------------------------------------------------------------
 
-  /** SHA-256 en hexadecimal. Se usa para guardar tokens de sesion hasheados. */
+  /** SHA-256 en hexadecimal. Se usa para guardar tokens de sesión hasheados. */
   static async sha256(valor: string): Promise<string> {
     const digest = await crypto.subtle.digest('SHA-256', CODIFICADOR.encode(valor));
     return aHex(new Uint8Array(digest));
   }
 
   /**
-   * Comparacion de cadenas en tiempo constante respecto del contenido.
+   * Comparación de cadenas en tiempo constante respecto del contenido.
    * Se recorre siempre la longitud mayor para no filtrar por longitud.
    */
   static comparacionConstante(a: string, b: string): boolean {

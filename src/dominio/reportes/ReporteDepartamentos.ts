@@ -14,7 +14,7 @@ const COLUMNAS: readonly ColumnaReporte[] = [
 /** Un departamento sin gerente designado no es un error: es un puesto abierto. */
 const VACANTE = 'Vacante';
 
-/** Lee una celda numerica ya construida; la ausente vale cero, nunca `NaN`. */
+/** Lee una celda numérica ya construida; la ausente vale cero, nunca `NaN`. */
 function celdaNumerica(fila: Record<string, ValorCelda>, clave: string): number {
   const valor = fila[clave];
   return typeof valor === 'number' ? valor : 0;
@@ -29,15 +29,15 @@ function acumular(mapa: Map<string, number>, clave: string, cantidad: number): v
 let Clase: (new () => Reporte) | undefined;
 
 /**
- * Radiografia del organigrama: cuanta gente, cuantos proyectos y cuantas horas
+ * Radiografía del organigrama: cuanta gente, cuantos proyectos y cuantas horas
  * mueve cada unidad organizativa.
  *
- * La gerencia se resuelve como **asociacion**, no como herencia: `gerenteId`
- * apunta a un `Empleado` corriente, y por eso aqui basta con buscar ese id en
- * la plantilla. Si "Gerente" fuese una subclase, este reporte necesitaria un
+ * La gerencia se resuelve como **asociación**, no como herencia: `gerenteId`
+ * apunta a un `Empleado` corriente, y por eso aquí basta con buscar ese id en
+ * la plantilla. Si "Gerente" fuese una subclase, este reporte necesitaría un
  * `instanceof` para distinguirlos.
  *
- * Las horas se cuentan **solo si estan aprobadas** y se imputan al departamento
+ * Las horas se cuentan **solo si están aprobadas** y se imputan al departamento
  * *del proyecto*, no al del empleado: una hora que un empleado de I+D dedica a
  * un proyecto de Ventas es costo de Ventas.
  */
@@ -52,7 +52,7 @@ export function crearReporteDepartamentos(): Reporte {
     }
 
     override get descripcion(): string {
-      return 'Dotacion, proyectos y horas aprobadas de cada unidad organizativa.';
+      return 'Dotación, proyectos y horas aprobadas de cada unidad organizativa.';
     }
 
     override get columnas(): ColumnaReporte[] {

@@ -4,8 +4,8 @@ import { ErrorAutenticacion } from '../../dominio/base/errores.js';
 import { huellaDe, ipDe, json, leerJson } from '../http.js';
 
 export function registrarRutasAutenticacion(enrutador: Enrutador): void {
-  // El login es publico por definicion. `ServicioAutenticacion` aplica sus
-  // propias defensas: limite por IP, bloqueo por cuenta y respuesta uniforme.
+  // El login es público por definición. `Servicioautenticación` aplica sus
+  // propias defensas: límite por IP, bloqueo por cuenta y respuesta uniforme.
   enrutador.post(
     '/api/auth/login',
     async (api) => {
@@ -21,7 +21,7 @@ export function registrarRutasAutenticacion(enrutador: Enrutador): void {
     { requiereSesion: false },
   );
 
-  // Cerrar sesion no exige sesion valida: si la cookie ya caduco, el cliente
+  // Cerrar sesión no exige sesión valida: si la cookie ya caduco, el cliente
   // igualmente debe poder limpiar su estado sin recibir un 401.
   enrutador.post(
     '/api/auth/logout',
@@ -34,10 +34,10 @@ export function registrarRutasAutenticacion(enrutador: Enrutador): void {
     { requiereSesion: false },
   );
 
-  // Es el punto que consulta la SPA al arrancar para saber si hay sesion.
+  // Es el punto que consulta la SPA al arrancar para saber si hay sesión.
   enrutador.get('/api/auth/sesion', async (api) => {
     const solicitante = api.ctx.exigirSolicitante();
-    if (!api.sesion) throw new ErrorAutenticacion('No hay una sesion activa.');
+    if (!api.sesion) throw new ErrorAutenticacion('No hay una sesión activa.');
     const usuario = await api.ctx.usuarios.obtenerOFallar(solicitante.usuarioId);
     const servicio = new ServicioAutenticacion(api.ctx);
     return json(await servicio.aDTO(usuario, api.sesion));

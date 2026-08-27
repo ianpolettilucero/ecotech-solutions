@@ -1,10 +1,10 @@
 /**
- * Constructor de formularios a partir de una descripcion de campos.
+ * Constructor de formularios a partir de una descripción de campos.
  *
  * La vista declara que campos quiere y este componente se encarga del resto:
- * etiquetas asociadas al control, conversion de valores y, sobre todo, pintado
- * de los errores que devuelve la API. La validacion de verdad vive en el
- * servidor -- aqui solo se muestra su respuesta, nunca se sustituye.
+ * etiquetas asociadas al control, conversión de valores y, sobre todo, pintado
+ * de los errores que devuelve la API. La validación de verdad vive en el
+ * servidor -- aquí solo se muestra su respuesta, nunca se sustituye.
  */
 
 import { ErrorApi } from '../ClienteApi.js';
@@ -25,7 +25,7 @@ export interface CampoFormulario {
   etiqueta: string;
   tipo: TipoCampo;
   valor?: string | number | boolean | null;
-  /** Solo para 'seleccion'. */
+  /** Solo para 'selección'. */
   opciones?: { valor: string; texto: string }[];
   requerido?: boolean;
   ayuda?: string;
@@ -61,19 +61,19 @@ export class Formulario {
     this.prefijo = `f${contadorFormularios}`;
   }
 
-  /** Nodo a insertar: un <form> sin boton de envio, que aporta el Modal. */
+  /** Nodo a insertar: un <form> sin botón de envío, que aporta el Modal. */
   render(): HTMLFormElement {
     this.controles.clear();
     this.contenedores.clear();
 
     const formulario = elemento('form', {
       clase: 'formulario',
-      // El envio por Intro no dispara nada: quien decide cuando se guarda es el
-      // boton del modal, y dejarlo pasar recargaria la pagina entera.
+      // El envío por Intro no dispara nada: quien decide cuando se guarda es el
+      // botón del modal, y dejarlo pasar recargaría la página entera.
       al: { submit: (evento: Event) => evento.preventDefault() },
     });
-    // Sin validacion nativa: los mensajes del navegador no se pueden traducir
-    // ni llevan el estilo de la aplicacion, y ademas la comprobacion buena es
+    // Sin validación nativa: los mensajes del navegador no se pueden traducir
+    // ni llevan el estilo de la aplicación, y además la comprobación buena es
     // la del servidor. El asterisco y `required` quedan como pista visual y
     // para el lector de pantalla, pero quien manda es la respuesta de la API.
     formulario.noValidate = true;
@@ -84,7 +84,7 @@ export class Formulario {
     return formulario;
   }
 
-  /** Valores actuales, con los numeros ya convertidos a number. */
+  /** Valores actuales, con los números ya convertidos a number. */
   valores(): Record<string, string | number | boolean | null> {
     const salida: Record<string, string | number | boolean | null> = {};
     for (const campo of this.campos) {
@@ -99,15 +99,15 @@ export class Formulario {
       if (campo.tipo === 'numero') {
         const crudo = control.value.trim();
         const numero = Number(crudo);
-        // Vacio no es cero: un salario sin rellenar debe viajar como null para
-        // que el servidor lo distinga de un cero escrito a proposito.
+        // Vacío no es cero: un salario sin rellenar debe viajar como null para
+        // que el servidor lo distinga de un cero escrito a propósito.
         salida[campo.nombre] = crudo === '' || Number.isNaN(numero) ? null : numero;
         continue;
       }
 
-      // Se recorta todo menos las contrasenas y los textos largos: un espacio
+      // Se recorta todo menos las contraseñas y los textos largos: un espacio
       // final invisible en un email provoca un rechazo que nadie entiende, pero
-      // en una contrasena forma parte del secreto.
+      // en una contraseña forma parte del secreto.
       const recortable = campo.tipo !== 'contrasena' && campo.tipo !== 'area';
       salida[campo.nombre] = recortable ? control.value.trim() : control.value;
     }
@@ -165,7 +165,7 @@ export class Formulario {
   }
 
   // -------------------------------------------------------------------------
-  // Construccion
+  // Construcción
   // -------------------------------------------------------------------------
 
   private pintarCampo(campo: CampoFormulario): HTMLElement {
@@ -190,7 +190,7 @@ export class Formulario {
     }
 
     const clases = ['campo'];
-    // La casilla lleva el control a la izquierda del texto; el area de texto
+    // La casilla lleva el control a la izquierda del texto; el área de texto
     // ocupa la fila entera de la rejilla porque necesita ancho para leerse.
     if (campo.tipo === 'casilla') clases.push('campo-casilla');
     if (campo.tipo === 'area') clases.push('campo-ancho-total');
@@ -231,7 +231,7 @@ export class Formulario {
       }
       seleccion.value = Formulario.comoTexto(campo.valor);
       // Un <select> no admite `readonly`; se deshabilita, y `valores()` lo
-      // sigue leyendo porque no depende del envio nativo del formulario.
+      // sigue leyendo porque no depende del envío nativo del formulario.
       if (campo.soloLectura) seleccion.disabled = true;
       return seleccion;
     }

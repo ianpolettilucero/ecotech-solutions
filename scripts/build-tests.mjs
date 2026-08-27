@@ -2,9 +2,9 @@
  * Transpila `src/` y `tests/` a `build-tests/` para poder ejecutar la suite con
  * el runner nativo: `node --test build-tests/tests/`.
  *
- * No hay empaquetado ni resolucion de modulos: esbuild solo borra los tipos
+ * No hay empaquetado ni resolución de módulos: esbuild solo borra los tipos
  * archivo por archivo y conserva la estructura de carpetas. Como todos los
- * imports relativos del codigo fuente ya terminan en '.js' (lo exige el
+ * imports relativos del código fuente ya terminan en '.js' (lo exige el
  * tsconfig con moduleResolution Bundler + verbatimModuleSyntax), la salida
  * resuelve sola bajo las reglas de ESM de Node, sin banderas ni loaders.
  */
@@ -20,16 +20,16 @@ const RAIZ = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const SALIDA = 'build-tests';
 const DIR_SALIDA = path.join(RAIZ, SALIDA);
 
-/** Raices a transpilar. `src/` entra porque `tests/` importa el codigo real. */
+/** Raices a transpilar. `src/` entra porque `tests/` importa el código real. */
 const DIRS_ENTRADA = ['src', 'tests'];
 
 /**
- * Se apunta a la configuracion base, y no al `tsconfig.json` de la raiz, por
+ * Se apunta a la configuración base, y no al `tsconfig.json` de la raiz, por
  * dos motivos: ese archivo es un proyecto de solo referencias (sin
  * `compilerOptions`) y esbuild no sigue las referencias de proyecto, con lo que
- * se perderia `useDefineForClassFields: false` y los campos de clase pasarian a
- * semantica `[[Define]]`; y ademas aqui se transpila codigo de los dos
- * proyectos a la vez (worker y cliente), asi que lo unico comun es la base.
+ * se perdería `useDefineForClassFields: false` y los campos de clase pasarian a
+ * semántica `[[Define]]`; y además aquí se transpila código de los dos
+ * proyectos a la vez (worker y cliente), así que lo único común es la base.
  */
 const TSCONFIG = 'tsconfig.base.json';
 
@@ -37,8 +37,8 @@ const TSCONFIG = 'tsconfig.base.json';
  * Recorre `dir` en profundidad y devuelve las rutas de sus archivos `.ts`.
  *
  * El recorrido es propio y no delega en globs del shell: `npm test` debe
- * comportarse igual en cualquier shell y en CI, donde la expansion `**` no
- * esta garantizada.
+ * comportarse igual en cualquier shell y en CI, donde la expansión `**` no
+ * está garantizada.
  */
 async function recolectarTs(dir) {
   let entradas;
@@ -46,7 +46,7 @@ async function recolectarTs(dir) {
     entradas = await readdir(dir, { withFileTypes: true });
   } catch (error) {
     // Un directorio ausente no es un error: el proyecto puede no tener aun
-    // tests, y el resto de la transpilacion sigue siendo util.
+    // tests, y el resto de la transpilación sigue siendo útil.
     if (error.code === 'ENOENT') {
       return [];
     }
@@ -59,7 +59,7 @@ async function recolectarTs(dir) {
     if (entrada.isDirectory()) {
       archivos.push(...(await recolectarTs(ruta)));
     } else if (entrada.isFile() && ruta.endsWith('.ts') && !ruta.endsWith('.d.ts')) {
-      // Los .d.ts solo declaran tipos: esbuild emitiria un .js vacio inutil.
+      // Los .d.ts solo declaran tipos: esbuild emitiria un .js vacío inútil.
       archivos.push(ruta);
     }
   }
@@ -73,7 +73,7 @@ async function recolectarEntradas() {
   for (const nombre of DIRS_ENTRADA) {
     const rutas = await recolectarTs(path.join(RAIZ, nombre));
     // esbuild resuelve las rutas relativas contra `absWorkingDir`; se pasan
-    // asi para que `outbase: '.'` reproduzca la jerarquia src/ y tests/.
+    // así para que `outbase: '.'` reproduzca la jerarquía src/ y tests/.
     entradas.push(...rutas.map((ruta) => path.relative(RAIZ, ruta).split(path.sep).join('/')));
   }
 
@@ -112,7 +112,7 @@ async function principal() {
 try {
   await principal();
 } catch (error) {
-  // Que `npm test` falle en la transpilacion en vez de correr una suite vieja.
+  // Que `npm test` falle en la transpilación en vez de correr una suite vieja.
   process.exitCode = 1;
   throw error;
 }

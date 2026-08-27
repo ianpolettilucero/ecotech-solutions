@@ -1,14 +1,14 @@
 /**
- * Modulo de empleados.
+ * Módulo de empleados.
  *
- * Dos detalles de esta pantalla no son cosmeticos:
+ * Dos detalles de esta pantalla no son cosméticos:
  *
  * 1. El listado NUNCA trae datos personales en claro (el servidor los enmascara
- *    siempre en la lista), asi que "Ver" y "Editar" piden la ficha completa por
- *    id. Cuando aun asi llegan enmascarados es que el usuario no tiene
+ *    siempre en la lista), así que "Ver" y "Editar" piden la ficha completa por
+ *    id. Cuando aun así llegan enmascarados es que el usuario no tiene
  *    `empleado:leer_sensible`, y entonces se dice con todas las letras en vez
  *    de mostrar unos asteriscos que parecen un dato sin cargar.
- * 2. Los campos economicos que se envian dependen de la modalidad de contrato.
+ * 2. Los campos económicos que se envian dependen de la modalidad de contrato.
  *    Ver `cuerpoAlta`.
  */
 
@@ -48,7 +48,7 @@ import {
   selector,
 } from '../componentes/piezas.js';
 
-/** Respuesta del catalogo de departamentos, que llega con su conteo. */
+/** Respuesta del catálogo de departamentos, que llega con su conteo. */
 interface RespuestaDepartamentos {
   departamentos: DepartamentoDTO[];
   conteoEmpleados: Record<string, number>;
@@ -58,10 +58,10 @@ interface RespuestaDepartamentos {
 type Valores = Record<string, string | number | boolean | null>;
 
 /**
- * Campos economicos que acepta cada modalidad.
+ * Campos económicos que acepta cada modalidad.
  *
- * La tabla vive aqui, en un solo sitio, y la usan tanto el envio del alta como
- * la ficha de solo lectura: asi no hay dos listas que puedan discrepar.
+ * La tabla vive aquí, en un solo sitio, y la usan tanto el envío del alta como
+ * la ficha de solo lectura: así no hay dos listas que puedan discrepar.
  */
 const CAMPOS_ECONOMICOS: Readonly<Record<TipoContrato, readonly string[]>> = Object.freeze({
   ASALARIADO: ['salarioMensual'],
@@ -87,7 +87,7 @@ function comoTexto(valor: string | number | boolean | null | undefined): string 
   return valor === null || valor === undefined ? '' : String(valor);
 }
 
-/** `Formulario` ya convierte los campos numericos; el resto no es un numero. */
+/** `Formulario` ya convierte los campos numéricos; el resto no es un número. */
 function comoNumero(valor: string | number | boolean | null | undefined): number | null {
   return typeof valor === 'number' && Number.isFinite(valor) ? valor : null;
 }
@@ -129,7 +129,7 @@ export class VistaEmpleados extends Vista {
   }
 
   // ---------------------------------------------------------------------------
-  // Armazon de la pantalla
+  // Armazón de la pantalla
   // ---------------------------------------------------------------------------
 
   private cabecera(): HTMLElement {
@@ -205,8 +205,8 @@ export class VistaEmpleados extends Vista {
   // ---------------------------------------------------------------------------
 
   /**
-   * Catalogo de departamentos, solo para resolver nombres y poblar selectores.
-   * Si el rol no lo puede leer, la vista sigue siendo util: la columna muestra
+   * Catálogo de departamentos, solo para resolver nombres y poblar selectores.
+   * Si el rol no lo puede leer, la vista sigue siendo útil: la columna muestra
    * un guion en vez de dejar la pantalla en un error.
    */
   private async cargarDepartamentos(): Promise<DepartamentoDTO[]> {
@@ -256,7 +256,7 @@ export class VistaEmpleados extends Vista {
       { titulo: 'Acciones', clase: 'celda-acciones', celda: (e) => this.acciones(e) },
     ];
     return new Tabla<EmpleadoDTO>(columnas, {
-      vacio: 'Ningun empleado coincide con los filtros aplicados.',
+      vacio: 'Ningún empleado coincide con los filtros aplicados.',
     });
   }
 
@@ -270,9 +270,9 @@ export class VistaEmpleados extends Vista {
     // Solo se ofrece la baja de quien sigue activo: repetirla es un error de
     // negocio en el servidor y no tiene sentido invitar a provocarlo.
     if (this.app.puede('empleado:eliminar') && empleado.activo) {
-      // Etiqueta corta a proposito: la fila ya tiene ocho columnas y "Dar de
-      // baja" empujaba la accion fuera del ancho visible. El alcance completo
-      // de la operacion se explica en el dialogo de confirmacion, que es donde
+      // Etiqueta corta a propósito: la fila ya tiene ocho columnas y "Dar de
+      // baja" empujaba la acción fuera del ancho visible. El alcance completo
+      // de la operación se explica en el diálogo de confirmación, que es donde
       // hay que leerlo antes de decidir.
       botones.push(boton('Baja', () => void this.darDeBaja(empleado), 'peligro'));
     }
@@ -280,8 +280,8 @@ export class VistaEmpleados extends Vista {
   }
 
   /**
-   * El alta y la baja no son una enumeracion del dominio, asi que `etiqueta()`
-   * no las traduce: la insignia se arma aqui con el mismo lenguaje visual.
+   * El alta y la baja no son una enumeración del dominio, así que `etiqueta()`
+   * no las traduce: la insignia se arma aquí con el mismo lenguaje visual.
    */
   private insigniaEstado(activo: boolean): HTMLElement {
     return elemento('span', {
@@ -292,7 +292,7 @@ export class VistaEmpleados extends Vista {
 
   private nombreDepartamento(id: string | null): string {
     if (id === null || id === '') return 'Sin asignar';
-    // `.find` puede no encontrar nada; sin el catalogo cargado, tampoco.
+    // `.find` puede no encontrar nada; sin el catálogo cargado, tampoco.
     return this.departamentos.find((departamento) => departamento.id === id)?.nombre ?? '-';
   }
 
@@ -301,7 +301,7 @@ export class VistaEmpleados extends Vista {
   // ---------------------------------------------------------------------------
 
   private async abrirFicha(id: string): Promise<void> {
-    // La ficha se pide por id a proposito: el listado enmascara siempre los
+    // La ficha se pide por id a propósito: el listado enmascara siempre los
     // datos personales, tenga permiso quien mira o no.
     const empleado = await this.app.intentar(() =>
       ClienteApi.get<EmpleadoDTO>(`/api/empleados/${id}`),
@@ -311,7 +311,7 @@ export class VistaEmpleados extends Vista {
     Modal.abrir({
       titulo: `Ficha de ${empleado.nombreCompleto}`,
       contenido: this.ficha(empleado),
-      // El dialogo siempre trae dos botones; en una ficha que no guarda nada
+      // El diálogo siempre trae dos botones; en una ficha que no guarda nada
       // los dos cierran, y el principal se rotula sin ambiguedad.
       textoAceptar: 'Cerrar',
       textoCancelar: 'Volver',
@@ -340,12 +340,12 @@ export class VistaEmpleados extends Vista {
     agregar(
       contenido,
       this.dato('Documento', empleado.datosSensibles.documento),
-      this.dato('Telefono', empleado.datosSensibles.telefono),
-      this.dato('Direccion', empleado.datosSensibles.direccion),
+      this.dato('Teléfono', empleado.datosSensibles.telefono),
+      this.dato('Dirección', empleado.datosSensibles.direccion),
       this.dato('Email personal', empleado.datosSensibles.emailPersonal),
     );
-    // Solo se listan las condiciones economicas propias de la modalidad: en un
-    // contrato por horas el "salario mensual" no esta vacio, es que no existe.
+    // Solo se listan las condiciones económicas propias de la modalidad: en un
+    // contrato por horas el "salario mensual" no está vacío, es que no existe.
     for (const clave of camposEconomicos(empleado.tipoContrato)) {
       agregar(
         contenido,
@@ -366,7 +366,7 @@ export class VistaEmpleados extends Vista {
         'pila',
         elemento('strong', { texto: 'Datos personales ocultos' }),
         elemento('p', {
-          texto: 'Su usuario no tiene el permiso para ver datos personales, asi que el documento, el telefono, la direccion, el email personal y las condiciones economicas no se muestran. Lo que el servidor devuelve en su lugar no es el dato real.',
+          texto: 'Su usuario no tiene el permiso para ver datos personales, así que el documento, el teléfono, la dirección, el email personal y las condiciones económicas no se muestran. Lo que el servidor devuelve en su lugar no es el dato real.',
         }),
       ),
     );
@@ -403,7 +403,7 @@ export class VistaEmpleados extends Vista {
           await ClienteApi.post<EmpleadoDTO>('/api/empleados', this.cuerpoAlta(formulario.valores()));
         } catch (error) {
           // Los errores por campo se pintan bajo su input; el mensaje general
-          // va a la notificacion. El dialogo sigue abierto con lo escrito.
+          // va a la notificación. El diálogo sigue abierto con lo escrito.
           formulario.mostrarErrores(error);
           this.app.notificarError(
             error instanceof ErrorApi ? error.message : 'No se pudo dar de alta al empleado.',
@@ -435,7 +435,7 @@ export class VistaEmpleados extends Vista {
         requerido: true,
         valor: 'ASALARIADO',
         opciones: TIPOS_CONTRATO.map((tipo) => ({ valor: tipo, texto: etiqueta(tipo) })),
-        ayuda: 'Decide que condiciones economicas hay que completar y no se puede cambiar despues del alta.',
+        ayuda: 'Decide qué condiciones económicas hay que completar y no se puede cambiar después del alta.',
       },
       {
         nombre: 'fechaInicioContrato',
@@ -452,8 +452,8 @@ export class VistaEmpleados extends Vista {
         opciones: this.opcionesDepartamento(null),
       },
       { nombre: 'documento', etiqueta: 'Documento', tipo: 'texto', requerido: true },
-      { nombre: 'telefono', etiqueta: 'Telefono', tipo: 'texto', requerido: true },
-      { nombre: 'direccion', etiqueta: 'Direccion', tipo: 'texto', requerido: true },
+      { nombre: 'telefono', etiqueta: 'Teléfono', tipo: 'texto', requerido: true },
+      { nombre: 'direccion', etiqueta: 'Dirección', tipo: 'texto', requerido: true },
       { nombre: 'emailPersonal', etiqueta: 'Email personal', tipo: 'email', requerido: true },
       {
         nombre: 'salarioMensual',
@@ -471,7 +471,7 @@ export class VistaEmpleados extends Vista {
         nombre: 'topeMensual',
         etiqueta: 'Tope mensual',
         tipo: 'numero',
-        ayuda: 'Solo para contratistas: limite que la facturacion del mes no puede superar.',
+        ayuda: 'Solo para contratistas: límite que la facturación del mes no puede superar.',
       },
     ];
   }
@@ -479,10 +479,10 @@ export class VistaEmpleados extends Vista {
   /**
    * Cuerpo del alta.
    *
-   * Los tres campos economicos se pintan siempre porque el usuario puede
+   * Los tres campos económicos se pintan siempre porque el usuario puede
    * cambiar de modalidad mientras rellena, pero **solo viajan los que la
    * modalidad elegida admite**: un contrato por horas no tiene salario mensual,
-   * y mandarlo igualmente guardaria un dato que la formula de remuneracion no
+   * y mandarlo igualmente guardaría un dato que la fórmula de remuneración no
    * va a usar nunca. El resto se omite del cuerpo, no se envia como nulo.
    */
   private cuerpoAlta(valores: Valores): Record<string, unknown> {
@@ -496,7 +496,7 @@ export class VistaEmpleados extends Vista {
       tipoContrato,
       fechaInicioContrato: comoTexto(valores['fechaInicioContrato']),
       // "Sin asignar" viaja como nulo: el esquema admite nulo, pero no una
-      // cadena vacia como identificador.
+      // cadena vacía como identificador.
       departamentoId: departamentoId === '' ? null : departamentoId,
       documento: comoTexto(valores['documento']),
       telefono: comoTexto(valores['telefono']),
@@ -514,7 +514,7 @@ export class VistaEmpleados extends Vista {
   }
 
   // ---------------------------------------------------------------------------
-  // Edicion
+  // Edición
   // ---------------------------------------------------------------------------
 
   private async abrirEdicion(id: string): Promise<void> {
@@ -581,8 +581,8 @@ export class VistaEmpleados extends Vista {
         tipo: 'seleccion',
         valor: empleado.tipoContrato,
         opciones: TIPOS_CONTRATO.map((tipo) => ({ valor: tipo, texto: etiqueta(tipo) })),
-        // La modalidad define la clase concreta y la formula de remuneracion:
-        // cambiarla exige baja y alta nueva, asi que aqui solo se muestra.
+        // La modalidad define la clase concreta y la fórmula de remuneración:
+        // cambiarla exige baja y alta nueva, así que aquí solo se muestra.
         soloLectura: true,
         ayuda: 'Para cambiar la modalidad hay que dar de baja el contrato y registrar un alta nueva.',
       },
@@ -614,14 +614,14 @@ export class VistaEmpleados extends Vista {
       },
       {
         nombre: 'telefono',
-        etiqueta: 'Telefono',
+        etiqueta: 'Teléfono',
         tipo: 'texto',
         requerido: true,
         valor: empleado.datosSensibles.telefono,
       },
       {
         nombre: 'direccion',
-        etiqueta: 'Direccion',
+        etiqueta: 'Dirección',
         tipo: 'texto',
         requerido: true,
         valor: empleado.datosSensibles.direccion,
@@ -649,10 +649,10 @@ export class VistaEmpleados extends Vista {
   /**
    * Cambios respecto de lo que se cargo en el formulario.
    *
-   * Se compara contra el valor con el que se pinto cada campo, que salio del
-   * DTO: asi el PATCH lleva solo lo que el usuario toco. Mandar la ficha
-   * entera reescribiria el sobre cifrado de los datos personales en cada
-   * guardado y dejaria una traza de auditoria que dice que cambio todo.
+   * Se compara contra el valor con el que se pinto cada campo, que salió del
+   * DTO: así el PATCH lleva solo lo que el usuario toco. Mandar la ficha
+   * entera reescribiría el sobre cifrado de los datos personales en cada
+   * guardado y dejaría una traza de auditoría que dice que cambio todo.
    */
   private cambios(campos: CampoFormulario[], valores: Valores): Record<string, unknown> {
     const cambios: Record<string, unknown> = {};
@@ -662,8 +662,8 @@ export class VistaEmpleados extends Vista {
 
       if (campo.tipo === 'numero') {
         const nuevo = comoNumero(valores[campo.nombre]);
-        // Vaciar un importe no se traduce en un envio: la modalidad exige que
-        // exista, y borrarlo es un error de datos, no una intencion.
+        // Vaciar un importe no se traduce en un envío: la modalidad exige que
+        // exista, y borrarlo es un error de datos, no una intención.
         if (nuevo !== null && nuevo !== comoNumero(campo.valor)) cambios[campo.nombre] = nuevo;
         continue;
       }
@@ -696,7 +696,7 @@ export class VistaEmpleados extends Vista {
   private async darDeBaja(empleado: EmpleadoDTO): Promise<void> {
     const confirmado = await Modal.confirmar(
       'Dar de baja al empleado',
-      `${empleado.nombreCompleto} (legajo ${empleado.legajo}) pasara a inactivo. Es una baja logica: la ficha y las horas ya imputadas se conservan, pero ademas se cierran con fecha de hoy todas sus asignaciones a proyectos, queda vacante cualquier departamento que dirigiera y se desactiva su cuenta de acceso.`,
+      `${empleado.nombreCompleto} (legajo ${empleado.legajo}) pasara a inactivo. Es una baja lógica: la ficha y las horas ya imputadas se conservan, pero además se cierran con fecha de hoy todas sus asignaciones a proyectos, queda vacante cualquier departamento que dirigiera y se desactiva su cuenta de acceso.`,
       true,
     );
     if (!confirmado) return;

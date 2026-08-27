@@ -9,13 +9,13 @@ export interface ResultadoLimite {
 /**
  * Limitador de tasa por ventana fija sobre KV.
  *
- * Protege los puntos caros o abusables: el login (fuerza bruta) y la generacion
+ * Protege los puntos caros o abusables: el login (fuerza bruta) y la generación
  * de informes (cada PDF cuesta CPU). Se apoya en el TTL nativo de KV, de modo
  * que los contadores caducan solos y no hace falta purgarlos.
  *
- * Limitacion conocida y asumida: KV es eventualmente consistente, asi que un
- * atacante muy distribuido podria colarse algunos intentos de mas antes de que
- * el contador se propague. Es una segunda linea de defensa; la primera es el
+ * Limitación conocida y asumida: KV es eventualmente consistente, así que un
+ * atacante muy distribuido podría colarse algunos intentos de más antes de que
+ * el contador se propague. Es una segunda línea de defensa; la primera es el
  * bloqueo de cuenta de `Usuario`, que si es exacto porque vive junto al dato del
  * usuario. Esta redundancia es deliberada.
  */
@@ -24,8 +24,8 @@ export class LimitadorTasa {
 
   /**
    * Consume un intento del cubo `clave`.
-   * @param maximo intentos permitidos dentro de la ventana
-   * @param ventanaSegundos duracion de la ventana
+   * @param máximo intentos permitidos dentro de la ventana
+   * @param ventanaSegundos duración de la ventana
    */
   async consumir(clave: string, maximo: number, ventanaSegundos: number): Promise<ResultadoLimite> {
     const claveKv = `limite:${clave}`;

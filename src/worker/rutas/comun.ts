@@ -8,14 +8,14 @@ const REGLA_ID = new ReglaIdentificador();
 /**
  * Extrae y valida un identificador de la ruta.
  *
- * Validarlo aqui, antes de que llegue a un servicio, es lo que impide que un
- * valor arbitrario del cliente se use como clave del almacen. Sin esto, un `id`
- * como `../usuarios` podria intentar alcanzar otra coleccion.
+ * Validarlo aquí, antes de que llegue a un servicio, es lo que impide que un
+ * valor arbitrario del cliente se use como clave del almacén. Sin esto, un `id`
+ * como `../usuarios` podría intentar alcanzar otra colección.
  */
 export function idDeRuta(api: PeticionApi, nombre = 'id'): string {
   const bruto = api.parametros[nombre];
   if (bruto === undefined) {
-    throw new ErrorValidacion(`Falta el parametro "${nombre}" en la ruta.`);
+    throw new ErrorValidacion(`Falta el parámetro "${nombre}" en la ruta.`);
   }
   try {
     return REGLA_ID.aplicar(bruto, nombre);
@@ -25,7 +25,7 @@ export function idDeRuta(api: PeticionApi, nombre = 'id'): string {
   }
 }
 
-/** Lee un parametro de consulta, devolviendo `undefined` si viene vacio. */
+/** Lee un parámetro de consulta, devolviendo `undefined` si viene vacío. */
 export function consulta(api: PeticionApi, nombre: string): string | undefined {
   const valor = api.url.searchParams.get(nombre);
   if (valor === null) return undefined;
@@ -33,18 +33,18 @@ export function consulta(api: PeticionApi, nombre: string): string | undefined {
   return limpio === '' ? undefined : limpio;
 }
 
-/** Lee un parametro booleano de consulta (`true` / `false`). */
+/** Lee un parámetro booleano de consulta (`true` / `false`). */
 export function consultaBooleana(api: PeticionApi, nombre: string): boolean | undefined {
   const valor = consulta(api, nombre);
   if (valor === undefined) return undefined;
   if (valor === 'true') return true;
   if (valor === 'false') return false;
-  throw new ErrorValidacion(`El parametro "${nombre}" debe ser true o false.`);
+  throw new ErrorValidacion(`El parámetro "${nombre}" debe ser true o false.`);
 }
 
 /**
- * Lee un parametro de consulta restringido a un conjunto cerrado.
- * Rechazar aqui lo que no esta en la lista blanca evita que un valor arbitrario
+ * Lee un parámetro de consulta restringido a un conjunto cerrado.
+ * Rechazar aquí lo que no está en la lista blanca evita que un valor arbitrario
  * llegue a los filtros de los servicios.
  */
 export function consultaEnumerada<T extends string>(
@@ -56,7 +56,7 @@ export function consultaEnumerada<T extends string>(
   if (valor === undefined) return undefined;
   if (!permitidos.includes(valor as T)) {
     throw new ErrorValidacion(
-      `El parametro "${nombre}" debe ser uno de: ${permitidos.join(', ')}.`,
+      `El parámetro "${nombre}" debe ser uno de: ${permitidos.join(', ')}.`,
       [{ campo: nombre, mensaje: `Valor no permitido: "${valor}".` }],
     );
   }
@@ -68,7 +68,7 @@ export function consultaFecha(api: PeticionApi, nombre: string): string | undefi
   const valor = consulta(api, nombre);
   if (valor === undefined) return undefined;
   if (!/^\d{4}-\d{2}-\d{2}$/.test(valor)) {
-    throw new ErrorValidacion(`El parametro "${nombre}" debe tener el formato AAAA-MM-DD.`, [
+    throw new ErrorValidacion(`El parámetro "${nombre}" debe tener el formato AAAA-MM-DD.`, [
       { campo: nombre, mensaje: 'Formato de fecha invalido.' },
     ]);
   }
@@ -99,7 +99,7 @@ export function consultaEntero(
   const numero = Number(valor);
   if (!Number.isInteger(numero) || numero < minimo || numero > maximo) {
     throw new ErrorValidacion(
-      `El parametro "${nombre}" debe ser un entero entre ${minimo} y ${maximo}.`,
+      `El parámetro "${nombre}" debe ser un entero entre ${minimo} y ${maximo}.`,
     );
   }
   return numero;

@@ -23,14 +23,14 @@ type Metodo = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 /**
  * Cliente HTTP de la API.
  *
- * La sesion viaja en una cookie `HttpOnly`, de modo que este codigo **nunca
- * toca el token**: aunque un XSS lograra ejecutarse, no tendria nada que robar.
- * Lo unico que guarda en memoria es el token CSRF, que por si solo no sirve
+ * La sesión viaja en una cookie `HttpOnly`, de modo que este código **nunca
+ * toca el token**: aunque un XSS lograra ejecutarse, no tendría nada que robar.
+ * Lo único que guarda en memoria es el token CSRF, que por si solo no sirve
  * para autenticarse.
  */
 export class ClienteApi {
   private static tokenCsrf: string | null = null;
-  /** Se invoca cuando el servidor responde 401: la sesion caduco. */
+  /** Se invoca cuando el servidor responde 401: la sesión caduco. */
   static alExpirarSesion: (() => void) | null = null;
 
   static fijarTokenCsrf(token: string | null): void {
@@ -106,8 +106,8 @@ export class ClienteApi {
    * Descarga un informe binario.
    *
    * No se usa un enlace directo porque la respuesta necesita ir con las
-   * credenciales y porque asi los errores (403, 422) se muestran como una
-   * notificacion en vez de abrir una pestana con JSON crudo.
+   * credenciales y porque así los errores (403, 422) se muestran como una
+   * notificación en vez de abrir una pestana con JSON crudo.
    */
   static async descargar(ruta: string): Promise<void> {
     const respuesta = await fetch(ruta, {
@@ -121,7 +121,7 @@ export class ClienteApi {
         const cuerpo = (await respuesta.json()) as Respuesta<unknown>;
         if (!cuerpo.ok) mensaje = cuerpo.error.mensaje;
       } catch {
-        // El cuerpo no era JSON; se conserva el mensaje generico.
+        // El cuerpo no era JSON; se conserva el mensaje genérico.
       }
       throw new ErrorApi('DESCARGA', mensaje, respuesta.status);
     }
@@ -143,7 +143,7 @@ export class ClienteApi {
     setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
 
-  /** Construye una cadena de consulta omitiendo los valores vacios. */
+  /** Construye una cadena de consulta omitiendo los valores vacíos. */
   static consulta(parametros: Record<string, string | number | boolean | null | undefined>): string {
     const partes = new URLSearchParams();
     for (const [clave, valor] of Object.entries(parametros)) {

@@ -4,10 +4,10 @@ import { ErrorAutorizacion } from '../base/errores.js';
 /**
  * Control de acceso basado en roles (RBAC).
  *
- * Requisito: "asegure que los usuarios solo tengan acceso a los modulos del
- * sistema para las que estan autorizados".
+ * Requisito: "asegure que los usuarios solo tengan acceso a los módulos del
+ * sistema para las que están autorizados".
  *
- * La matriz es *deny-by-default*: un rol solo puede lo que figura aqui. Las
+ * La matriz es *deny-by-default*: un rol solo puede lo que figura aquí. Las
  * comprobaciones adicionales de propiedad del recurso (por ejemplo, que un
  * EMPLEADO solo vea sus propias horas) viven en los servicios, porque dependen
  * de datos y no solo del rol.
@@ -40,7 +40,7 @@ const MATRIZ: Readonly<Record<Rol, readonly Permiso[]>> = Object.freeze({
   ],
 
   // Gerencia: opera sobre proyectos y valida las horas de su gente, pero no
-  // accede a datos personales sensibles ni a la nomina.
+  // accede a datos personales sensibles ni a la nómina.
   GERENTE: [
     'empleado:leer',
     'departamento:leer',
@@ -56,7 +56,7 @@ const MATRIZ: Readonly<Record<Rol, readonly Permiso[]>> = Object.freeze({
     'reporte:generar',
   ],
 
-  // Empleado: carga sus horas y consulta el organigrama. Nada mas.
+  // Empleado: carga sus horas y consulta el organigrama. Nada más.
   EMPLEADO: [
     'empleado:leer',
     'departamento:leer',
@@ -66,7 +66,7 @@ const MATRIZ: Readonly<Record<Rol, readonly Permiso[]>> = Object.freeze({
     'tiempo:registrar',
   ],
 
-  // Auditor: solo lectura, incluida la traza de auditoria. Sin escritura.
+  // Auditor: solo lectura, incluida la traza de auditoría. Sin escritura.
   AUDITOR: [
     'empleado:leer',
     'departamento:leer',

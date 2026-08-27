@@ -21,7 +21,7 @@ function filtrosDe(api: PeticionApi): FiltrosReporte {
   if (empleadoId !== undefined) filtros.empleadoId = empleadoId;
 
   if (filtros.desde && filtros.hasta && filtros.desde > filtros.hasta) {
-    throw new ErrorValidacion('El rango de fechas esta invertido.', [
+    throw new ErrorValidacion('El rango de fechas está invertido.', [
       { campo: 'desde', mensaje: 'No puede ser posterior a "hasta".' },
     ]);
   }
@@ -30,7 +30,7 @@ function filtrosDe(api: PeticionApi): FiltrosReporte {
 
 export function registrarRutasReportes(enrutador: Enrutador): void {
   enrutador.get('/api/reportes/:tipo', async (api) => {
-    // El tipo llega en la ruta, asi que se valida contra la lista blanca antes
+    // El tipo llega en la ruta, así que se valida contra la lista blanca antes
     // de tocar nada: es lo que elige la clase de informe que se instancia.
     const tipo = api.parametros['tipo'];
     if (tipo === undefined || !TIPOS_REPORTE.includes(tipo as (typeof TIPOS_REPORTE)[number])) {

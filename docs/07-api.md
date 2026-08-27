@@ -371,7 +371,7 @@ cuerpo.
 la sesión de KV. Sin cookie válida responde igual, para que el cliente pueda
 limpiar su estado sin recibir un 401.
 
-### GET /api/auth/sesion
+### GET /api/auth/sesión
 
 Exige sesión. Es el punto que consulta la SPA al arrancar.
 
@@ -380,7 +380,7 @@ Exige sesión. Es el punto que consulta la SPA al arrancar.
 **Errores**: `401 NO_AUTENTICADO` sin sesión; `404 NO_ENCONTRADO` si la cuenta
 desapareció del almacén entre la resolución de la sesión y la lectura.
 
-### POST /api/auth/contrasena
+### POST /api/auth/contraseña
 
 Exige sesión, `X-Token-CSRF` y `Content-Type: application/json`. Cambia la
 contraseña **del propio solicitante**; no existe forma de cambiar la de otro.
@@ -1064,7 +1064,7 @@ Dos criterios que conviene tener presentes: `horasMesActual` y
 imputan al departamento **del proyecto**, no al del empleado, porque es donde se
 consume el presupuesto.
 
-### GET /api/auditoria
+### GET /api/auditoría
 
 Permiso `auditoria:leer` (ADMIN_RRHH y AUDITOR).
 
@@ -1407,7 +1407,7 @@ como quedó.
   `405 METODO_NO_PERMITIDO` con la cabecera `Allow` enumerando los métodos
   válidos; una ruta inexistente devuelve `404 NO_ENCONTRADO`. Ambos casos están
   cubiertos por `scripts/humo.sh`.
-- **Ningún listado pagina.** `RepositorioKV.listar` lee la colección entera
+- **Ningún listado página.** `RepositorioKV.listar` lee la colección entera
   desde una sola clave de KV y filtra en memoria; no hay `limite`, `offset` ni
   orden configurable en empleados, departamentos, proyectos, asignaciones ni
   registros de tiempo. El único endpoint con tope es `/api/auditoria`. Con

@@ -25,16 +25,16 @@ export type FiltrosAsignaciones = {
  * Jornada completa expresada en puntos porcentuales.
  *
  * Se declara como constante y no como el literal `100` repetido por el archivo
- * para que el dia que la empresa admita sobreasignacion planificada (por
- * ejemplo hasta 120 en periodos pico) haya un unico punto que tocar.
+ * para que el día que la empresa admita sobreasignación planificada (por
+ * ejemplo hasta 120 en periodos pico) haya un único punto que tocar.
  */
 const DEDICACION_TOTAL = 100;
 
 // ---------------------------------------------------------------------------
-// Esquemas de validacion
+// Esquemas de validación
 //
-// Constantes de modulo: se construyen una sola vez por isolate (los `RegExp`
-// de las reglas no se recompilan en cada peticion) y quedan disponibles para
+// Constantes de módulo: se construyen una sola vez por isolate (los `RegExp`
+// de las reglas no se recompilan en cada petición) y quedan disponibles para
 // documentar la API con `describir()` sin ejecutar el servicio.
 // ---------------------------------------------------------------------------
 
@@ -50,26 +50,26 @@ const ESQUEMA_ASIGNAR = new Esquema<DatosAsignacion>({
   empleadoId: campo(new ReglaIdentificador()),
   proyectoId: campo(new ReglaIdentificador()),
   rolProyecto: campo(new ReglaEnumerado(ROLES_PROYECTO)),
-  // Por defecto el empleado se incorpora a dedicacion completa, que es el caso
-  // habitual cuando alguien entra a un unico proyecto.
+  // Por defecto el empleado se incorpora a dedicación completa, que es el caso
+  // habitual cuando alguien entra a un único proyecto.
   porcentajeDedicacion: campo(new ReglaNumero(1, DEDICACION_TOTAL), {
     opcional: true,
     porDefecto: DEDICACION_TOTAL,
   }),
-  // Se admite fecha futura: planificar la incorporacion de alguien al proyecto
-  // del mes que viene es legitimo. El valor por defecto (hoy) no puede
-  // declararse aqui porque se evaluaria una sola vez al cargar el modulo.
+  // Se admite fecha futura: planificar la incorporación de alguien al proyecto
+  // del mes que viene es legítimo. El valor por defecto (hoy) no puede
+  // declararse aquí porque se evaluaría una sola vez al cargar el módulo.
   fechaAsignacion: campo(new ReglaFecha(true), { opcional: true }),
 });
 
 /**
- * Actualizacion.
+ * Actualización.
  *
- * Solo se dejan tocar el rol y la dedicacion. `empleadoId`, `proyectoId` y
- * `fechaAsignacion` quedan fuera del esquema a proposito: reapuntar una
- * asignacion a otra persona o a otro proyecto cambiaria retroactivamente el
+ * Solo se dejan tocar el rol y la dedicación. `empleadoId`, `proyectoId` y
+ * `fechaasignación` quedan fuera del esquema a propósito: reapuntar una
+ * asignación a otra persona o a otro proyecto cambiaría retroactivamente el
  * vinculo que explica las horas ya imputadas bajo ella. Para eso se cierra la
- * asignacion y se crea otra, y quedan dos asientos de auditoria en vez de uno.
+ * asignación y se crea otra, y quedan dos asientos de auditoría en vez de uno.
  */
 const ESQUEMA_ACTUALIZAR = new Esquema<{
   rolProyecto?: RolProyecto;
@@ -104,12 +104,12 @@ function redondear(valor: number): number {
 }
 
 /**
- * Casos de uso sobre la participacion de empleados en proyectos.
+ * Casos de uso sobre la participación de empleados en proyectos.
  *
  * La entidad `AsignacionProyecto` sabe cuando esta vigente y como cerrarse,
  * pero no puede saber si el empleado existe, si el proyecto admite gente nueva
  * ni cuanta jornada tiene ya comprometida esa persona en *otros* proyectos:
- * todo eso son invariantes entre agregados, y por eso viven aqui.
+ * todo eso son invariantes entre agregados, y por eso viven aquí.
  */
 export class ServicioAsignaciones {
   constructor(private readonly ctx: Contexto) {}
@@ -133,7 +133,7 @@ export class ServicioAsignaciones {
       return true;
     });
 
-    // Las vigentes primero y, dentro de cada grupo, la incorporacion mas
+    // Las vigentes primero y, dentro de cada grupo, la incorporación más
     // reciente arriba: es el orden en que se lee un equipo de proyecto.
     asignaciones.sort((a, b) => {
       if (a.activa !== b.activa) return a.activa ? -1 : 1;
@@ -150,8 +150,8 @@ export class ServicioAsignaciones {
    * Asignaciones de un empleado que cubrian la fecha indicada.
    *
    * Devuelve entidades y no DTOs porque no es un extremo de la API sino una
-   * consulta para otros servicios (la validacion de un parte de horas, los
-   * informes de dedicacion), que necesitan preguntar a cada asignacion por su
+   * consulta para otros servicios (la validación de un parte de horas, los
+   * informes de dedicación), que necesitan preguntar a cada asignación por su
    * comportamiento y no solo por sus datos.
    *
    * Incluye las ya cerradas que cubrian esa fecha: para justificar horas de un
@@ -182,12 +182,12 @@ export class ServicioAsignaciones {
     const empleado = await this.ctx.empleados.obtener(entrada.empleadoId);
     if (empleado === null) {
       throw new ErrorReglaNegocio(
-        'El empleado indicado no existe: no se puede asignar a un proyecto a alguien que no esta dado de alta.',
+        'El empleado indicado no existe: no se puede asignar a un proyecto a alguien que no está dado de alta.',
       );
     }
     if (!empleado.activo) {
       throw new ErrorReglaNegocio(
-        `El empleado ${empleado.legajo} esta dado de baja y no puede incorporarse a un proyecto.`,
+        `El empleado ${empleado.legajo} está dado de baja y no puede incorporarse a un proyecto.`,
       );
     }
 
@@ -197,14 +197,14 @@ export class ServicioAsignaciones {
     }
     if (!proyecto.estaAbierto()) {
       throw new ErrorReglaNegocio(
-        `El proyecto ${proyecto.codigo} esta ${proyecto.estado} y ya no admite incorporaciones.`,
+        `El proyecto ${proyecto.codigo} está ${proyecto.estado} y ya no admite incorporaciones.`,
       );
     }
 
-    // Una persona no puede estar dos veces en el mismo equipo: seria imposible
-    // decir cual de las dos lineas explica una hora imputada, y la dedicacion
-    // se contaria por duplicado. Si existe una asignacion CERRADA no molesta:
-    // reincorporar a alguien al proyecto es legitimo y crea una linea nueva,
+    // Una persona no puede estar dos veces en el mismo equipo: sería imposible
+    // decir cual de las dos líneas explica una hora imputada, y la dedicación
+    // se contaría por duplicado. Si existe una asignación CERRADA no molesta:
+    // reincorporar a alguien al proyecto es legítimo y crea una línea nueva,
     // que es justo lo que conserva la historia de la primera etapa.
     const duplicada = await this.ctx.asignaciones.buscarUno(
       (asignacion) =>
@@ -216,7 +216,7 @@ export class ServicioAsignaciones {
       throw new ErrorConflicto(
         `${empleado.nombreCompleto()} ya participa en el proyecto ${proyecto.codigo} ` +
           `como ${duplicada.rolProyecto} al ${duplicada.porcentajeDedicacion}%. ` +
-          'Modifique esa asignacion en lugar de crear una segunda.',
+          'Modifique esa asignación en lugar de crear una segunda.',
       );
     }
 
@@ -256,21 +256,21 @@ export class ServicioAsignaciones {
     const entrada = ESQUEMA_ACTUALIZAR.validar(datos);
 
     if (entrada.rolProyecto === undefined && entrada.porcentajeDedicacion === undefined) {
-      // Sin cambios efectivos no se escribe ni se audita: un asiento vacio solo
-      // ensucia la traza y hace mas dificil encontrar los cambios reales.
+      // Sin cambios efectivos no se escribe ni se audita: un asiento vacío solo
+      // ensucia la traza y hace más difícil encontrar los cambios reales.
       return asignacion.aDTO();
     }
 
     if (!asignacion.activa) {
       throw new ErrorReglaNegocio(
-        'La asignacion esta cerrada. Reescribir una participacion ya finalizada falsearia ' +
-          'las horas imputadas bajo ella: si la persona vuelve al proyecto, cree una asignacion nueva.',
+        'La asignación está cerrada. Reescribir una participación ya finalizada falsearía ' +
+          'las horas imputadas bajo ella: si la persona vuelve al proyecto, cree una asignación nueva.',
       );
     }
 
     if (entrada.porcentajeDedicacion !== undefined) {
-      // Se excluye la propia asignacion del computo: si no, se sumaria dos
-      // veces (la dedicacion vieja y la nueva) y subir del 40% al 50% podria
+      // Se excluye la propia asignación del computo: si no, se sumaría dos
+      // veces (la dedicación vieja y la nueva) y subir del 40% al 50% podría
       // fallar sin motivo.
       await this.exigirDedicacionDisponible(
         asignacion.empleadoId,
@@ -297,11 +297,11 @@ export class ServicioAsignaciones {
   }
 
   /**
-   * Cierra la participacion.
+   * Cierra la participación.
    *
-   * No borra la fila: la asignacion es la que explica las horas ya imputadas al
-   * proyecto durante ese periodo. Borrarla dejaria esos partes sin justificante,
-   * que es exactamente la perdida de trazabilidad que traia la hoja de calculo.
+   * No borra la fila: la asignación es la que explica las horas ya imputadas al
+   * proyecto durante ese periodo. Borrarla dejaría esos partes sin justificante,
+   * que es exactamente la perdida de trazabilidad que traía la hoja de cálculo.
    */
   async desasignar(id: string, fecha?: string): Promise<AsignacionDTO> {
     this.ctx.exigirPermiso('asignacion:gestionar');
@@ -317,7 +317,7 @@ export class ServicioAsignaciones {
       entidad: 'AsignacionProyecto',
       entidadId: asignacion.id,
       detalle:
-        `Participacion de ${asignacion.empleadoId} en ${asignacion.proyectoId} ` +
+        `Participación de ${asignacion.empleadoId} en ${asignacion.proyectoId} ` +
         `cerrada con fecha ${dia}.`,
       exito: true,
     });
@@ -335,13 +335,13 @@ export class ServicioAsignaciones {
   }
 
   /**
-   * Control de sobreasignacion.
+   * Control de sobreasignación.
    *
-   * Este es el nucleo del problema de "errores en la asignacion de personal a
-   * proyectos" del enunciado: con planillas separadas por proyecto nadie veia
+   * Este es el nucleo del problema de "errores en la asignación de personal a
+   * proyectos" del enunciado: con planillas separadas por proyecto nadie veía
    * el total de una persona, y el mismo empleado terminaba comprometido al 60%
-   * en tres proyectos a la vez. Cada responsable creia contar con el, y los
-   * plazos se calculaban sobre una capacidad que no existia.
+   * en tres proyectos a la vez. Cada responsable creía contar con el, y los
+   * plazos se calculaban sobre una capacidad que no existía.
    *
    * La suma solo puede calcularse mirando *todas* las asignaciones del
    * empleado, o sea cruzando proyectos: es un invariante entre agregados y por
@@ -349,7 +349,7 @@ export class ServicioAsignaciones {
    * queda libre, para que quien planifica pueda corregir el porcentaje sin
    * tener que ir a buscar el dato a otra pantalla.
    *
-   * @param excluirId asignacion que no debe contarse (la que se esta editando).
+   * @param excluirId asignación que no debe contarse (la que se está editando).
    */
   private async exigirDedicacionDisponible(
     empleadoId: string,
@@ -369,7 +369,7 @@ export class ServicioAsignaciones {
       throw new ErrorReglaNegocio(
         `El empleado ya tiene comprometido el ${comprometida}% de su jornada en ` +
           `${activas.length} proyecto(s) activo(s). Solo quedan ${disponible} puntos ` +
-          `disponibles y se pidieron ${dedicacionDeseada}. Reduzca la dedicacion o ` +
+          `disponibles y se pidieron ${dedicacionDeseada}. Reduzca la dedicación o ` +
           'cierre alguna de las asignaciones vigentes.',
       );
     }

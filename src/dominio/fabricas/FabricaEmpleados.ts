@@ -8,20 +8,20 @@ import type { TipoContrato } from '../../compartido/tipos.js';
 /**
  * Fabrica de empleados.
  *
- * Es el **unico** punto del sistema que menciona las clases concretas. Todo lo
- * demas (repositorios, servicios, informes, nomina) trabaja contra el tipo
+ * Es el **único** punto del sistema que menciona las clases concretas. Todo lo
+ * demás (repositorios, servicios, informes, nómina) trabaja contra el tipo
  * abstracto `Empleado`.
  *
  * Resuelve un problema muy concreto de la persistencia: en KV se guarda un
  * objeto plano, y al leerlo hay que decidir que subclase reconstruir. Sin
- * fabrica, ese `switch` se repetiria en cada repositorio y en cada punto de alta.
- * Aqui esta una sola vez, y agregar una modalidad de contrato es agregar un caso
- * en un unico lugar conocido.
+ * fabrica, ese `switch` se repetiría en cada repositorio y en cada punto de alta.
+ * Aquí esta una sola vez, y agregar una modalidad de contrato es agregar un caso
+ * en un único lugar conocido.
  */
 export class FabricaEmpleados {
   /**
    * Reconstruye la instancia correcta a partir del estado persistido.
-   * Es la operacion inversa de `Empleado.aEstado()`.
+   * Es la operación inversa de `Empleado.aEstado()`.
    */
   static rehidratar(estado: EstadoEmpleado): Empleado {
     switch (estado.tipoContrato) {
@@ -32,16 +32,16 @@ export class FabricaEmpleados {
       case 'CONTRATISTA':
         return new Contratista(estado);
       default:
-        // Un estado con tipo desconocido significa datos corruptos o una version
+        // Un estado con tipo desconocido significa datos corruptos o una versión
         // futura del esquema. Fallar es preferible a devolver un empleado con
-        // remuneracion cero, que pasaria inadvertido en la nomina.
+        // remuneración cero, que pasaría inadvertido en la nómina.
         throw new ErrorValidacion(
-          `Tipo de contrato desconocido en el almacen: "${String(estado.tipoContrato)}".`,
+          `Tipo de contrato desconocido en el almacén: "${String(estado.tipoContrato)}".`,
         );
     }
   }
 
-  /** Alta de un empleado nuevo, con los parametros propios de su modalidad. */
+  /** Alta de un empleado nuevo, con los parámetros propios de su modalidad. */
   static crear(datos: Omit<EstadoEmpleado, 'creadoEn' | 'actualizadoEn'>): Empleado {
     const ahora = new Date().toISOString();
     const empleado = FabricaEmpleados.rehidratar({
@@ -70,8 +70,8 @@ export class FabricaEmpleados {
   }
 
   /**
-   * Campos economicos obligatorios segun la modalidad. El servicio los usa para
-   * armar el esquema de validacion correcto sin conocer las clases concretas.
+   * Campos económicos obligatorios según la modalidad. El servicio los usa para
+   * armar el esquema de validación correcto sin conocer las clases concretas.
    */
   static camposRequeridos(tipo: TipoContrato): (keyof EstadoEmpleado)[] {
     switch (tipo) {

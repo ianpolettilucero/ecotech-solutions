@@ -12,25 +12,25 @@ export interface EstadoAsignacion extends EstadoEntidad {
 }
 
 /**
- * Participacion de un empleado en un proyecto.
+ * Participación de un empleado en un proyecto.
  *
- * ## Por que esto es una clase y no una linea del diagrama
+ * ## Por que esto es una clase y no una línea del diagrama
  *
- * Empleado y Proyecto tienen una relacion muchos-a-muchos: un empleado participa
- * en varios proyectos y un proyecto ocupa a varios empleados. La tentacion (y el
- * error mas frecuente en los diagramas generados por IA) es resolverla con una
- * simple asociacion `N..*` entre ambas clases.
+ * Empleado y Proyecto tienen una relación muchos-a-muchos: un empleado participa
+ * en varios proyectos y un proyecto ocupa a varios empleados. La tentación (y el
+ * error más frecuente en los diagramas generados por IA) es resolverla con una
+ * simple asociación `N..*` entre ambas clases.
  *
- * No alcanza, porque **la relacion en si tiene datos**: con que rol participa,
+ * No alcanza, porque **la relación en si tiene datos**: con que rol participa,
  * que porcentaje de su jornada dedica, desde cuando y hasta cuando. Esos
  * atributos no pertenecen ni al empleado (varian por proyecto) ni al proyecto
  * (varian por empleado): pertenecen al vinculo. En UML eso es exactamente una
- * **clase de asociacion**, y en codigo, una entidad propia con identidad.
+ * **clase de asociación**, y en código, una entidad propia con identidad.
  *
- * Ademas resuelve la trazabilidad: al desasignar no se borra la fila, se cierra
- * con `fechaDesasignacion`. Las horas cargadas durante ese periodo siguen
+ * Además resuelve la trazabilidad: al desasignar no se borra la fila, se cierra
+ * con `fechadesasignación`. Las horas cargadas durante ese periodo siguen
  * teniendo un vinculo que las explica, que es justamente lo que las hojas de
- * calculo perdian.
+ * cálculo perdian.
  */
 export class AsignacionProyecto extends Entidad<EstadoAsignacion> {
   private _empleadoId: string;
@@ -74,15 +74,15 @@ export class AsignacionProyecto extends Entidad<EstadoAsignacion> {
     return this._fechaDesasignacion;
   }
 
-  /** Vigente = todavia no cerrada. */
+  /** Vigente = todavía no cerrada. */
   get activa(): boolean {
     return this._fechaDesasignacion === null;
   }
 
   /**
-   * Si la asignacion cubria la fecha indicada. Se usa al validar un registro de
+   * Si la asignación cubría la fecha indicada. Se usa al validar un registro de
    * horas: no se pueden imputar horas a un proyecto en el que no se participaba
-   * ese dia.
+   * ese día.
    */
   estabaVigenteEn(fecha: string): boolean {
     if (fecha < this._fechaAsignacion) return false;
@@ -91,7 +91,7 @@ export class AsignacionProyecto extends Entidad<EstadoAsignacion> {
 
   cambiarRol(rol: RolProyecto): void {
     if (!this.activa) {
-      throw new ErrorReglaNegocio('No se puede modificar una asignacion ya cerrada.');
+      throw new ErrorReglaNegocio('No se puede modificar una asignación ya cerrada.');
     }
     this._rolProyecto = rol;
     this.tocar();
@@ -99,28 +99,28 @@ export class AsignacionProyecto extends Entidad<EstadoAsignacion> {
 
   cambiarDedicacion(porcentaje: number): void {
     if (!this.activa) {
-      throw new ErrorReglaNegocio('No se puede modificar una asignacion ya cerrada.');
+      throw new ErrorReglaNegocio('No se puede modificar una asignación ya cerrada.');
     }
     this._porcentajeDedicacion = porcentaje;
     this.tocar();
     this.validar();
   }
 
-  /** Cierra la participacion. No borra: preserva la trazabilidad historica. */
+  /** Cierra la participación. No borra: preserva la trazabilidad histórica. */
   desasignar(fecha: string): void {
     if (!this.activa) {
-      throw new ErrorReglaNegocio('La asignacion ya estaba cerrada.');
+      throw new ErrorReglaNegocio('La asignación ya estaba cerrada.');
     }
     if (fecha < this._fechaAsignacion) {
       throw new ErrorReglaNegocio(
-        'La fecha de desasignacion no puede ser anterior a la de asignacion.',
+        'La fecha de desasignación no puede ser anterior a la de asignación.',
       );
     }
     this._fechaDesasignacion = fecha;
     this.tocar();
   }
 
-  /** Reabre una asignacion cerrada por error. Queda en la traza de auditoria. */
+  /** Reabre una asignación cerrada por error. Queda en la traza de auditoría. */
   reactivar(): void {
     if (this.activa) return;
     this._fechaDesasignacion = null;
@@ -129,18 +129,18 @@ export class AsignacionProyecto extends Entidad<EstadoAsignacion> {
 
   override validar(): void {
     if (this._porcentajeDedicacion <= 0 || this._porcentajeDedicacion > 100) {
-      throw new ErrorValidacion('El porcentaje de dedicacion debe estar entre 1 y 100.', [
+      throw new ErrorValidacion('El porcentaje de dedicación debe estar entre 1 y 100.', [
         { campo: 'porcentajeDedicacion', mensaje: 'Debe estar entre 1 y 100.' },
       ]);
     }
     if (!/^\d{4}-\d{2}-\d{2}$/.test(this._fechaAsignacion)) {
-      throw new ErrorValidacion('La fecha de asignacion no es valida.', [
+      throw new ErrorValidacion('La fecha de asignación no es válida.', [
         { campo: 'fechaAsignacion', mensaje: 'Debe tener el formato AAAA-MM-DD.' },
       ]);
     }
     if (this._fechaDesasignacion !== null && this._fechaDesasignacion < this._fechaAsignacion) {
-      throw new ErrorValidacion('La fecha de desasignacion es anterior a la de asignacion.', [
-        { campo: 'fechaDesasignacion', mensaje: 'Debe ser posterior a la asignacion.' },
+      throw new ErrorValidacion('La fecha de desasignación es anterior a la de asignación.', [
+        { campo: 'fechaDesasignacion', mensaje: 'Debe ser posterior a la asignación.' },
       ]);
     }
   }

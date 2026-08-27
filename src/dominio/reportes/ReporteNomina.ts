@@ -8,13 +8,13 @@ const COLUMNAS: readonly ColumnaReporte[] = [
   { clave: 'tipoContrato', titulo: 'Contrato', tipo: 'texto' },
   { clave: 'departamento', titulo: 'Departamento', tipo: 'texto' },
   { clave: 'horasAprobadas', titulo: 'Horas aprobadas', tipo: 'numero' },
-  { clave: 'modalidad', titulo: 'Modalidad de calculo', tipo: 'texto' },
-  { clave: 'remuneracion', titulo: 'Remuneracion', tipo: 'moneda' },
+  { clave: 'modalidad', titulo: 'Modalidad de cálculo', tipo: 'texto' },
+  { clave: 'remuneracion', titulo: 'Remuneración', tipo: 'moneda' },
 ];
 
 const SIN_DEPARTAMENTO = 'Sin asignar';
 
-/** Lee una celda numerica ya construida; la ausente vale cero, nunca `NaN`. */
+/** Lee una celda numérica ya construida; la ausente vale cero, nunca `NaN`. */
 function celdaNumerica(fila: Record<string, ValorCelda>, clave: string): number {
   const valor = fila[clave];
   return typeof valor === 'number' ? valor : 0;
@@ -24,30 +24,30 @@ function celdaNumerica(fila: Record<string, ValorCelda>, clave: string): number 
 let Clase: (new () => Reporte) | undefined;
 
 /**
- * Liquidacion del periodo.
+ * Liquidación del periodo.
  *
  * ## Este es el reporte que demuestra el polimorfismo
  *
  * En el bucle que arma las filas **no hay un solo `if` ni `switch` sobre
  * `tipoContrato`**, y tampoco un `instanceof`. Se recorre una lista de
- * `Empleado` y a cada uno se le pide su remuneracion:
+ * `Empleado` y a cada uno se le pide su remuneración:
  *
  * - el asalariado devuelve su sueldo fijo e ignora las horas,
  * - el jornalizado multiplica por su tarifa y recarga las extra al 1,5x,
  * - el contratista factura por hora pero corta en su tope mensual.
  *
- * Cada objeto aplica su propia formula porque cada clase la encierra. La
- * version con un campo `tipo` y un `switch` aqui obligaria a modificar este
+ * Cada objeto aplica su propia fórmula porque cada clase la encierra. La
+ * versión con un campo `tipo` y un `switch` aquí obligaría a modificar este
  * archivo -- el que mueve dinero -- cada vez que la empresa incorpora una
- * modalidad de contratacion; con esta, incorporarla es escribir una clase que
- * nadie mas tiene que conocer.
+ * modalidad de contratación; con esta, incorporarla es escribir una clase que
+ * nadie más tiene que conocer.
  *
- * La unica traduccion por tipo que queda es la **etiqueta legible** de la
+ * La única traducción por tipo que queda es la **etiqueta legible** de la
  * columna "Contrato", y la resuelve la fabrica, que es el lugar donde el
- * proyecto centraliza a proposito el catalogo de modalidades.
+ * proyecto centraliza a propósito el catálogo de modalidades.
  *
  * Solo entran empleados activos y **solo cuentan las horas aprobadas**: pagar
- * sobre horas en borrador seria liquidar trabajo que nadie valido.
+ * sobre horas en borrador sería liquidar trabajo que nadie valido.
  */
 export function crearReporteNomina(): Reporte {
   Clase ??= class ReporteNomina extends Reporte {
@@ -56,11 +56,11 @@ export function crearReporteNomina(): Reporte {
     }
 
     override get titulo(): string {
-      return 'Nomina del periodo';
+      return 'Nómina del periodo';
     }
 
     override get descripcion(): string {
-      return 'Remuneracion bruta de cada empleado activo segun su modalidad de contrato.';
+      return 'Remuneración bruta de cada empleado activo según su modalidad de contrato.';
     }
 
     override get columnas(): ColumnaReporte[] {
@@ -97,8 +97,8 @@ export function crearReporteNomina(): Reporte {
                 ? SIN_DEPARTAMENTO
                 : (nombresDepartamento.get(empleado.departamentoId) ?? SIN_DEPARTAMENTO),
             horasAprobadas: horas,
-            // Las dos llamadas polimorficas: cada subclase se describe y se
-            // liquida a si misma. Este archivo no sabe cual esta respondiendo.
+            // Las dos llamadas polimórficas: cada subclase se describe y se
+            // liquida a si misma. Este archivo no sabe cual está respondiendo.
             modalidad: empleado.descripcionRemuneracion(),
             remuneracion: empleado.calcularRemuneracionMensual(horas),
           };
@@ -113,7 +113,7 @@ export function crearReporteNomina(): Reporte {
         horasAprobadas: this.redondear(
           this.sumar(filas.map((fila) => celdaNumerica(fila, 'horasAprobadas'))),
         ),
-        // Masa salarial del periodo: el numero por el que se abre este reporte.
+        // Masa salarial del periodo: el número por el que se abre este reporte.
         remuneracion: this.redondear(
           this.sumar(filas.map((fila) => celdaNumerica(fila, 'remuneracion'))),
         ),

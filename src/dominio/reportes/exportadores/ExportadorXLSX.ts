@@ -16,15 +16,15 @@ const FIRMA_LOCAL = 0x04034b50;
 const FIRMA_CENTRAL = 0x02014b50;
 const FIRMA_FIN_CENTRAL = 0x06054b50;
 
-/** Version 2.0 del formato: la minima que admite deflate. Es la que escribe Excel. */
+/** Versión 2.0 del formato: la mínima que admite deflate. Es la que escribe Excel. */
 const VERSION_ZIP = 20;
 
 const METODO_ALMACENADO = 0;
 const METODO_DEFLATE = 8;
 
 /**
- * 1980-01-01 00:00 ya empaquetado al vuelo MS-DOS (anio-1980 << 9 | mes << 5 | dia).
- * Es la fecha mas antigua representable en ZIP y, al ser fija, dos exportaciones
+ * 1980-01-01 00:00 ya empaquetado al vuelo MS-DOS (anio-1980 << 9 | mes << 5 | día).
+ * Es la fecha más antigua representable en ZIP y, al ser fija, dos exportaciones
  * del mismo reporte salen identicas byte a byte: la salida se puede comparar y
  * cachear sin sorpresas.
  */
@@ -39,7 +39,7 @@ interface EntradaZip {
 
 let tablaCrc32: Uint32Array | null = null;
 
-/** La tabla es 1 KiB que la mayoria de peticiones nunca necesita: se crea al primer uso. */
+/** La tabla es 1 KiB que la mayoría de peticiones nunca necesita: se crea al primer uso. */
 function obtenerTablaCrc32(): Uint32Array {
   if (tablaCrc32 !== null) return tablaCrc32;
   const tabla = new Uint32Array(256);
@@ -58,7 +58,7 @@ function crc32(datos: Uint8Array): number {
   const tabla = obtenerTablaCrc32();
   let acumulado = 0xffffffff;
   for (const byte of datos) {
-    // El indice va enmascarado a 8 bits y la tabla tiene 256 entradas: el `?? 0`
+    // El índice va enmascarado a 8 bits y la tabla tiene 256 entradas: el `?? 0`
     // existe unicamente para satisfacer a noUncheckedIndexedAccess.
     acumulado = (acumulado >>> 8) ^ (tabla[(acumulado ^ byte) & 0xff] ?? 0);
   }
@@ -79,9 +79,9 @@ function concatenar(partes: readonly Uint8Array[]): Uint8Array {
 
 /**
  * Comprime con deflate *crudo* (sin envoltura zlib), que es literalmente el
- * metodo 8 del ZIP. Devuelve `null` cuando el runtime no expone
- * `CompressionStream`, para que el contenedor caiga a "stored" (metodo 0): el
- * archivo pesa mas, pero sigue siendo un .xlsx valido.
+ * método 8 del ZIP. Devuelve `null` cuando el runtime no expone
+ * `CompressionStream`, para que el contenedor caiga a "stored" (método 0): el
+ * archivo pesa más, pero sigue siendo un .xlsx valido.
  */
 async function comprimirCrudo(datos: Uint8Array): Promise<Uint8Array | null> {
   if (typeof CompressionStream === 'undefined') return null;
@@ -89,13 +89,13 @@ async function comprimirCrudo(datos: Uint8Array): Promise<Uint8Array | null> {
     const flujo = new CompressionStream('deflate-raw');
     const escritor = flujo.writable.getWriter();
     // WebCrypto y los flujos exigen un `ArrayBuffer` propio, no un
-    // `ArrayBufferLike` (que admitiria memoria compartida). Se copia a un buffer
+    // `ArrayBufferLike` (que admitiría memoria compartida). Se copia a un buffer
     // recien creado: son fragmentos XML de pocos KiB y el coste es irrelevante
-    // frente a tener que sembrar aserciones de tipo por todo el modulo.
+    // frente a tener que sembrar aserciones de tipo por todo el módulo.
     const entrada = new Uint8Array(new ArrayBuffer(datos.byteLength));
     entrada.set(datos);
-    // La escritura no se espera aqui: quien drena el flujo es el lector de abajo,
-    // y esperarla antes se bloquearia en cuanto los datos superasen el buffer
+    // La escritura no se espera aquí: quien drena el flujo es el lector de abajo,
+    // y esperarla antes se bloquearía en cuanto los datos superasen el buffer
     // interno del transformador.
     const escritura = escritor.write(entrada).then(() => escritor.close());
     const lector: ReadableStreamDefaultReader<Uint8Array> = flujo.readable.getReader();
@@ -116,7 +116,7 @@ async function comprimirCrudo(datos: Uint8Array): Promise<Uint8Array | null> {
  * Serializa las entradas como un ZIP completo: cabecera local por entrada,
  * directorio central y End Of Central Directory.
  *
- * El crc y los dos tamanios se repiten en la cabecera local y en la central; si
+ * El crc y los dos tamaños se repiten en la cabecera local y en la central; si
  * no coinciden exactamente, Excel declara el libro danado en lugar de abrirlo.
  */
 async function construirZip(entradas: readonly EntradaZip[]): Promise<Uint8Array> {
@@ -196,8 +196,8 @@ async function construirZip(entradas: readonly EntradaZip[]): Promise<Uint8Array
 /**
  * Caracteres de control que XML 1.0 prohibe incluso escapados: todo lo menor
  * que 0x20 salvo tab, LF y CR. Uno solo de ellos colado desde un campo de texto
- * deja el libro ilegible, asi que se eliminan antes de escapar. Van como
- * escapes unicode a proposito: en el fuente, los literales serian invisibles.
+ * deja el libro ilegible, así que se eliminan antes de escapar. Van como
+ * escapes unicode a propósito: en el fuente, los literales serían invisibles.
  */
 const CONTROLES_PROHIBIDOS = /[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g;
 
@@ -212,9 +212,9 @@ function escaparXml(texto: string): string {
 }
 
 /**
- * Indice de columna (base 0) a referencia A1: A, B, ... Z, AA, AB...
- * Es una numeracion biyectiva en base 26 (no existe un digito "cero"), de ahi
- * el -1 antes de cada division.
+ * Índice de columna (base 0) a referencia A1: A, B, ... Z, AA, AB...
+ * Es una numeración biyectiva en base 26 (no existe un digito "cero"), de ahi
+ * el -1 antes de cada división.
  */
 function letrasColumna(indice: number): string {
   let restante = indice + 1;
@@ -271,7 +271,7 @@ const RELACIONES_LIBRO = [
   '</Relationships>',
 ].join('');
 
-/** Indices dentro de `<cellXfs>`; el atributo `s` de cada celda apunta aqui. */
+/** Índices dentro de `<cellXfs>`; el atributo `s` de cada celda apunta aquí. */
 const ESTILO_NORMAL = 0;
 const ESTILO_CABECERA = 1;
 const ESTILO_MONEDA = 2;
@@ -280,7 +280,7 @@ const ESTILO_TOTAL = 4;
 const ESTILO_TOTAL_MONEDA = 5;
 
 /**
- * Hoja de estilos minima pero completa: Excel exige que existan las colecciones
+ * Hoja de estilos mínima pero completa: Excel exige que existan las colecciones
  * fonts/fills/borders/cellStyleXfs aunque no se usen, y que los dos primeros
  * rellenos sean justamente "none" y "gray125".
  *
@@ -331,7 +331,7 @@ const MUESTRA_ANCHO = 50;
 
 /**
  * Excel prohibe `: \ / ? * [ ]` en el nombre de hoja, lo limita a 31 caracteres
- * y rechaza el apostrofo en los extremos. Un titulo de reporte no cumple nada de
+ * y rechaza el apóstrofo en los extremos. Un titulo de reporte no cumple nada de
  * eso por si solo, y un nombre invalido impide abrir el libro.
  */
 function nombreHoja(titulo: string): string {
@@ -353,13 +353,13 @@ function nombreHoja(titulo: string): string {
  * Exportador a XLSX real (OOXML SpreadsheetML dentro de un ZIP), sin ninguna
  * dependencia de terceros.
  *
- * Un .xlsx no es mas que un ZIP de partes XML, pero el runtime de Workers no
- * trae escritor de ZIP: el contenedor se emite a mano mas arriba y esta clase
+ * Un .xlsx no es más que un ZIP de partes XML, pero el runtime de Workers no
+ * trae escritor de ZIP: el contenedor se emite a mano más arriba y esta clase
  * se ocupa solo de generar las partes.
  *
- * Decision: no se genera `sharedStrings.xml`. Las cadenas van embebidas en la
- * celda (`t="inlineStr"`), lo que cuesta algo de tamanio pero ahorra una parte
- * entera y su tabla de deduplicacion, que no aportan nada en reportes de un
+ * Decisión: no se genera `sharedStrings.xml`. Las cadenas van embebidas en la
+ * celda (`t="inlineStr"`), lo que cuesta algo de tamaño pero ahorra una parte
+ * entera y su tabla de deduplicación, que no aportan nada en reportes de un
  * solo uso generados al vuelo.
  */
 export class ExportadorXLSX extends Exportador {
@@ -402,7 +402,7 @@ export class ExportadorXLSX extends Exportador {
   }
 
   /** El orden de los hijos de `<worksheet>` no es libre: el esquema exige
-   *  dimension, sheetViews, sheetFormatPr, cols, sheetData y solo despues
+   *  dimensión, sheetViews, sheetFormatPr, cols, sheetData y solo después
    *  autoFilter. Alterarlo hace que Excel rechace la hoja. */
   private construirHoja(reporte: ReporteDTO): string {
     const totalColumnas = reporte.columnas.length;
@@ -413,7 +413,7 @@ export class ExportadorXLSX extends Exportador {
 
     const dimension = totalColumnas > 0 ? `A1:${ultimaColumna}${ultimaFila}` : 'A1';
     // El autofiltro cubre cabecera y datos pero nunca la fila de totales: si
-    // entrase en el rango, Excel la ordenaria y filtraria junto al resto.
+    // entrase en el rango, Excel la ordenaría y filtraría junto al resto.
     const autofiltro =
       totalColumnas > 0 ? `<autoFilter ref="A1:${ultimaColumna}${ultimaFilaDatos}"/>` : '';
 
@@ -488,7 +488,7 @@ export class ExportadorXLSX extends Exportador {
           const referencia = `${letrasColumna(indice)}${numeroFila}`;
           const valor = reporte.totales[columna.clave];
           if (valor === undefined) {
-            // La primera columna (legajo, codigo, nombre...) casi nunca tiene
+            // La primera columna (legajo, código, nombre...) casi nunca tiene
             // total propio; sin una etiqueta, la fila final queda huerfana.
             return indice === 0
               ? celdaTexto(referencia, 'TOTALES', ESTILO_TOTAL)
@@ -504,13 +504,13 @@ export class ExportadorXLSX extends Exportador {
   }
 
   /**
-   * Las columnas numericas y de moneda se emiten como numero de verdad (`<v>`)
+   * Las columnas numéricas y de moneda se emiten como número de verdad (`<v>`)
    * y se dejan formatear a la hoja de estilos: exportar el texto ya formateado
-   * impediria sumar, ordenar o graficar la columna desde Excel.
+   * impediría sumar, ordenar o graficar la columna desde Excel.
    *
    * Las fechas viajan como texto pese a llevar formato de fecha aplicado: el DTO
-   * las trae como cadena ISO cuya precision y zona horaria no estan
-   * garantizadas, y convertirlas a numero de serie desplazaria el dia en
+   * las trae como cadena ISO cuya precisión y zona horaria no están
+   * garantizadas, y convertirlas a número de serie desplazaría el día en
    * silencio.
    */
   private construirCelda(

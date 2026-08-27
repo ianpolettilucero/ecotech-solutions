@@ -24,9 +24,9 @@ import { ServicioAuditoria } from './ServicioAuditoria.js';
 
 const ESQUEMA_LOGIN = new Esquema<{ email: string; contrasena: string }>({
   email: campo(new ReglaEmail()),
-  // En el login NO se aplica `ReglaContrasena`: rechazar por politica una
-  // contrasena mal escrita revelaria la politica exacta a un atacante y, peor,
-  // distinguiria "formato invalido" de "credenciales incorrectas". Aqui solo se
+  // En el login NO se aplica `ReglaContrasena`: rechazar por política una
+  // contraseña mal escrita revelaría la política exacta a un atacante y, peor,
+  // distinguiría "formato invalido" de "credenciales incorrectas". Aquí solo se
   // acota la longitud para evitar el DoS por PBKDF2.
   contrasena: campo(new ReglaTexto(1, 128)),
 });
@@ -47,19 +47,19 @@ export interface ResultadoLogin {
 }
 
 /**
- * Autenticacion y gestion de sesiones.
+ * Autenticación y gestión de sesiones.
  *
- * ## Modelo de sesion
+ * ## Modelo de sesión
  *
  * Se usan **sesiones opacas del lado del servidor**, no JWT. Un JWT no se puede
  * revocar antes de que expire: si se despide a alguien o se le cambia el rol, su
- * token sigue siendo valido hasta el vencimiento. Con una sesion en KV, borrar
+ * token sigue siendo valido hasta el vencimiento. Con una sesión en KV, borrar
  * la clave corta el acceso al instante, que es lo que exige el requisito de
- * autorizacion.
+ * autorización.
  *
  * El token viaja en una cookie `__Host-` con `HttpOnly`, `Secure` y
  * `SameSite=Strict`. `HttpOnly` impide que un XSS lo lea; `SameSite=Strict`
- * bloquea el CSRF clasico; y el token CSRF de doble envio cubre el caso de que
+ * bloquea el CSRF clásico; y el token CSRF de doble envío cubre el caso de que
  * un navegador antiguo ignore `SameSite`.
  *
  * ## Defensa contra fuerza bruta, en dos capas
@@ -81,7 +81,7 @@ export class ServicioAutenticacion {
     const { email, contrasena } = ESQUEMA_LOGIN.validar(datos);
     const auditoria = new ServicioAuditoria(this.ctx);
 
-    // Capa 1: limite por IP.
+    // Capa 1: límite por IP.
     const limite = await this.ctx.limitador.consumir(
       `login:ip:${ip ?? 'desconocida'}`,
       MAX_INTENTOS_IP,
@@ -95,16 +95,16 @@ export class ServicioAutenticacion {
         exito: false,
       });
       throw new ErrorLimiteExcedido(
-        'Demasiados intentos desde esta direccion. Intente mas tarde.',
+        'Demasiados intentos desde esta dirección. Intente más tarde.',
         limite.reintentarEnSegundos,
       );
     }
 
     const usuario = await this.ctx.usuarios.buscarUno((u) => u.email === email);
 
-    // Se verifica SIEMPRE una contrasena, exista el usuario o no. Sin este
-    // senuelo, un email inexistente responderia en microsegundos y uno real
-    // tardaria los 100.000 ciclos de PBKDF2: la diferencia de tiempo permitiria
+    // Se verifica SIEMPRE una contraseña, exista el usuario o no. Sin este
+    // senuelo, un email inexistente respondería en microsegundos y uno real
+    // tardaría los 100.000 ciclos de PBKDF2: la diferencia de tiempo permitiría
     // enumerar la plantilla completa de la empresa.
     const credenciales = usuario?.credencialesParaVerificar() ?? {
       hash: '0'.repeat(64),
@@ -119,16 +119,16 @@ export class ServicioAutenticacion {
     // Capa 2: bloqueo por cuenta.
     //
     // Se comprueba DESPUES del senuelo y se responde con el mismo error
-    // generico que cualquier otro fallo. Un mensaje propio ("la cuenta esta
-    // bloqueada", y ademas con otro codigo HTTP) convertiria el bloqueo en un
-    // oraculo de enumeracion: bastaria con fallar cinco veces contra un email
+    // genérico que cualquier otro fallo. Un mensaje propio ("la cuenta esta
+    // bloqueada", y además con otro código HTTP) convertiría el bloqueo en un
+    // oraculo de enumeración: bastaría con fallar cinco veces contra un email
     // para saber si pertenece a alguien de la empresa, que es justo lo que el
-    // resto de este metodo se esfuerza en no revelar.
+    // resto de este método se esfuerza en no revelar.
     //
-    // El bloqueo sigue siendo efectivo: no se abre sesion aunque la contrasena
-    // sea correcta. Tampoco se suma un intento mas, para que insistir durante
+    // El bloqueo sigue siendo efectivo: no se abre sesión aunque la contraseña
+    // sea correcta. Tampoco se suma un intento más, para que insistir durante
     // la ventana no la prolongue indefinidamente. Quien necesita saber que una
-    // cuenta esta bloqueada es el auditor, y para eso queda el asiento.
+    // cuenta está bloqueada es el auditor, y para eso queda el asiento.
     if (usuario && usuario.estaBloqueado()) {
       await auditoria.registrar({
         accion: 'LOGIN_CUENTA_BLOQUEADA',
@@ -137,7 +137,7 @@ export class ServicioAutenticacion {
         detalle: `email=${email}`,
         exito: false,
       });
-      throw new ErrorAutenticacion('Email o contrasena incorrectos.');
+      throw new ErrorAutenticacion('Email o contraseña incorrectos.');
     }
 
     if (!usuario || !contrasenaCorrecta || !usuario.activo) {
@@ -152,8 +152,8 @@ export class ServicioAutenticacion {
         detalle: `email=${email}`,
         exito: false,
       });
-      // Mensaje unico e indistinguible para los tres casos.
-      throw new ErrorAutenticacion('Email o contrasena incorrectos.');
+      // Mensaje único e indistinguible para los tres casos.
+      throw new ErrorAutenticacion('Email o contraseña incorrectos.');
     }
 
     usuario.registrarAccesoExitoso();
@@ -162,7 +162,7 @@ export class ServicioAutenticacion {
 
     const { token, sesion } = await this.crearSesion(usuario, huella);
 
-    // El solicitante se fija ya, para que la auditoria del login lo atribuya.
+    // El solicitante se fija ya, para que la auditoría del login lo atribuya.
     this.ctx.solicitante = {
       usuarioId: usuario.id,
       email: usuario.email,
@@ -182,7 +182,7 @@ export class ServicioAutenticacion {
   }
 
   // ---------------------------------------------------------------------------
-  // Ciclo de vida de la sesion
+  // Ciclo de vida de la sesión
   // ---------------------------------------------------------------------------
 
   private async crearSesion(
@@ -209,8 +209,8 @@ export class ServicioAutenticacion {
 
   /**
    * Resuelve la identidad del solicitante a partir de la cookie.
-   * Devuelve `null` si no hay sesion valida; nunca lanza, porque las rutas
-   * publicas tambien pasan por aqui.
+   * Devuelve `null` si no hay sesión valida; nunca lanza, porque las rutas
+   * públicas también pasan por aquí.
    */
   async resolverSolicitante(
     token: string | null,
@@ -228,14 +228,14 @@ export class ServicioAutenticacion {
     }
 
     // Si la huella del cliente cambio, el token pudo haber sido robado y
-    // reutilizado desde otro navegador. Se invalida la sesion por precaucion.
+    // reutilizado desde otro navegador. Se invalida la sesión por precaución.
     if (sesion.huellaCliente && huella && sesion.huellaCliente !== huella) {
       await this.ctx.almacen.borrar(claveSesion(hashToken));
       return null;
     }
 
     // El rol se revalida contra el usuario real: si RRHH le cambio el rol o lo
-    // desactivo hace un minuto, la sesion en curso debe reflejarlo de inmediato.
+    // desactivo hace un minuto, la sesión en curso debe reflejarlo de inmediato.
     const usuario = await this.ctx.usuarios.obtener(sesion.usuarioId);
     if (!usuario || !usuario.activo) {
       await this.ctx.almacen.borrar(claveSesion(hashToken));
@@ -267,19 +267,19 @@ export class ServicioAutenticacion {
   }
 
   /**
-   * Verificacion CSRF de doble envio para toda peticion que muta datos.
+   * Verificación CSRF de doble envío para toda petición que muta datos.
    * `SameSite=Strict` ya cubre el caso habitual; esto es la segunda barrera.
    */
   verificarCsrf(sesion: DatosSesion, cabecera: string | null): void {
     if (!cabecera || !ServicioCripto.comparacionConstante(cabecera, sesion.tokenCsrf)) {
       throw new ErrorAutorizacion(
-        `Token ${CABECERA_CSRF} ausente o invalido. Recargue la pagina e intente de nuevo.`,
+        `Token ${CABECERA_CSRF} ausente o invalido. Recargue la página e intente de nuevo.`,
       );
     }
   }
 
   // ---------------------------------------------------------------------------
-  // Cambio de contrasena
+  // Cambio de contraseña
   // ---------------------------------------------------------------------------
 
   async cambiarContrasena(datos: unknown): Promise<void> {
@@ -300,10 +300,10 @@ export class ServicioAutenticacion {
         entidadId: usuario.id,
         exito: false,
       });
-      throw new ErrorAutenticacion('La contrasena actual no es correcta.');
+      throw new ErrorAutenticacion('La contraseña actual no es correcta.');
     }
     if (contrasenaActual === contrasenaNueva) {
-      throw new ErrorValidacion('La contrasena nueva debe ser distinta de la actual.', [
+      throw new ErrorValidacion('La contraseña nueva debe ser distinta de la actual.', [
         { campo: 'contrasenaNueva', mensaje: 'Debe ser distinta de la actual.' },
       ]);
     }
@@ -321,10 +321,10 @@ export class ServicioAutenticacion {
   }
 
   // ---------------------------------------------------------------------------
-  // Proyeccion
+  // Proyección
   // ---------------------------------------------------------------------------
 
-  /** Arma el DTO de sesion que consume el cliente para pintar el menu. */
+  /** Arma el DTO de sesión que consume el cliente para pintar el menú. */
   async aDTO(usuario: Usuario, sesion: DatosSesion): Promise<SesionDTO> {
     let empleado = null;
     if (usuario.empleadoId) {
@@ -351,7 +351,7 @@ export class ServicioAutenticacion {
     };
   }
 
-  /** Cabecera `Set-Cookie` para instalar la sesion. */
+  /** Cabecera `Set-Cookie` para instalar la sesión. */
   static cookieDeSesion(token: string): string {
     return [
       `${NOMBRE_COOKIE_SESION}=${token}`,
@@ -368,7 +368,7 @@ export class ServicioAutenticacion {
     return `${NOMBRE_COOKIE_SESION}=; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=0`;
   }
 
-  /** Lee el token de sesion de la cabecera `Cookie`. */
+  /** Lee el token de sesión de la cabecera `Cookie`. */
   static leerTokenDeCookie(cabeceraCookie: string | null): string | null {
     if (!cabeceraCookie) return null;
     for (const parte of cabeceraCookie.split(';')) {

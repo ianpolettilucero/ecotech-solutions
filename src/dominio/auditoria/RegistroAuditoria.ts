@@ -13,13 +13,13 @@ export interface EstadoRegistroAuditoria extends EstadoEntidad {
 }
 
 /**
- * Asiento de la traza de auditoria.
+ * Asiento de la traza de auditoría.
  *
  * Responde al problema de "falta de trazabilidad": deja constancia de quien hizo
  * que, sobre que entidad y cuando, incluidos los intentos fallidos (un login
  * rechazado o un 403 son justamente lo que interesa detectar).
  *
- * Es **inmutable por diseno**: no expone ningun metodo de mutacion. Un asiento
+ * Es **inmutable por diseño**: no expone ningún método de mutación. Un asiento
  * que se puede editar no sirve como evidencia. Por eso tampoco hereda el patron
  * de `tocar()` del resto de entidades.
  */
@@ -66,7 +66,7 @@ export class RegistroAuditoria extends Entidad<EstadoRegistroAuditoria> {
       entidad: datos.entidad,
       entidadId: datos.entidadId ?? null,
       // Se recorta el detalle: la traza no debe convertirse en un vertedero de
-      // cuerpos de peticion, que ademas podrian contener datos personales.
+      // cuerpos de petición, que además podrían contener datos personales.
       detalle: (datos.detalle ?? '').slice(0, 300),
       exito: datos.exito,
       ip: datos.ip ?? null,
@@ -86,7 +86,7 @@ export class RegistroAuditoria extends Entidad<EstadoRegistroAuditoria> {
   }
 
   override validar(): void {
-    // Un asiento se construye siempre por la fabrica estatica con datos ya
+    // Un asiento se construye siempre por la fabrica estática con datos ya
     // normalizados; no hay ruta por la que llegue invalido.
   }
 

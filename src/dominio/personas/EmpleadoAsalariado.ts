@@ -3,11 +3,11 @@ import { ErrorValidacion } from '../base/errores.js';
 import type { TipoContrato } from '../../compartido/tipos.js';
 
 /**
- * Empleado en relacion de dependencia con sueldo fijo.
+ * Empleado en relación de dependencia con sueldo fijo.
  *
- * Su remuneracion **no depende de las horas cargadas**: el registro horario le
+ * Su remuneración **no depende de las horas cargadas**: el registro horario le
  * sirve a la empresa para imputar costo a proyectos, no para liquidar. Por eso
- * `calcularRemuneracionMensual` ignora el parametro, y eso es correcto y
+ * `calcularRemuneracionMensual` ignora el parámetro, y eso es correcto y
  * deliberado, no un descuido.
  */
 export class EmpleadoAsalariado extends Empleado {

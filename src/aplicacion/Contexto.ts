@@ -26,37 +26,37 @@ import type { Permiso, Rol } from '../compartido/tipos.js';
 import { PoliticaAutorizacion } from '../dominio/seguridad/PoliticaAutorizacion.js';
 import { ErrorAutorizacion } from '../dominio/base/errores.js';
 
-/** Bindings declarados en `wrangler.jsonc`, mas los secrets. */
+/** Bindings declarados en `wrangler.jsonc`, más los secrets. */
 export interface Entorno {
   ECOTECH_KV: KVNamespace;
   ASSETS: Fetcher;
   ENTORNO?: string;
-  /** Secret. Clave maestra de la que se derivan las de cifrado e indice ciego. */
+  /** Secret. Clave maestra de la que se derivan las de cifrado e índice ciego. */
   CLAVE_MAESTRA?: string;
-  /** Secret opcional. Contrasena del administrador sembrado en el primer arranque. */
+  /** Secret opcional. Contraseña del administrador sembrado en el primer arranque. */
   CLAVE_ADMIN_INICIAL?: string;
 }
 
-/** Identidad del solicitante, resuelta por el middleware de autenticacion. */
+/** Identidad del solicitante, resuelta por el middleware de autenticación. */
 export interface Solicitante {
   usuarioId: string;
   email: string;
   rol: Rol;
-  /** Empleado que representa, si la cuenta esta vinculada a uno. */
+  /** Empleado que representa, si la cuenta está vinculada a uno. */
   empleadoId: string | null;
   ip: string | null;
 }
 
 /**
- * Contenedor de dependencias de una peticion.
+ * Contenedor de dependencias de una petición.
  *
- * Se construye uno por peticion (los Workers no tienen estado global fiable
+ * Se construye uno por petición (los Workers no tienen estado global fiable
  * entre invocaciones) y agrupa los repositorios y servicios de infraestructura.
- * Que todo cuelgue de aqui hace que las dependencias de cada servicio sean
+ * Que todo cuelgue de aquí hace que las dependencias de cada servicio sean
  * explicitas en su constructor: nada de singletons ni de imports con efectos
  * secundarios, que son justamente lo que vuelve imposible testear.
  *
- * Los repositorios se crean de forma perezosa: una peticion que solo lista
+ * Los repositorios se crean de forma perezosa: una petición que solo lista
  * departamentos no paga por instanciar los ocho.
  */
 export class Contexto {
@@ -73,17 +73,17 @@ export class Contexto {
   private _auditoria?: RepositorioKV<RegistroAuditoria, EstadoRegistroAuditoria>;
 
   /**
-   * Diagnostico del ultimo fallo de siembra, si lo hubo.
+   * Diagnóstico del último fallo de siembra, si lo hubo.
    *
    * Se guarda en vez de propagarse porque una siembra rota no debe tumbar la
-   * sonda de estado: precisamente cuando el sistema esta mal es cuando hay que
+   * sonda de estado: precisamente cuando el sistema está mal es cuando hay que
    * poder preguntarle que le pasa.
    */
   errorDeSiembra: string | null = null;
 
   constructor(
     readonly entorno: Entorno,
-    /** `null` mientras la peticion no esta autenticada (login, salud, assets). */
+    /** `null` mientras la petición no está autenticada (login, salud, assets). */
     public solicitante: Solicitante | null = null,
   ) {
     this.almacen = new AlmacenKV(entorno.ECOTECH_KV);
@@ -94,7 +94,7 @@ export class Contexto {
   /**
    * Resuelve la clave maestra de cifrado.
    *
-   * En produccion **debe** venir del secret `CLAVE_MAESTRA`. Si falta, se usa
+   * En producción **debe** venir del secret `CLAVE_MAESTRA`. Si falta, se usa
    * una clave de desarrollo derivada del nombre del proyecto: permite levantar
    * el entorno local con `wrangler dev` sin configurar nada, pero deja el
    * sistema en un estado que `GET /api/salud` reporta explicitamente como
@@ -106,7 +106,7 @@ export class Contexto {
     return 'ecotech-clave-de-desarrollo-no-apta-para-produccion-0001';
   }
 
-  /** `true` si el cifrado esta usando la clave de desarrollo. */
+  /** `true` si el cifrado está usando la clave de desarrollo. */
   get usaClaveDeDesarrollo(): boolean {
     const secreto = this.entorno.CLAVE_MAESTRA?.trim();
     return !secreto || secreto.length < 32;
@@ -151,7 +151,7 @@ export class Contexto {
       this.almacen,
       'asignaciones',
       (estado) => new AsignacionProyecto(estado),
-      'la asignacion',
+      'la asignación',
     );
     return this._asignaciones;
   }
@@ -181,19 +181,19 @@ export class Contexto {
       this.almacen,
       'auditoria',
       (estado) => new RegistroAuditoria(estado),
-      'el registro de auditoria',
+      'el registro de auditoría',
     );
     return this._auditoria;
   }
 
   // ---------------------------------------------------------------------------
-  // Autorizacion
+  // Autorización
   // ---------------------------------------------------------------------------
 
-  /** Solicitante autenticado, o 403 si la peticion es anonima. */
+  /** Solicitante autenticado, o 403 si la petición es anónima. */
   exigirSolicitante(): Solicitante {
     if (!this.solicitante) {
-      throw new ErrorAutorizacion('Esta operacion requiere una sesion activa.');
+      throw new ErrorAutorizacion('Esta operación requiere una sesión activa.');
     }
     return this.solicitante;
   }

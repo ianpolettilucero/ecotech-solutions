@@ -2,10 +2,10 @@
  * Cartera de proyectos.
  *
  * La pantalla no calcula nada del ciclo de vida: el servidor es quien decide si
- * una transicion de estado es legal y si un borrado debe convertirse en una
- * cancelacion. Aqui solo se ofrecen las acciones y se muestra, palabra por
- * palabra, la explicacion que devuelve la API cuando dice que no. Duplicar esas
- * reglas en el cliente solo conseguiria que las dos versiones se separaran.
+ * una transición de estado es legal y si un borrado debe convertirse en una
+ * cancelación. Aquí solo se ofrecen las acciones y se muestra, palabra por
+ * palabra, la explicación que devuelve la API cuando dice que no. Duplicar esas
+ * reglas en el cliente solo conseguiría que las dos versiones se separaran.
  */
 
 import type {
@@ -106,7 +106,7 @@ export class VistaProyectos extends Vista {
     const barra = filtros(
       campoFiltro(
         'Buscar',
-        buscador('Codigo o nombre', (valor) => {
+        buscador('Código o nombre', (valor) => {
           this.texto = valor;
           void this.refrescar();
         }),
@@ -173,7 +173,7 @@ export class VistaProyectos extends Vista {
 
   private tabla(horasPorProyecto: Record<string, number>): Tabla<ProyectoDTO> {
     const columnas: ColumnaTabla<ProyectoDTO>[] = [
-      { titulo: 'Codigo', clase: 'texto-mono', celda: (p) => p.codigo },
+      { titulo: 'Código', clase: 'texto-mono', celda: (p) => p.codigo },
       { titulo: 'Nombre', celda: (p) => p.nombre },
       { titulo: 'Estado', celda: (p) => insignia(p.estado) },
       { titulo: 'Departamento', celda: (p) => this.nombreDepartamento(p.departamentoId) },
@@ -188,14 +188,14 @@ export class VistaProyectos extends Vista {
         titulo: 'Imputadas',
         clase: 'celda-numero',
         // El indexado de un Record puede no traer clave: sin el `?? 0` la celda
-        // mostraria "undefined" en cuanto un proyecto no tenga horas cargadas.
+        // mostraría "undefined" en cuanto un proyecto no tenga horas cargadas.
         celda: (p) => formatearNumero(horasPorProyecto[p.id] ?? 0, 1),
       },
       { titulo: 'Consumo', celda: (p) => this.celdaConsumo(p, horasPorProyecto[p.id] ?? 0) },
       { titulo: 'Acciones', clase: 'celda-acciones', celda: (p) => this.acciones(p) },
     ];
     return new Tabla(columnas, {
-      vacio: 'Ningun proyecto coincide con los filtros aplicados.',
+      vacio: 'Ningún proyecto coincide con los filtros aplicados.',
     });
   }
 
@@ -229,7 +229,7 @@ export class VistaProyectos extends Vista {
   }
 
   // ---------------------------------------------------------------------------
-  // Alta y edicion
+  // Alta y edición
   // ---------------------------------------------------------------------------
 
   private abrirFormulario(proyecto: ProyectoDTO | null): void {
@@ -243,7 +243,7 @@ export class VistaProyectos extends Vista {
       },
       {
         nombre: 'descripcion',
-        etiqueta: 'Descripcion',
+        etiqueta: 'Descripción',
         tipo: 'area',
         valor: proyecto?.descripcion ?? '',
         ayuda: 'Objetivo y alcance acordados. Se ve en los informes de proyecto.',
@@ -260,7 +260,7 @@ export class VistaProyectos extends Vista {
         etiqueta: 'Fin estimado',
         tipo: 'fecha',
         valor: proyecto?.fechaFinEstimada ?? '',
-        ayuda: 'Opcional. Dejelo vacio si todavia no hay una fecha comprometida.',
+        ayuda: 'Opcional. Déjelo vacío si todavía no hay una fecha comprometida.',
       },
       {
         nombre: 'departamentoId',
@@ -290,8 +290,8 @@ export class VistaProyectos extends Vista {
 
   private async guardar(proyecto: ProyectoDTO | null, formulario: Formulario): Promise<boolean> {
     const valores = formulario.valores();
-    // Un desplegable vacio significa "sin departamento", no la cadena vacia: el
-    // esquema del servidor admite null pero rechaza un identificador vacio.
+    // Un desplegable vacío significa "sin departamento", no la cadena vacía: el
+    // esquema del servidor admite null pero rechaza un identificador vacío.
     const cuerpo = {
       nombre: valores['nombre'],
       descripcion: valores['descripcion'],
@@ -332,7 +332,7 @@ export class VistaProyectos extends Vista {
       proyecto.estado,
       (valor) => {
         // `find` puede no encontrar nada: se comprueba antes de asignar en vez
-        // de forzar el tipo con una asercion que el compilador no puede avalar.
+        // de forzar el tipo con una aserción que el compilador no puede avalar.
         const encontrado = ESTADOS_PROYECTO.find((estado) => estado === valor);
         if (encontrado) elegido = encontrado;
       },
@@ -343,13 +343,13 @@ export class VistaProyectos extends Vista {
       contenido: div(
         'pila',
         elemento('p', {
-          texto: `Ahora mismo el proyecto esta ${etiqueta(proyecto.estado)}.`,
+          texto: `Ahora mismo el proyecto está ${etiqueta(proyecto.estado)}.`,
         }),
         campoFiltro('Nuevo estado', control),
         elemento('p', {
           clase: 'texto-menor texto-tenue',
           texto:
-            'El servidor solo acepta las transiciones validas del ciclo de vida. Si la que elige no lo es, le dira exactamente por que.',
+            'El servidor solo acepta las transiciones válidas del ciclo de vida. Si la que elige no lo es, le dirá exactamente por qué.',
         }),
       ),
       textoAceptar: 'Cambiar estado',
@@ -359,7 +359,7 @@ export class VistaProyectos extends Vista {
 
   private async cambiarEstado(proyecto: ProyectoDTO, estado: EstadoProyecto): Promise<boolean> {
     if (estado === proyecto.estado) {
-      this.app.notificarAviso('El proyecto ya esta en ese estado.');
+      this.app.notificarAviso('El proyecto ya está en ese estado.');
       return false;
     }
     try {
@@ -368,8 +368,8 @@ export class VistaProyectos extends Vista {
       await this.refrescar();
       return true;
     } catch (e) {
-      // Una transicion rechazada llega como 422 con el motivo redactado por el
-      // dominio. Se muestra tal cual: reescribirlo aqui perderia el detalle.
+      // Una transición rechazada llega como 422 con el motivo redactado por el
+      // dominio. Se muestra tal cual: reescribirlo aquí perdería el detalle.
       this.app.notificarError(
         e instanceof ErrorApi ? e.message : 'No se pudo cambiar el estado del proyecto.',
       );
@@ -385,7 +385,7 @@ export class VistaProyectos extends Vista {
     const confirmado = await Modal.confirmar(
       `Eliminar ${proyecto.codigo}`,
       `Va a dar de baja "${proyecto.nombre}". Si el proyecto tiene horas cargadas o asignaciones, ` +
-        'no se borra: pasa a Cancelado, porque borrarlo dejaria sin justificante las horas ya imputadas.',
+        'no se borra: pasa a Cancelado, porque borrarlo dejaría sin justificante las horas ya imputadas.',
       true,
     );
     if (!confirmado) return;
@@ -398,7 +398,7 @@ export class VistaProyectos extends Vista {
   }
 
   // ---------------------------------------------------------------------------
-  // Catalogo de departamentos
+  // Catálogo de departamentos
   // ---------------------------------------------------------------------------
 
   private async cargarDepartamentos(): Promise<DepartamentoDTO[]> {
@@ -406,7 +406,7 @@ export class VistaProyectos extends Vista {
       const datos = await ClienteApi.get<RespuestaDepartamentos>('/api/departamentos');
       return datos.departamentos;
     } catch {
-      // Sin el catalogo la pantalla sigue siendo util: solo se pierde el nombre
+      // Sin el catálogo la pantalla sigue siendo útil: solo se pierde el nombre
       // legible del departamento, no el listado de proyectos.
       return [];
     }

@@ -30,9 +30,9 @@ export type FiltrosRegistrosTiempo = {
 };
 
 // ---------------------------------------------------------------------------
-// Esquemas de validacion
+// Esquemas de validación
 //
-// Constantes de modulo: se construyen una sola vez por isolate y quedan
+// Constantes de módulo: se construyen una sola vez por isolate y quedan
 // disponibles para documentar la API con `describir()` sin ejecutar el
 // servicio.
 // ---------------------------------------------------------------------------
@@ -47,12 +47,12 @@ type DatosRegistro = {
 
 const ESQUEMA_CREAR = new Esquema<DatosRegistro>({
   proyectoId: campo(new ReglaIdentificador()),
-  // Sin futuro: cargar horas por adelantado seria declarar trabajo no hecho, y
-  // nadie podria contrastarlo despues. La entidad repite el control en
-  // `validar()`, porque tambien la alcanzan las ediciones.
+  // Sin futuro: cargar horas por adelantado sería declarar trabajo no hecho, y
+  // nadie podría contrastarlo después. La entidad repite el control en
+  // `validar()`, porque también la alcanzan las ediciones.
   fecha: campo(new ReglaFecha(false)),
   horas: campo(new ReglaNumero(HORAS_MINIMAS, HORAS_MAXIMAS_POR_REGISTRO)),
-  // El minimo de 10 caracteres es deliberado: una descripcion como "tareas"
+  // El mínimo de 10 caracteres es deliberado: una descripción como "tareas"
   // no permite auditar nada ni sirve para facturar al cliente.
   descripcion: campo(new ReglaTexto(10, 500)),
   // Solo lo honra quien puede ver las horas de todos (ver `crear`).
@@ -60,10 +60,10 @@ const ESQUEMA_CREAR = new Esquema<DatosRegistro>({
 });
 
 /**
- * Edicion parcial.
+ * Edición parcial.
  *
  * `empleadoId` queda fuera: mover un parte de horas de una persona a otra
- * reescribiria el pasado de las dos. Si se cargo sobre quien no era, se elimina
+ * reescribiría el pasado de las dos. Si se cargo sobre quien no era, se elimina
  * el borrador y se carga de nuevo.
  */
 const ESQUEMA_ACTUALIZAR = new Esquema<{
@@ -102,12 +102,12 @@ function redondear(valor: number): number {
 /**
  * Casos de uso sobre los partes de horas.
  *
- * Es el servicio con mas reglas del sistema porque concentra las tres cosas que
- * la planilla no podia garantizar: que nadie vea horas ajenas, que toda hora
- * imputada tenga detras una asignacion que la explique, y que el circuito de
- * aprobacion no se pueda saltear. La maquina de estados
- * (BORRADOR -> ENVIADO -> APROBADO | RECHAZADO) vive en la entidad; aqui estan
- * la autorizacion y los invariantes que cruzan agregados.
+ * Es el servicio con más reglas del sistema porque concentra las tres cosas que
+ * la planilla no podía garantizar: que nadie vea horas ajenas, que toda hora
+ * imputada tenga detrás una asignación que la explique, y que el circuito de
+ * aprobación no se pueda saltear. La máquina de estados
+ * (BORRADOR -> ENVIADO -> APROBADO | RECHAZADO) vive en la entidad; aquí están
+ * la autorización y los invariantes que cruzan agregados.
  */
 export class ServicioRegistrosTiempo {
   constructor(private readonly ctx: Contexto) {}
@@ -124,15 +124,15 @@ export class ServicioRegistrosTiempo {
     // horas, y el filtro que lo garantiza lo pone el **servidor**, pisando lo
     // que haya llegado en `criterios.empleadoId`. Es la diferencia entre un
     // control real y uno decorativo: si se respetara el filtro del cliente,
-    // bastaria con editar un parametro de la URL (?empleadoId=<el de otro>)
-    // para leer las horas de un companero. El unico identificador en el que se
-    // puede confiar es el que sale de la sesion, nunca el que llega en la
-    // peticion.
+    // bastaría con editar un parámetro de la URL (?empleadoId=<el de otro>)
+    // para leer las horas de un compañero. El único identificador en el que se
+    // puede confiar es el que sale de la sesión, nunca el que llega en la
+    // petición.
     let empleadoId = criterios.empleadoId;
     if (!veTodo) {
-      // Cuenta sin empleado vinculado (por ejemplo un usuario tecnico): no
-      // tiene horas propias, y devolver "todo" seria justo lo contrario de lo
-      // que pide el permiso. Lista vacia.
+      // Cuenta sin empleado vinculado (por ejemplo un usuario técnico): no
+      // tiene horas propias, y devolver "todo" sería justo lo contrario de lo
+      // que pide el permiso. Lista vacía.
       if (solicitante.empleadoId === null) return [];
       empleadoId = solicitante.empleadoId;
     }
@@ -143,14 +143,14 @@ export class ServicioRegistrosTiempo {
         return false;
       }
       // Las fechas ISO `AAAA-MM-DD` ordenan igual como texto que como fecha,
-      // asi que la comparacion directa alcanza y evita construir N `Date`.
+      // así que la comparación directa alcanza y evita construir N `Date`.
       if (criterios.desde !== undefined && registro.fecha < criterios.desde) return false;
       if (criterios.hasta !== undefined && registro.fecha > criterios.hasta) return false;
       if (criterios.estado !== undefined && registro.estado !== criterios.estado) return false;
       return true;
     });
 
-    // Lo mas reciente primero: es como se revisa un parte de horas.
+    // Lo más reciente primero: es como se revisa un parte de horas.
     registros.sort((a, b) => {
       if (a.fecha !== b.fecha) return a.fecha < b.fecha ? 1 : -1;
       return a.creadoEn < b.creadoEn ? 1 : -1;
@@ -162,10 +162,10 @@ export class ServicioRegistrosTiempo {
   async obtener(id: string): Promise<RegistroTiempoDTO> {
     const { solicitante, veTodo } = this.exigirLectura();
     const registro = await this.cargar(id);
-    // Aqui no hay filtro que forzar: el id ya apunta a un registro concreto, de
+    // Aquí no hay filtro que forzar: el id ya apunta a un registro concreto, de
     // modo que la propiedad se comprueba sobre el resultado. Se responde 403 y
     // no 404 porque el registro existe; ocultar eso no aporta nada frente a
-    // alguien que ya esta autenticado.
+    // alguien que ya está autenticado.
     if (!veTodo) this.exigirPropiedad(registro, solicitante);
     return registro.aDTO();
   }
@@ -178,12 +178,12 @@ export class ServicioRegistrosTiempo {
     const solicitante = this.ctx.exigirPermiso('tiempo:registrar');
     const entrada = ESQUEMA_CREAR.validar(datos);
 
-    // Cargar horas en nombre de otro es una operacion legitima de gerencia
+    // Cargar horas en nombre de otro es una operación legítima de gerencia
     // (alguien de licencia, un parte en papel), pero solo la puede hacer quien
     // ya tiene visibilidad sobre las horas de terceros. Para el resto, el
     // `empleadoId` que llegue se **ignora** y se fuerza el propio: si se
-    // confiara en el, cualquier empleado podria imputar horas a nombre de un
-    // companero y ensuciarle el parte del mes.
+    // confiara en el, cualquier empleado podría imputar horas a nombre de un
+    // compañero y ensuciarle el parte del mes.
     const empleadoId =
       entrada.empleadoId !== undefined && this.ctx.puede('tiempo:leer_todos')
         ? entrada.empleadoId
@@ -191,8 +191,8 @@ export class ServicioRegistrosTiempo {
 
     if (empleadoId === null) {
       throw new ErrorReglaNegocio(
-        'Su cuenta de acceso no esta vinculada a ningun empleado, de modo que no puede ' +
-          'cargar horas propias. Solicite la vinculacion a Recursos Humanos.',
+        'Su cuenta de acceso no está vinculada a ningún empleado, de modo que no puede ' +
+          'cargar horas propias. Solicite la vinculación a Recursos Humanos.',
       );
     }
 
@@ -202,7 +202,7 @@ export class ServicioRegistrosTiempo {
     }
     if (!empleado.activo) {
       throw new ErrorReglaNegocio(
-        `El empleado ${empleado.legajo} esta dado de baja y no admite carga de horas.`,
+        `El empleado ${empleado.legajo} está dado de baja y no admite carga de horas.`,
       );
     }
 
@@ -220,8 +220,8 @@ export class ServicioRegistrosTiempo {
       fecha: entrada.fecha,
       horas: entrada.horas,
       descripcion: entrada.descripcion,
-      // Nace en BORRADOR: nada entra al circuito de aprobacion sin que su autor
-      // lo envie explicitamente.
+      // Nace en BORRADOR: nada entra al circuito de aprobación sin que su autor
+      // lo envíe explicitamente.
       estado: 'BORRADOR',
       aprobadoPor: null,
       motivoRechazo: null,
@@ -252,8 +252,8 @@ export class ServicioRegistrosTiempo {
     // motivo real del rechazo y es el que tiene que leer el usuario.
     if (!registro.puedeEditarlo()) {
       throw new ErrorReglaNegocio(
-        `El registro esta en estado ${registro.estado} y ya no admite ediciones. ` +
-          'Para corregirlo, un aprobador debe rechazarlo primero; asi el cambio queda explicado.',
+        `El registro está en estado ${registro.estado} y ya no admite ediciones. ` +
+          'Para corregirlo, un aprobador debe rechazarlo primero; así el cambio queda explicado.',
       );
     }
 
@@ -266,16 +266,16 @@ export class ServicioRegistrosTiempo {
       proyectoDestino !== registro.proyectoId || fechaDestino !== registro.fecha;
     const cambiaComputo = horasDestino !== registro.horas || fechaDestino !== registro.fecha;
 
-    // Mover un parte de proyecto o de dia lo somete otra vez a las mismas
+    // Mover un parte de proyecto o de día lo somete otra vez a las mismas
     // reglas que su alta: el proyecto de destino puede estar cerrado y la
-    // asignacion puede no cubrir la fecha nueva.
+    // asignación puede no cubrir la fecha nueva.
     if (cambiaVinculo) {
       await this.exigirProyectoConCargaAbierta(proyectoDestino);
       await this.exigirAsignacionVigente(registro.empleadoId, proyectoDestino, fechaDestino);
     }
     if (cambiaComputo) {
-      // Se excluye este registro del computo del dia: si no, sus horas viejas
-      // se sumarian a las nuevas y una correccion de 8 a 9 horas fallaria como
+      // Se excluye este registro del computo del día: si no, sus horas viejas
+      // se sumarian a las nuevas y una corrección de 8 a 9 horas fallaría como
       // si se estuviesen cargando 17.
       await this.exigirTopeDiario(
         registro.empleadoId,
@@ -285,7 +285,7 @@ export class ServicioRegistrosTiempo {
       );
     }
 
-    // La entidad aplica los campos, revalida sus invariantes y, si venia
+    // La entidad aplica los campos, revalida sus invariantes y, si venía
     // RECHAZADO, lo devuelve a BORRADOR limpiando el motivo.
     registro.editar({
       proyectoId: entrada.proyectoId,
@@ -308,18 +308,18 @@ export class ServicioRegistrosTiempo {
   }
 
   /**
-   * Borrado **fisico**, y aqui si corresponde.
+   * Borrado **físico**, y aquí si corresponde.
    *
-   * En el resto del sistema las bajas son logicas para no dejar huerfanos los
-   * datos historicos, pero un registro que solo estuvo en BORRADOR (o que fue
-   * rechazado) jamas computo en una nomina, en un costo de proyecto ni en un
+   * En el resto del sistema las bajas son lógicas para no dejar huerfanos los
+   * datos históricos, pero un registro que solo estuvo en BORRADOR (o que fue
+   * rechazado) jamás computo en una nómina, en un costo de proyecto ni en un
    * informe cerrado: no hay nada que quede colgando. Conservarlo como "fila
-   * fantasma" solo llenaria de ruido el parte del empleado. Lo que si queda es
-   * el asiento de auditoria, que registra que existio y quien lo borro.
+   * fantasma" solo llenaría de ruido el parte del empleado. Lo que si queda es
+   * el asiento de auditoría, que registra que existio y quien lo borro.
    */
   async eliminar(id: string): Promise<void> {
     // El permiso base es el de carga: borrar un borrador propio es parte de
-    // cargar horas. La restriccion fina (propio, o alguien con vision de todas
+    // cargar horas. La restricción fina (propio, o alguien con visión de todas
     // las horas) va aparte, porque depende del dato y no solo del rol.
     const solicitante = this.ctx.exigirPermiso('tiempo:registrar');
     const registro = await this.cargar(id);
@@ -328,7 +328,7 @@ export class ServicioRegistrosTiempo {
     if (!registro.puedeEditarlo()) {
       throw new ErrorReglaNegocio(
         `No se puede eliminar un registro en estado ${registro.estado}: ya entro al circuito ` +
-          'de aprobacion y borrarlo haria desaparecer horas que alguien reviso.',
+          'de aprobación y borrarlo haría desaparecer horas que alguien reviso.',
       );
     }
 
@@ -345,7 +345,7 @@ export class ServicioRegistrosTiempo {
     });
   }
 
-  /** Envia el parte a aprobacion: a partir de aqui el empleado ya no lo toca. */
+  /** Envia el parte a aprobación: a partir de aquí el empleado ya no lo toca. */
   async enviar(id: string): Promise<RegistroTiempoDTO> {
     const solicitante = this.ctx.exigirPermiso('tiempo:registrar');
     const registro = await this.cargar(id);
@@ -358,7 +358,7 @@ export class ServicioRegistrosTiempo {
       accion: 'TIEMPO_ENVIADO',
       entidad: 'RegistroTiempo',
       entidadId: registro.id,
-      detalle: `${registro.horas} h del ${registro.fecha} enviadas a aprobacion.`,
+      detalle: `${registro.horas} h del ${registro.fecha} enviadas a aprobación.`,
       exito: true,
     });
 
@@ -422,9 +422,9 @@ export class ServicioRegistrosTiempo {
    * Permiso de lectura y alcance.
    *
    * `tiempo:leer_todos` y `tiempo:leer_propio` habilitan el mismo extremo con
-   * distinto alcance, asi que no alcanza con `exigirPermiso`: se resuelve cual
-   * de los dos tiene el solicitante y se devuelve esa decision, para que cada
-   * metodo la aplique como le corresponde (forzar el filtro, o comprobar la
+   * distinto alcance, así que no alcanza con `exigirPermiso`: se resuelve cual
+   * de los dos tiene el solicitante y se devuelve esa decisión, para que cada
+   * método la aplique como le corresponde (forzar el filtro, o comprobar la
    * propiedad del registro).
    */
   private exigirLectura(): { solicitante: Solicitante; veTodo: boolean } {
@@ -436,7 +436,7 @@ export class ServicioRegistrosTiempo {
     return { solicitante, veTodo };
   }
 
-  /** 403 si el registro no pertenece al empleado que representa la sesion. */
+  /** 403 si el registro no pertenece al empleado que representa la sesión. */
   private exigirPropiedad(registro: RegistroTiempo, solicitante: Solicitante): void {
     if (solicitante.empleadoId === null || registro.empleadoId !== solicitante.empleadoId) {
       throw new ErrorAutorizacion('Solo puede consultar y modificar sus propios registros de horas.');
@@ -444,10 +444,10 @@ export class ServicioRegistrosTiempo {
   }
 
   /**
-   * Identidad con la que se firma una aprobacion o un rechazo.
+   * Identidad con la que se firma una aprobación o un rechazo.
    *
    * Se prefiere el `empleadoId` porque es lo que compara la entidad para
-   * impedir la autoaprobacion; para una cuenta administrativa sin empleado
+   * impedir la autoaprobación; para una cuenta administrativa sin empleado
    * vinculado se usa el `usuarioId`, que sigue siendo una identidad real y
    * nunca puede coincidir con el autor del parte.
    */
@@ -462,7 +462,7 @@ export class ServicioRegistrosTiempo {
     }
     if (!proyecto.admiteCargaDeHoras()) {
       throw new ErrorReglaNegocio(
-        `El proyecto ${proyecto.codigo} esta ${proyecto.estado} y solo se imputan horas a ` +
+        `El proyecto ${proyecto.codigo} está ${proyecto.estado} y solo se imputan horas a ` +
           'proyectos EN_CURSO. Si el trabajo se hizo, reactive el proyecto antes de cargarlas.',
       );
     }
@@ -470,17 +470,17 @@ export class ServicioRegistrosTiempo {
   }
 
   /**
-   * Trazabilidad: toda hora tiene que estar respaldada por una participacion.
+   * Trazabilidad: toda hora tiene que estar respaldada por una participación.
    *
-   * No se imputan horas a un proyecto en el que no se participaba **ese dia**,
+   * No se imputan horas a un proyecto en el que no se participaba **ese día**,
    * por eso se pregunta por `estabaVigenteEn(fecha)` y no por `activa`: sirve
-   * tanto para el que nunca estuvo en el equipo como para el que ya salio y
+   * tanto para el que nunca estuvo en el equipo como para el que ya salió y
    * carga con fecha posterior a su baja. Es lo que permite explicar, meses
-   * despues, por que una hora esta imputada donde esta.
+   * después, por que una hora está imputada donde esta.
    *
    * Se consulta el repositorio en lugar de `ServicioAsignaciones.vigentesDe`
-   * para no acoplar la carga de horas al permiso 'asignacion:leer': esto es una
-   * comprobacion interna de integridad, no una lectura que el usuario pidio.
+   * para no acoplar la carga de horas al permiso 'asignación:leer': esto es una
+   * comprobación interna de integridad, no una lectura que el usuario pidió.
    */
   private async exigirAsignacionVigente(
     empleadoId: string,
@@ -496,7 +496,7 @@ export class ServicioRegistrosTiempo {
     if (asignacion === null) {
       throw new ErrorReglaNegocio(
         `El empleado no estaba asignado a ese proyecto el ${fecha}, de modo que no puede ` +
-          'imputarle horas. Cree primero la asignacion correspondiente al periodo.',
+          'imputarle horas. Cree primero la asignación correspondiente al periodo.',
       );
     }
   }
@@ -504,18 +504,18 @@ export class ServicioRegistrosTiempo {
   /**
    * Tope de horas de una jornada.
    *
-   * La entidad ya acota cada registro por separado, pero el limite real es del
-   * dia: sin este control alguien podria cargar cuatro registros de 12 horas al
-   * mismo dia repartidos en proyectos distintos, y ninguno de los cuatro
-   * violaria por si solo ningun invariante. Es de nuevo un invariante que solo
-   * se ve mirando la coleccion entera, y por eso vive en el servicio.
+   * La entidad ya acota cada registro por separado, pero el límite real es del
+   * día: sin este control alguien podría cargar cuatro registros de 12 horas al
+   * mismo día repartidos en proyectos distintos, y ninguno de los cuatro
+   * violaría por si solo ningún invariante. Es de nuevo un invariante que solo
+   * se ve mirando la colección entera, y por eso vive en el servicio.
    *
    * Cuentan todos los estados, incluidos borradores y rechazados: el tope
-   * describe cuantas horas caben en un dia, no cuantas se van a pagar. No hay
-   * que excluir "eliminados" porque el borrado de registros es fisico: lo que
-   * ya no esta en la coleccion no existe.
+   * describe cuantas horas caben en un día, no cuantas se van a pagar. No hay
+   * que excluir "eliminados" porque el borrado de registros es físico: lo que
+   * ya no está en la colección no existe.
    *
-   * @param excluirId registro que no debe contarse (el que se esta editando).
+   * @param excluirId registro que no debe contarse (el que se está editando).
    */
   private async exigirTopeDiario(
     empleadoId: string,
@@ -536,8 +536,8 @@ export class ServicioRegistrosTiempo {
       const disponibles = redondear(HORAS_MAXIMAS_POR_DIA - yaCargadas);
       throw new ErrorReglaNegocio(
         `El ${fecha} ya hay ${yaCargadas} h cargadas en ${delDia.length} registro(s) y el tope ` +
-          `diario es de ${HORAS_MAXIMAS_POR_DIA} h. Con estas ${horas} h el total llegaria a ` +
-          `${totalResultante} h: quedan ${disponibles} h disponibles ese dia.`,
+          `diario es de ${HORAS_MAXIMAS_POR_DIA} h. Con estas ${horas} h el total llegaría a ` +
+          `${totalResultante} h: quedan ${disponibles} h disponibles ese día.`,
       );
     }
   }

@@ -882,7 +882,7 @@ una clave pública— y por eso no se silencia:
 
 - `Contexto.usaClaveDeDesarrollo` devuelve `true` cuando el secret falta o mide
   menos de 32 caracteres.
-- `GET /api/salud` (ruta pública, `requiereSesion: false`) lo publica:
+- `GET /api/salud` (ruta pública, `requiereSesion: false`) lo pública:
 
 ```json
 {

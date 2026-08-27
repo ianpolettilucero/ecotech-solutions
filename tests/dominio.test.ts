@@ -39,7 +39,7 @@ function estadoEmpleado(parcial: Partial<EstadoEmpleado> & { tipoContrato: TipoC
   };
 }
 
-describe('Polimorfismo de la remuneracion', () => {
+describe('Polimorfismo de la remuneración', () => {
   it('el asalariado cobra igual trabaje las horas que trabaje', () => {
     const empleado = new EmpleadoAsalariado(
       estadoEmpleado({ tipoContrato: 'ASALARIADO', salarioMensual: 2_000_000 }),
@@ -69,7 +69,7 @@ describe('Polimorfismo de la remuneracion', () => {
   });
 
   it('un mismo bucle liquida las tres modalidades sin preguntar el tipo', () => {
-    // Este es el test que justifica la herencia: el "motor de nomina" no tiene
+    // Este es el test que justifica la herencia: el "motor de nómina" no tiene
     // ni un `if` sobre el tipo de contrato.
     const plantilla: Empleado[] = [
       new EmpleadoAsalariado(estadoEmpleado({ tipoContrato: 'ASALARIADO', salarioMensual: 1_000_000 })),
@@ -132,7 +132,7 @@ describe('Empleado: un solo departamento a la vez', () => {
     assert.equal(empleado.departamentoId, 'dep-2');
   });
 
-  it('la baja es logica y desvincula del departamento', () => {
+  it('la baja es lógica y desvincula del departamento', () => {
     const empleado = FabricaEmpleados.crear(
       estadoEmpleado({ tipoContrato: 'ASALARIADO', salarioMensual: 100, departamentoId: 'dep-1' }),
     );
@@ -149,7 +149,7 @@ describe('Empleado: un solo departamento a la vez', () => {
     const oculto = empleado.aDTO(null);
     assert.equal(oculto.sensiblesEnmascarados, true);
     assert.equal(oculto.datosSensibles.documento, '********');
-    // La remuneracion tambien se oculta: es un dato sensible mas.
+    // La remuneración también se oculta: es un dato sensible más.
     assert.equal(oculto.salarioMensual, null);
 
     const visible = empleado.aDTO({
@@ -195,7 +195,7 @@ describe('Departamento', () => {
   });
 });
 
-describe('Proyecto: maquina de estados', () => {
+describe('Proyecto: máquina de estados', () => {
   const nuevo = (estado: Proyecto['estado'] = 'PLANIFICADO'): Proyecto =>
     new Proyecto({
       id: crypto.randomUUID(),
@@ -245,7 +245,7 @@ describe('Proyecto: maquina de estados', () => {
   });
 });
 
-describe('AsignacionProyecto como clase de asociacion', () => {
+describe('AsignacionProyecto como clase de asociación', () => {
   const nueva = (desde = '2026-01-01', hasta: string | null = null): AsignacionProyecto =>
     new AsignacionProyecto({
       id: crypto.randomUUID(),
@@ -271,7 +271,7 @@ describe('AsignacionProyecto como clase de asociacion', () => {
     assert.equal(asignacion.estabaVigenteEn('2026-07-01'), false);
   });
 
-  it('desasignar preserva el historico en vez de borrar', () => {
+  it('desasignar preserva el histórico en vez de borrar', () => {
     const asignacion = nueva();
     asignacion.desasignar('2026-05-01');
     assert.equal(asignacion.fechaDesasignacion, '2026-05-01');
@@ -282,14 +282,14 @@ describe('AsignacionProyecto como clase de asociacion', () => {
     assert.throws(() => nueva('2026-05-01').desasignar('2026-01-01'), ErrorReglaNegocio);
   });
 
-  it('una asignacion cerrada ya no se modifica', () => {
+  it('una asignación cerrada ya no se modifica', () => {
     const asignacion = nueva();
     asignacion.desasignar('2026-05-01');
     assert.throws(() => asignacion.cambiarRol('QA'), ErrorReglaNegocio);
   });
 });
 
-describe('RegistroTiempo: circuito de aprobacion', () => {
+describe('RegistroTiempo: circuito de aprobación', () => {
   const ayer = new Date(Date.now() - 86_400_000).toISOString().slice(0, 10);
 
   const nuevo = (estado: RegistroTiempo['estado'] = 'BORRADOR'): RegistroTiempo =>
@@ -324,7 +324,7 @@ describe('RegistroTiempo: circuito de aprobacion', () => {
   it('el rechazo exige un motivo y devuelve el registro al empleado', () => {
     const registro = nuevo('ENVIADO');
     assert.throws(() => registro.rechazar('jefe-1', 'no'), ErrorValidacion);
-    registro.rechazar('jefe-1', 'La descripcion no identifica la tarea');
+    registro.rechazar('jefe-1', 'La descripción no identifica la tarea');
     assert.equal(registro.estado, 'RECHAZADO');
     assert.equal(registro.puedeEditarlo(), true);
 
@@ -351,13 +351,13 @@ describe('RegistroTiempo: circuito de aprobacion', () => {
     assert.throws(() => registro.editar({ horas: 0 }), ErrorValidacion);
   });
 
-  it('exige una descripcion util de la tarea', () => {
+  it('exige una descripción útil de la tarea', () => {
     const registro = nuevo();
     assert.throws(() => registro.editar({ descripcion: 'varios' }), ErrorValidacion);
   });
 });
 
-describe('PoliticaAutorizacion (RBAC)', () => {
+describe('Politicaautorización (RBAC)', () => {
   it('deniega por defecto: el empleado no gestiona personas', () => {
     assert.equal(PoliticaAutorizacion.puede('EMPLEADO', 'empleado:crear'), false);
     assert.equal(PoliticaAutorizacion.puede('EMPLEADO', 'empleado:leer_sensible'), false);
@@ -371,7 +371,7 @@ describe('PoliticaAutorizacion (RBAC)', () => {
     assert.equal(permisos.some((p) => /:(crear|editar|eliminar|gestionar|registrar|aprobar)$/.test(p)), false);
   });
 
-  it('la gerencia aprueba horas pero no ve datos personales ni nomina', () => {
+  it('la gerencia aprueba horas pero no ve datos personales ni nómina', () => {
     assert.equal(PoliticaAutorizacion.puede('GERENTE', 'tiempo:aprobar'), true);
     assert.equal(PoliticaAutorizacion.puede('GERENTE', 'empleado:leer_sensible'), false);
     assert.equal(PoliticaAutorizacion.puede('GERENTE', 'reporte:nomina'), false);
@@ -388,7 +388,7 @@ describe('PoliticaAutorizacion (RBAC)', () => {
     });
   });
 
-  it('la matriz devuelta es una copia: no se puede mutar la politica', () => {
+  it('la matriz devuelta es una copia: no se puede mutar la política', () => {
     const permisos = PoliticaAutorizacion.permisosDe('EMPLEADO');
     permisos.push('usuario:gestionar');
     assert.equal(PoliticaAutorizacion.puede('EMPLEADO', 'usuario:gestionar'), false);

@@ -1,6 +1,6 @@
 import { nuevoId } from './Identificador.js';
 
-/** Forma persistida minima de cualquier entidad. */
+/** Forma persistida mínima de cualquier entidad. */
 export interface EstadoEntidad {
   id: string;
   creadoEn: string;
@@ -8,14 +8,14 @@ export interface EstadoEntidad {
 }
 
 /**
- * Raiz de la jerarquia de entidades del dominio.
+ * Raiz de la jerarquía de entidades del dominio.
  *
  * Aporta los tres fundamentos de POO que el resto del modelo reutiliza:
  *
- * - **Abstraccion**: define *que* sabe hacer toda entidad (validarse,
+ * - **Abstracción**: define *que* sabe hacer toda entidad (validarse,
  *   serializarse) sin decir *como*.
  * - **Encapsulamiento**: el identificador y las marcas de tiempo son
- *   `protected`/`readonly`; nadie fuera de la jerarquia los reescribe. Las
+ *   `protected`/`readonly`; nadie fuera de la jerarquía los reescribe. Las
  *   mutaciones pasan por `tocar()`, que mantiene `actualizadoEn` coherente.
  * - **Herencia + polimorfismo**: `validar()` y `aEstado()` son abstractos, de
  *   modo que los repositorios trabajan con `Entidad` sin conocer subclases.
@@ -40,18 +40,18 @@ export abstract class Entidad<E extends EstadoEntidad = EstadoEntidad> {
     return this._actualizadoEn;
   }
 
-  /** Marca la entidad como modificada. Toda mutacion debe invocarlo. */
+  /** Marca la entidad como modificada. Toda mutación debe invocarlo. */
   protected tocar(): void {
     this._actualizadoEn = new Date().toISOString();
   }
 
   /**
    * Comprueba los invariantes propios de la entidad.
-   * Debe lanzar `ErrorValidacion` / `ErrorReglaNegocio` si algo no cierra.
+   * Debe lanzar `Errorvalidación` / `ErrorReglaNegocio` si algo no cierra.
    */
   abstract validar(): void;
 
-  /** Proyeccion serializable que se guarda en el almacen. */
+  /** Proyección serializable que se guarda en el almacén. */
   abstract aEstado(): E;
 
   /** Igualdad por identidad, no por valor: dos entidades son la misma si comparten id. */

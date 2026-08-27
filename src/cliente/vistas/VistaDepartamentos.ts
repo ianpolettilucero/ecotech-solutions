@@ -1,14 +1,14 @@
 /**
- * Modulo de departamentos.
+ * Módulo de departamentos.
  *
- * El organigrama es pequeno y cabe entero en una peticion, asi que el listado
+ * El organigrama es pequeno y cabe entero en una petición, así que el listado
  * llega con el conteo de empleados ya calculado y no hay que encadenar una
  * llamada por fila.
  *
  * La baja tiene una regla de negocio propia en el servidor: un departamento con
  * empleados activos no se elimina. El mensaje de ese 422 explica el motivo y a
- * quien hay que reasignar, de modo que aqui se muestra tal cual llega en vez de
- * sustituirlo por un generico "no se pudo eliminar".
+ * quien hay que reasignar, de modo que aquí se muestra tal cual llega en vez de
+ * sustituirlo por un genérico "no se pudo eliminar".
  */
 
 import type { DepartamentoDTO, EmpleadoDTO, Permiso } from '../../compartido/tipos.js';
@@ -58,9 +58,6 @@ export class VistaDepartamentos extends Vista {
     return 'Departamentos';
   }
 
-  override get tituloCorto(): string {
-    return 'Areas';
-  }
 
   override get icono(): string {
     return 'D';
@@ -82,7 +79,7 @@ export class VistaDepartamentos extends Vista {
   }
 
   // ---------------------------------------------------------------------------
-  // Armazon de la pantalla
+  // Armazón de la pantalla
   // ---------------------------------------------------------------------------
 
   private cabecera(): HTMLElement {
@@ -93,7 +90,7 @@ export class VistaDepartamentos extends Vista {
         elemento('h2', { clase: 'titulo-pagina', texto: 'Organigrama' }),
         elemento('p', {
           clase: 'subtitulo',
-          texto: 'Unidades organizativas, quien las dirige y cuanta gente activa tiene cada una.',
+          texto: 'Unidades organizativas, quién las dirige y cuánta gente activa tiene cada una.',
         }),
       ),
     );
@@ -116,7 +113,7 @@ export class VistaDepartamentos extends Vista {
     return filtros(
       campoFiltro(
         'Buscar',
-        buscador('Nombre o descripcion', (texto) => {
+        buscador('Nombre o descripción', (texto) => {
           this.texto = texto;
           void this.cargar();
         }),
@@ -172,20 +169,20 @@ export class VistaDepartamentos extends Vista {
   private tabla(conteo: Record<string, number>): Tabla<DepartamentoDTO> {
     const columnas: ColumnaTabla<DepartamentoDTO>[] = [
       { titulo: 'Nombre', celda: (d) => d.nombre },
-      { titulo: 'Descripcion', celda: (d) => (d.descripcion === '' ? '-' : d.descripcion) },
+      { titulo: 'Descripción', celda: (d) => (d.descripcion === '' ? '-' : d.descripcion) },
       { titulo: 'Gerente', celda: (d) => this.nombreGerente(d.gerenteId) },
       {
         titulo: 'Empleados',
         clase: 'celda-numero',
         // Indexar un Record devuelve `number | undefined`; el servidor siembra
-        // en cero los departamentos vacios, pero no se depende de ello.
+        // en cero los departamentos vacíos, pero no se depende de ello.
         celda: (d) => formatearNumero(conteo[d.id] ?? 0, 0),
       },
       { titulo: 'Estado', celda: (d) => this.insigniaEstado(d.activo) },
       { titulo: 'Acciones', clase: 'celda-acciones', celda: (d) => this.acciones(d) },
     ];
     return new Tabla<DepartamentoDTO>(columnas, {
-      vacio: 'Ningun departamento coincide con los filtros aplicados.',
+      vacio: 'Ningún departamento coincide con los filtros aplicados.',
     });
   }
 
@@ -203,7 +200,7 @@ export class VistaDepartamentos extends Vista {
     return botonera(...botones);
   }
 
-  /** El alta y la baja no son enumeracion del dominio: se rotulan aqui. */
+  /** El alta y la baja no son enumeración del dominio: se rotulan aquí. */
   private insigniaEstado(activo: boolean): HTMLElement {
     return elemento('span', {
       clase: activo ? 'insignia insignia-exito' : 'insignia insignia-neutro',
@@ -214,13 +211,13 @@ export class VistaDepartamentos extends Vista {
   private nombreGerente(gerenteId: string | null): string {
     if (gerenteId === null || gerenteId === '') return 'Vacante';
     // `.find` puede no encontrar nada, y sin permiso de lectura de empleados la
-    // lista esta vacia: en ambos casos se muestra un guion, no "Vacante", que
-    // significaria justo lo contrario de lo que pasa.
+    // lista está vacía: en ambos casos se muestra un guion, no "Vacante", que
+    // significaría justo lo contrario de lo que pasa.
     return this.empleados.find((empleado) => empleado.id === gerenteId)?.nombreCompleto ?? '-';
   }
 
   // ---------------------------------------------------------------------------
-  // Alta y edicion
+  // Alta y edición
   // ---------------------------------------------------------------------------
 
   private abrirFormulario(departamento: DepartamentoDTO | null): void {
@@ -251,7 +248,7 @@ export class VistaDepartamentos extends Vista {
           }
         } catch (error) {
           // Errores por campo bajo su input, mensaje general en la
-          // notificacion, y el dialogo abierto con lo que ya estaba escrito.
+          // notificación, y el diálogo abierto con lo que ya estaba escrito.
           formulario.mostrarErrores(error);
           this.app.notificarError(
             error instanceof ErrorApi ? error.message : 'No se pudo guardar el departamento.',
@@ -280,7 +277,7 @@ export class VistaDepartamentos extends Vista {
       },
       {
         nombre: 'descripcion',
-        etiqueta: 'Descripcion',
+        etiqueta: 'Descripción',
         tipo: 'area',
         valor: departamento?.descripcion ?? '',
         ayuda: 'Que hace la unidad. Se muestra en el listado y en los informes.',
@@ -298,7 +295,7 @@ export class VistaDepartamentos extends Vista {
 
   /**
    * Solo se ofrece gente activa: designar gerente a alguien dado de baja
-   * dejaria una jefatura que no existe. Se conserva el gerente actual aunque no
+   * dejaría una jefatura que no existe. Se conserva el gerente actual aunque no
    * aparezca en la lista para no perderlo al guardar otro campo.
    */
   private opcionesGerente(actual: string | null): { valor: string; texto: string }[] {
@@ -316,7 +313,7 @@ export class VistaDepartamentos extends Vista {
       nombre: comoTexto(valores['nombre']),
       descripcion: comoTexto(valores['descripcion']),
       // "Vacante" viaja como nulo: el esquema admite nulo, pero no una cadena
-      // vacia como identificador.
+      // vacía como identificador.
       gerenteId: gerenteId === '' ? null : gerenteId,
     };
   }
@@ -339,7 +336,7 @@ export class VistaDepartamentos extends Vista {
   private async eliminar(departamento: DepartamentoDTO): Promise<void> {
     const confirmado = await Modal.confirmar(
       'Eliminar departamento',
-      `El departamento "${departamento.nombre}" quedara inactivo. Es una baja logica: los proyectos y las horas de periodos ya cerrados siguen apuntando a el y deben poder resolverlo. Si todavia tiene empleados activos asignados, el servidor rechazara la baja.`,
+      `El departamento "${departamento.nombre}" quedara inactivo. Es una baja lógica: los proyectos y las horas de periodos ya cerrados siguen apuntando a el y deben poder resolverlo. Si todavía tiene empleados activos asignados, el servidor rechazara la baja.`,
       true,
     );
     if (!confirmado) return;

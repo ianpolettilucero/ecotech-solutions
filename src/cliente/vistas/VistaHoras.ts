@@ -1,10 +1,10 @@
 /**
- * Registro y aprobacion de horas.
+ * Registro y aprobación de horas.
  *
- * Es la pantalla con mas reglas de negocio detras y, precisamente por eso, la
+ * Es la pantalla con más reglas de negocio detrás y, precisamente por eso, la
  * que menos reglas repite: el circuito Borrador -> Enviado -> Aprobado o
- * Rechazado lo gobierna el servidor. Aqui solo se ofrecen las acciones que el
- * estado de cada parte admite, para que nadie pulse un boton que va a fallar.
+ * Rechazado lo gobierna el servidor. Aquí solo se ofrecen las acciones que el
+ * estado de cada parte admite, para que nadie pulse un botón que va a fallar.
  */
 
 import type {
@@ -50,18 +50,18 @@ interface RespuestaProyectos {
   horasPorProyecto: Record<string, number>;
 }
 
-/** Longitud minima de la descripcion que exige el servidor. */
+/** Longitud mínima de la descripción que exige el servidor. */
 const MINIMO_DESCRIPCION = 10;
 
-/** Longitud minima del motivo de rechazo que exige el servidor. */
+/** Longitud mínima del motivo de rechazo que exige el servidor. */
 const MINIMO_MOTIVO = 5;
 
-/** Primer dia del mes en curso, en formato `AAAA-MM-DD`. */
+/** Primer día del mes en curso, en formato `AAAA-MM-DD`. */
 function primerDiaDelMes(): string {
   return `${hoy().slice(0, 7)}-01`;
 }
 
-/** Ultimo dia del mes en curso. El dia 0 del mes siguiente es el ultimo de este. */
+/** Último día del mes en curso. El día 0 del mes siguiente es el último de este. */
 function ultimoDiaDelMes(): string {
   const ahora = new Date();
   const fin = new Date(ahora.getFullYear(), ahora.getMonth() + 1, 0);
@@ -101,7 +101,7 @@ export class VistaHoras extends Vista {
   private resumen: HTMLElement | null = null;
   private lista: HTMLElement | null = null;
 
-  /** `true` si el usuario ve las horas de toda la organizacion y no solo las suyas. */
+  /** `true` si el usuario ve las horas de toda la organización y no solo las suyas. */
   private get verTodos(): boolean {
     return this.app.puede('tiempo:leer_todos');
   }
@@ -109,7 +109,7 @@ export class VistaHoras extends Vista {
   override async render(contenedor: HTMLElement): Promise<void> {
     this.proyectos = await this.cargarProyectos();
     // La lista de personas solo hace falta cuando se ven horas ajenas: pedirla
-    // en el caso contrario seria una llamada cuyo resultado no se pinta nunca.
+    // en el caso contrario sería una llamada cuyo resultado no se pinta nunca.
     this.empleados = this.verTodos ? await this.cargarEmpleados() : [];
 
     const cabecera = div(
@@ -120,7 +120,7 @@ export class VistaHoras extends Vista {
         elemento('p', {
           clase: 'texto-menor texto-tenue',
           texto: this.verTodos
-            ? 'Partes de horas de la organizacion, con su estado dentro del circuito de aprobacion.'
+            ? 'Partes de horas de la organización, con su estado dentro del circuito de aprobación.'
             : 'Sus partes de horas y el estado en que se encuentra cada uno.',
         }),
       ),
@@ -258,7 +258,7 @@ export class VistaHoras extends Vista {
       tarjetaMetrica(
         'Horas pendientes',
         `${formatearNumero(VistaHoras.sumar(pendientes), 2)} h`,
-        `${pendientes.length} registro(s) a la espera de aprobacion`,
+        `${pendientes.length} registro(s) a la espera de aprobación`,
       ),
     );
   }
@@ -281,7 +281,7 @@ export class VistaHoras extends Vista {
         clase: 'celda-numero',
         celda: (r) => formatearNumero(r.horas, 2),
       },
-      { titulo: 'Descripcion', clase: 'celda-texto', celda: (r) => r.descripcion },
+      { titulo: 'Descripción', clase: 'celda-texto', celda: (r) => r.descripcion },
       { titulo: 'Estado', celda: (r) => VistaHoras.celdaEstado(r) },
       { titulo: 'Acciones', clase: 'celda-acciones', celda: (r) => this.acciones(r) },
     );
@@ -294,7 +294,7 @@ export class VistaHoras extends Vista {
     const marca = insignia(registro.estado);
     if (registro.estado !== 'RECHAZADO' || !registro.motivoRechazo) return marca;
 
-    // El motivo va debajo del estado y tambien como titulo: quien lo lee tiene
+    // El motivo va debajo del estado y también como titulo: quien lo lee tiene
     // que saber que corregir sin abrir nada, y el texto puede quedar recortado.
     marca.title = `Motivo del rechazo: ${registro.motivoRechazo}`;
     return div(
@@ -312,7 +312,7 @@ export class VistaHoras extends Vista {
     const botones: HTMLElement[] = [];
     const puedeAprobar = this.app.puede('tiempo:aprobar');
     // Cargar y corregir horas es potestad de quien las trabajo; quien ve las de
-    // todos puede ademas corregir un parte ajeno que todavia no salio a revisar.
+    // todos puede además corregir un parte ajeno que todavía no salió a revisar.
     const puedeGestionar =
       this.app.puede('tiempo:registrar') &&
       (registro.empleadoId === this.empleadoPropio() || this.verTodos);
@@ -344,13 +344,13 @@ export class VistaHoras extends Vista {
     const propio = this.empleadoPropio();
     if (!propio) {
       this.app.notificarAviso(
-        'Su usuario no esta vinculado a una ficha de empleado, asi que no puede cargar horas.',
+        'Su usuario no está vinculado a una ficha de empleado, así que no puede cargar horas.',
       );
       return;
     }
 
-    // Solo se ofrecen los proyectos en los que hay una participacion vigente:
-    // el servidor rechaza cualquier otro, y ofrecerlos seria invitar al error.
+    // Solo se ofrecen los proyectos en los que hay una participación vigente:
+    // el servidor rechaza cualquier otro, y ofrecerlos sería invitar al error.
     const asignaciones = await this.app.intentar(() =>
       ClienteApi.get<AsignacionDTO[]>(
         `/api/asignaciones${ClienteApi.consulta({ empleadoId: propio, activa: true })}`,
@@ -362,7 +362,7 @@ export class VistaHoras extends Vista {
     const disponibles = this.proyectos.filter((proyecto) => vigentes.has(proyecto.id));
     if (disponibles.length === 0) {
       this.app.notificarAviso(
-        'No tiene ninguna asignacion vigente, de modo que no hay proyectos a los que imputar horas.',
+        'No tiene ninguna asignación vigente, de modo que no hay proyectos a los que imputar horas.',
       );
       return;
     }
@@ -374,7 +374,7 @@ export class VistaHoras extends Vista {
         tipo: 'seleccion',
         requerido: true,
         opciones: this.opcionesProyecto(disponibles),
-        ayuda: 'Solo sus proyectos con asignacion vigente. Ademas, deben estar en curso para admitir carga.',
+        ayuda: 'Solo sus proyectos con asignación vigente. Además, deben estar en curso para admitir carga.',
       },
       { nombre: 'fecha', etiqueta: 'Fecha', tipo: 'fecha', requerido: true, valor: hoy() },
       {
@@ -382,11 +382,11 @@ export class VistaHoras extends Vista {
         etiqueta: 'Horas',
         tipo: 'numero',
         requerido: true,
-        ayuda: 'Horas trabajadas ese dia en ese proyecto.',
+        ayuda: 'Horas trabajadas ese día en ese proyecto.',
       },
       {
         nombre: 'descripcion',
-        etiqueta: 'Descripcion',
+        etiqueta: 'Descripción',
         tipo: 'area',
         requerido: true,
         ayuda: `Que se hizo, con al menos ${MINIMO_DESCRIPCION} caracteres. Es lo que lee quien aprueba.`,
@@ -439,7 +439,7 @@ export class VistaHoras extends Vista {
     const descripcion = String(valores['descripcion'] ?? '').trim();
     if (descripcion.length < MINIMO_DESCRIPCION) {
       this.app.notificarError(
-        `La descripcion debe tener al menos ${MINIMO_DESCRIPCION} caracteres.`,
+        `La descripción debe tener al menos ${MINIMO_DESCRIPCION} caracteres.`,
       );
       return false;
     }
@@ -447,7 +447,7 @@ export class VistaHoras extends Vista {
   }
 
   // ---------------------------------------------------------------------------
-  // Edicion
+  // Edición
   // ---------------------------------------------------------------------------
 
   private abrirEdicion(registro: RegistroTiempoDTO): void {
@@ -470,11 +470,11 @@ export class VistaHoras extends Vista {
       },
       {
         nombre: 'descripcion',
-        etiqueta: 'Descripcion',
+        etiqueta: 'Descripción',
         tipo: 'area',
         requerido: true,
         valor: registro.descripcion,
-        ayuda: `Minimo ${MINIMO_DESCRIPCION} caracteres.`,
+        ayuda: `Mínimo ${MINIMO_DESCRIPCION} caracteres.`,
       },
     ];
 
@@ -515,12 +515,12 @@ export class VistaHoras extends Vista {
   }
 
   // ---------------------------------------------------------------------------
-  // Circuito de aprobacion
+  // Circuito de aprobación
   // ---------------------------------------------------------------------------
 
   private async enviar(registro: RegistroTiempoDTO): Promise<void> {
     const confirmado = await Modal.confirmar(
-      'Enviar a aprobacion',
+      'Enviar a aprobación',
       `Se enviaran ${formatearNumero(registro.horas, 2)} h del ${formatearFecha(registro.fecha)}. ` +
         'A partir de ese momento el parte deja de ser editable hasta que alguien lo apruebe o lo rechace.',
     );
@@ -528,7 +528,7 @@ export class VistaHoras extends Vista {
 
     const hecho = await this.app.intentar(
       () => ClienteApi.post<RegistroTiempoDTO>(`/api/registros-tiempo/${registro.id}/enviar`),
-      'Parte enviado a aprobacion.',
+      'Parte enviado a aprobación.',
     );
     if (hecho) await this.refrescar();
   }
@@ -545,7 +545,7 @@ export class VistaHoras extends Vista {
     const confirmado = await Modal.confirmar(
       'Eliminar el parte',
       `Se borrara el registro de ${formatearNumero(registro.horas, 2)} h del ` +
-        `${formatearFecha(registro.fecha)}. Solo se pueden borrar partes que aun no entraron al circuito de aprobacion.`,
+        `${formatearFecha(registro.fecha)}. Solo se pueden borrar partes que aún no entraron al circuito de aprobación.`,
       true,
     );
     if (!confirmado) return;
@@ -564,7 +564,7 @@ export class VistaHoras extends Vista {
         etiqueta: 'Motivo del rechazo',
         tipo: 'area',
         requerido: true,
-        ayuda: `Minimo ${MINIMO_MOTIVO} caracteres. Lo lee quien cargo las horas y queda en la traza de auditoria.`,
+        ayuda: `Mínimo ${MINIMO_MOTIVO} caracteres. Lo lee quien cargo las horas y queda en la traza de auditoría.`,
       },
     ]);
 
@@ -602,7 +602,7 @@ export class VistaHoras extends Vista {
   }
 
   // ---------------------------------------------------------------------------
-  // Catalogos
+  // Catálogos
   // ---------------------------------------------------------------------------
 
   private empleadoPropio(): string | null {

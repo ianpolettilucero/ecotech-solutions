@@ -1,10 +1,10 @@
 /**
  * Panel de inicio.
  *
- * Es la unica vista sin permisos declarados: cualquiera que entre al sistema
- * aterriza aqui. Por eso no muestra ni un dato de persona, solo agregados que
- * el servidor ya calculo (`/api/panel`); si hiciera falta filtrar por rol lo
- * haria el servicio, no esta pantalla.
+ * Es la única vista sin permisos declarados: cualquiera que entre al sistema
+ * aterriza aquí. Por eso no muestra ni un dato de persona, solo agregados que
+ * el servidor ya cálculo (`/api/panel`); si hiciera falta filtrar por rol lo
+ * haría el servicio, no esta pantalla.
  */
 
 import type { MetricasPanelDTO, Permiso } from '../../compartido/tipos.js';
@@ -29,7 +29,7 @@ interface EntradaHoras {
   horas: number;
 }
 
-/** Concordancia de numero, para que los avisos no digan "1 empleados". */
+/** Concordancia de número, para que los avisos no digan "1 empleados". */
 function plural(cantidad: number, singular: string, varios: string): string {
   return `${formatearNumero(cantidad, 0)} ${cantidad === 1 ? singular : varios}`;
 }
@@ -90,13 +90,13 @@ export class VistaPanel extends Vista {
         elemento('h2', { clase: 'titulo-pagina', texto: 'Resumen general' }),
         elemento('p', {
           clase: 'subtitulo',
-          texto: 'Situacion de la plantilla, los proyectos y las horas registradas.',
+          texto: 'Situación de la plantilla, los proyectos y las horas registradas.',
         }),
       ),
     );
 
-    // Acceso rapido al modulo de horas: es la tarea diaria de casi todo el
-    // mundo y no tiene sentido obligar a buscarla en el menu lateral.
+    // Acceso rápido al módulo de horas: es la tarea diaria de casi todo el
+    // mundo y no tiene sentido obligar a buscarla en el menú lateral.
     if (this.app.puede('tiempo:registrar')) {
       agregar(
         cabecera,
@@ -123,9 +123,9 @@ export class VistaPanel extends Vista {
         'Unidades del organigrama',
       ),
       tarjetaMetrica('Proyectos en curso', entero(metricas.proyectosEnCurso), 'Trabajo abierto'),
-      tarjetaMetrica('Horas del mes en curso', horas(metricas.horasMesActual), 'Desde el dia 1'),
+      tarjetaMetrica('Horas del mes en curso', horas(metricas.horasMesActual), 'Desde el día 1'),
       tarjetaMetrica(
-        'Horas pendientes de aprobacion',
+        'Horas pendientes de aprobación',
         horas(metricas.horasPendientesAprobacion),
         'Enviadas y sin revisar',
       ),
@@ -150,13 +150,13 @@ export class VistaPanel extends Vista {
       puntos.push(
         `Hay ${plural(metricas.empleadosSinDepartamento, 'empleado', 'empleados')} sin ` +
           'departamento asignado: no cuentan en el reparto por unidad ni en los informes ' +
-          'por departamento. Conviene asignarlos desde el modulo de empleados.',
+          'por departamento. Conviene asignarlos desde el módulo de empleados.',
       );
     }
     if (metricas.proyectosSobrePresupuesto > 0) {
       puntos.push(
-        `Hay ${plural(metricas.proyectosSobrePresupuesto, 'proyecto', 'proyectos')} con mas ` +
-          'horas registradas que las presupuestadas. Revise el alcance o amplie el ' +
+        `Hay ${plural(metricas.proyectosSobrePresupuesto, 'proyecto', 'proyectos')} con más ` +
+          'horas registradas que las presupuestadas. Revise el alcance o amplíe el ' +
           'presupuesto antes de seguir imputando.',
       );
     }
@@ -185,7 +185,7 @@ export class VistaPanel extends Vista {
     entradas: EntradaHoras[],
   ): HTMLElement {
     const ordenadas = [...entradas].sort((a, b) => b.horas - a.horas);
-    // Indexar un array devuelve `T | undefined`: con la lista vacia el maximo
+    // Indexar un array devuelve `T | undefined`: con la lista vacía el máximo
     // es cero y ninguna barra llega a dividirse por el.
     const maximo = ordenadas[0]?.horas ?? 0;
     const total = ordenadas.reduce((suma, entrada) => suma + entrada.horas, 0);
@@ -203,7 +203,7 @@ export class VistaPanel extends Vista {
     ];
 
     const tabla = new Tabla<FilaHoras>(columnas, {
-      vacio: 'Todavia no hay horas aprobadas que repartir.',
+      vacio: 'Todavía no hay horas aprobadas que repartir.',
       compacta: true,
     });
 

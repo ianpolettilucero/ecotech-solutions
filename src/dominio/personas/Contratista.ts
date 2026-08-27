@@ -6,11 +6,11 @@ import type { TipoContrato } from '../../compartido/tipos.js';
  * Profesional externo contratado por obra o servicio.
  *
  * Factura por hora, pero con un **tope mensual** pactado que la empresa no
- * supera aunque se carguen mas horas. Es justamente lo que hace que no baste con
- * reutilizar `EmpleadoPorHoras`: misma unidad de medida, regla economica
+ * supera aunque se carguen más horas. Es justamente lo que hace que no baste con
+ * reutilizar `EmpleadoPorHoras`: misma unidad de medida, regla económica
  * distinta.
  *
- * No percibe recargo por horas extra, porque no esta en relacion de dependencia.
+ * No percibe recargo por horas extra, porque no está en relación de dependencia.
  */
 export class Contratista extends Empleado {
   private _tarifaHora: number;
@@ -39,7 +39,7 @@ export class Contratista extends Empleado {
     return Math.round(Math.min(bruto, this._topeMensual) * 100) / 100;
   }
 
-  /** `true` si el tope recorto la facturacion del periodo. Lo usa la nomina. */
+  /** `true` si el tope recorto la facturación del periodo. Lo usa la nómina. */
   alcanzoTope(horasTrabajadas: number): boolean {
     return Math.max(0, horasTrabajadas) * this._tarifaHora > this._topeMensual;
   }

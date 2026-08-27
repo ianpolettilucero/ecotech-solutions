@@ -61,8 +61,8 @@ describe('FabricaExportadores', () => {
     }
   });
 
-  it('todos los formatos producen bytes no vacios sobre el mismo reporte', async () => {
-    // El servicio de informes trabaja asi: elige el exportador y le manda el
+  it('todos los formatos producen bytes no vacíos sobre el mismo reporte', async () => {
+    // El servicio de informes trabaja así: elige el exportador y le manda el
     // mismo objeto. Ninguno conoce al resto.
     const reporte = reporteDePrueba(50);
     for (const formato of ['json', 'csv', 'xlsx', 'pdf'] as const) {
@@ -89,20 +89,20 @@ describe('ExportadorCSV', () => {
     assert.ok(texto(bytes).includes('\r\n'));
   });
 
-  it('escapa comillas y separadores segun RFC 4180', async () => {
+  it('escapa comillas y separadores según RFC 4180', async () => {
     const bytes = await new ExportadorCSV().exportar(reporteDePrueba(1));
     const contenido = texto(bytes);
     // Las comillas internas se duplican y el valor va entrecomillado.
     assert.ok(contenido.includes('""comillas""'));
   });
 
-  it('neutraliza las formulas: el CSV no debe ejecutar nada al abrirse', async () => {
+  it('neutraliza las fórmulas: el CSV no debe ejecutar nada al abrirse', async () => {
     const reporte = reporteDePrueba(1);
     const fila = reporte.filas[0];
     assert.ok(fila);
     fila['nombre'] = '=HYPERLINK("http://malicioso","pulse")';
     const contenido = texto(await new ExportadorCSV().exportar(reporte));
-    // El apostrofo delante impide que Excel lo interprete como formula.
+    // El apóstrofo delante impide que Excel lo intérprete como fórmula.
     assert.ok(contenido.includes("'=HYPERLINK"));
     assert.equal(/[;"]=HYPERLINK/.test(contenido), false);
   });
@@ -139,7 +139,7 @@ describe('ExportadorXLSX', () => {
     }
   });
 
-  it('el numero de entradas del EOCD coincide con las partes escritas', async () => {
+  it('el número de entradas del EOCD coincide con las partes escritas', async () => {
     const bytes = await new ExportadorXLSX().exportar(reporteDePrueba(3));
     const vista = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
     const inicioEocd = bytes.length - 22;
@@ -149,7 +149,7 @@ describe('ExportadorXLSX', () => {
 });
 
 describe('ExportadorPDF', () => {
-  it('empieza con la cabecera de version y termina en %%EOF', async () => {
+  it('empieza con la cabecera de versión y termina en %%EOF', async () => {
     const bytes = await new ExportadorPDF().exportar(reporteDePrueba(10));
     const crudo = new TextDecoder('latin1').decode(bytes);
     assert.ok(crudo.startsWith('%PDF-1.'));
@@ -157,8 +157,8 @@ describe('ExportadorPDF', () => {
   });
 
   it('el desplazamiento de startxref apunta al byte exacto de la tabla', async () => {
-    // Es el fallo mas facil de cometer escribiendo un PDF a mano: si algun
-    // tramo se codifica en UTF-8, los desplazamientos se corren y ningun lector
+    // Es el fallo más fácil de cometer escribiendo un PDF a mano: si algún
+    // tramo se codifica en UTF-8, los desplazamientos se corren y ningún lector
     // abre el documento.
     const bytes = await new ExportadorPDF().exportar(reporteDePrueba(40));
     const crudo = new TextDecoder('latin1').decode(bytes);
@@ -168,7 +168,7 @@ describe('ExportadorPDF', () => {
     assert.equal(crudo.slice(desplazamiento, desplazamiento + 4), 'xref');
   });
 
-  it('pagina el contenido sin perder ninguna fila', async () => {
+  it('página el contenido sin perder ninguna fila', async () => {
     const reporte = reporteDePrueba(120);
     const crudo = new TextDecoder('latin1').decode(await new ExportadorPDF().exportar(reporte));
     for (let i = 1; i <= 120; i++) {
@@ -178,20 +178,20 @@ describe('ExportadorPDF', () => {
     assert.ok(crudo.includes('TOTALES'));
   });
 
-  it('repite la cabecera de la tabla en cada pagina', async () => {
+  it('repite la cabecera de la tabla en cada página', async () => {
     const crudo = new TextDecoder('latin1').decode(
       await new ExportadorPDF().exportar(reporteDePrueba(120)),
     );
     const paginas = (crudo.match(/\/Type\s*\/Page[^s]/g) ?? []).length;
     const cabeceras = (crudo.match(/\(Legajo\)/g) ?? []).length;
-    assert.ok(paginas > 1, 'el reporte deberia ocupar varias paginas');
+    assert.ok(paginas > 1, 'el reporte deberia ocupar varias páginas');
     assert.equal(cabeceras, paginas);
   });
 
-  it('un reporte de una sola fila cabe en una pagina', async () => {
+  it('un reporte de una sola fila cabe en una página', async () => {
     const crudo = new TextDecoder('latin1').decode(
       await new ExportadorPDF().exportar(reporteDePrueba(1)),
     );
-    assert.ok(crudo.includes('Pagina 1 de 1'));
+    assert.ok(crudo.includes('Página 1 de 1'));
   });
 });

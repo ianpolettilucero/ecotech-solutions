@@ -1,21 +1,21 @@
 /**
- * Auditoria de diseno adaptable con Playwright.
+ * Auditoría de diseño adaptable con Playwright.
  *
- * Recorre la pantalla de acceso y los nueve modulos en varios tamanios reales y
+ * Recorre la pantalla de acceso y los nueve módulos en varios tamaños reales y
  * falla si encuentra alguno de los defectos que de verdad rompen una pantalla
  * chica:
  *
- *  - la pagina se desplaza en horizontal,
+ *  - la página se desplaza en horizontal,
  *  - un elemento sobresale de su contenedor,
- *  - la tarjeta de acceso queda cortada por arriba (el clasico de centrar con
- *    `place-items: center` un contenido mas alto que la ventana),
- *  - el boton principal cae fuera de la vista,
+ *  - la tarjeta de acceso queda cortada por arriba (el clásico de centrar con
+ *    `place-items: center` un contenido más alto que la ventana),
+ *  - el botón principal cae fuera de la vista,
  *  - una tabla necesita desplazamiento lateral pese al modo de fichas,
- *  - la barra de navegacion inferior muestra menos de cuatro accesos,
- *  - la pagina de detras se desplaza mientras hay un dialogo abierto.
+ *  - la barra de navegación inferior muestra menos de cuatro accesos,
+ *  - la página de detrás se desplaza mientras hay un diálogo abierto.
  *
- * Se usa `playwright-core` a proposito: no descarga navegadores al instalarse,
- * de modo que ni el despliegue de Cloudflare ni una instalacion limpia pagan
+ * Se usa `playwright-core` a propósito: no descarga navegadores al instalarse,
+ * de modo que ni el despliegue de Cloudflare ni una instalación limpia pagan
  * 150 MB por una herramienta que solo se usa a mano. Hay que apuntarle a un
  * Chromium ya presente:
  *
@@ -30,7 +30,7 @@ import { existsSync, mkdirSync } from 'node:fs';
 const BASE = process.argv[2] ?? process.env.BASE_URL ?? 'http://127.0.0.1:8787';
 const CAPTURAS = process.env.CAPTURAS ?? null;
 
-/** Tamanios elegidos por lo que rompen, no por popularidad. */
+/** Tamaños elegidos por lo que rompen, no por popularidad. */
 const TAMANOS = [
   { nombre: 'movil-320', ancho: 320, alto: 568 },
   { nombre: 'movil-375', ancho: 375, alto: 667 },
@@ -93,7 +93,7 @@ function medir() {
     const caja = el.getBoundingClientRect();
     const cajaPadre = padre.getBoundingClientRect();
     const estilo = getComputedStyle(padre);
-    // Un padre que desplaza a proposito no cuenta como defecto.
+    // Un padre que desplaza a propósito no cuenta como defecto.
     if (estilo.overflowX === 'auto' || estilo.overflowX === 'scroll') continue;
     if (caja.width > 0 && (caja.right > cajaPadre.right + 1 || caja.left < cajaPadre.left - 1)) {
       desbordan.push(identificar(el));
@@ -122,12 +122,12 @@ function medir() {
 }
 
 /**
- * Estado de la barra de navegacion.
+ * Estado de la barra de navegación.
  *
  * Por debajo de 900 px la barra lateral pasa a ser una barra inferior. Se
  * comprueba lo que de verdad la hace utilizable: que la marca no ocupe sitio
  * en ella y que se vean varios accesos a la vez. Las dos cosas fallaron: la
- * regla que oculta la marca nombraba `.marca` mientras el armazon emite
+ * regla que oculta la marca nombraba `.marca` mientras el armazón emite
  * `.barra-lateral-marca`, y cada acceso heredaba el `inline-size: 100%` de la
  * barra vertical, de modo que medida uno el ancho entero de la pantalla.
  */
@@ -147,8 +147,8 @@ function medirNavegacion() {
   return {
     total: accesos.length,
     visibles: dentroDeLaBarra.length,
-    // Proporcion del ancho de la barra que ocupa el acceso mas ancho. Este es
-    // el numero que delataba el defecto: valia 1 (un acceso = toda la barra).
+    // Proporción del ancho de la barra que ocupa el acceso más ancho. Este es
+    // el número que delataba el defecto: valia 1 (un acceso = toda la barra).
     proporcionMayor: caja.width > 0 ? anchoMayor / caja.width : 0,
     marcaVisible: marca ? getComputedStyle(marca).display !== 'none' : false,
     activoALaVista: cajaActivo
@@ -189,11 +189,11 @@ for (const tamano of TAMANOS) {
     comprobar(tamano.nombre, 'acceso sin desbordamiento horizontal', d.desbordeHorizontal <= 1, `${d.desbordeHorizontal}px`);
     comprobar(tamano.nombre, 'acceso sin elementos fuera de su contenedor', d.desbordan.length === 0, d.desbordan.join(', '));
     comprobar(tamano.nombre, 'la tarjeta no queda cortada por arriba', !d.tarjetaCortadaArriba);
-    comprobar(tamano.nombre, 'el boton de ingresar esta a la vista', d.botonPrincipalVisible !== false);
+    comprobar(tamano.nombre, 'el botón de ingresar está a la vista', d.botonPrincipalVisible !== false);
     if (CAPTURAS) await pagina.screenshot({ path: `${CAPTURAS}/${tamano.nombre}-acceso.png` });
   }
 
-  // --- Sesion ---------------------------------------------------------------
+  // --- Sesión ---------------------------------------------------------------
   let dentro = false;
   for (const clave of [CLAVE_SEMBRADA, CLAVE_ROTADA]) {
     await pagina.fill('input[type="email"]', 'admin@ecotech.com').catch(() => {});
@@ -205,7 +205,7 @@ for (const tamano of TAMANOS) {
       break;
     }
   }
-  comprobar(tamano.nombre, 'inicia sesion', dentro);
+  comprobar(tamano.nombre, 'inicia sesión', dentro);
 
   if (dentro) {
     // El sistema exige rotar la clave sembrada antes de dejar navegar.
@@ -213,7 +213,7 @@ for (const tamano of TAMANOS) {
       await pagina.fill('[name="contrasenaActual"]', CLAVE_SEMBRADA);
       await pagina.fill('[name="contrasenaNueva"]', CLAVE_ROTADA);
       await pagina.fill('[name="contrasenaRepetida"]', CLAVE_ROTADA);
-      await pagina.locator('button', { hasText: /^Cambiar contrasena$/ }).first().click();
+      await pagina.locator('button', { hasText: /^Cambiar contraseña$/ }).first().click();
       await pagina.waitForTimeout(2200);
     }
 
@@ -223,9 +223,9 @@ for (const tamano of TAMANOS) {
       const d = await pagina.evaluate(medir);
       comprobar(tamano.nombre, `${modulo}: sin desbordamiento horizontal`, d.desbordeHorizontal <= 1, `${d.desbordeHorizontal}px`);
       comprobar(tamano.nombre, `${modulo}: nada fuera de su contenedor`, d.desbordan.length === 0, d.desbordan.join(', '));
-      // Solo por debajo del corte de fichas (900 px). Por encima, una tabla mas
+      // Solo por debajo del corte de fichas (900 px). Por encima, una tabla más
       // ancha que su contenedor es el comportamiento buscado: se desplaza dentro
-      // de `.tabla-contenedor` y nunca arrastra a la pagina.
+      // de `.tabla-contenedor` y nunca arrastra a la página.
       if (tamano.ancho < 900) {
         comprobar(tamano.nombre, `${modulo}: la tabla cabe`, d.tablaCabe, `${d.anchoTabla} > ${d.anchoContenedor}`);
       }
@@ -234,16 +234,16 @@ for (const tamano of TAMANOS) {
       }
 
       // La barra inferior solo existe por debajo de 900 px; por encima la
-      // navegacion es una columna y estas medidas no aplican.
+      // navegación es una columna y estas medidas no aplican.
       if (tamano.ancho < 900) {
         const n = await pagina.evaluate(medirNavegacion);
         if (n) {
           comprobar(tamano.nombre, `${modulo}: la marca no ocupa la barra inferior`, !n.marcaVisible);
           // Un tercio de la barra por acceso deja siempre tres enteros y el
-          // cuarto asomando, que es la senal de que la barra se desplaza.
+          // cuarto asomando, que es la señal de que la barra se desplaza.
           comprobar(
             tamano.nombre,
-            `${modulo}: ningun acceso acapara la barra inferior`,
+            `${modulo}: ningún acceso acapara la barra inferior`,
             n.proporcionMayor <= 0.34,
             `el mayor ocupa el ${Math.round(n.proporcionMayor * 100)}%`,
           );
@@ -253,14 +253,14 @@ for (const tamano of TAMANOS) {
             n.visibles >= Math.min(3, n.total),
             `${n.visibles} de ${n.total}`,
           );
-          comprobar(tamano.nombre, `${modulo}: el acceso activo esta a la vista`, n.activoALaVista);
+          comprobar(tamano.nombre, `${modulo}: el acceso activo está a la vista`, n.activoALaVista);
         }
       }
     }
 
-    // --- El dialogo congela la pagina de detras -----------------------------
-    // Sin esto el arrastre se encadenaba al documento: la lista de detras se
-    // movia sola y al cerrar el dialogo el usuario aparecia en otro sitio.
+    // --- El diálogo congela la página de detrás -----------------------------
+    // Sin esto el arrastre se encadenaba al documento: la lista de detrás se
+    // movia sola y al cerrar el diálogo el usuario aparecía en otro sitio.
     await pagina.goto(`${BASE}/#/empleados`, { waitUntil: 'domcontentloaded' });
     await pagina.waitForTimeout(1300);
     const abierto = await pagina.evaluate(async () => {
@@ -275,7 +275,7 @@ for (const tamano of TAMANOS) {
     // El gesto tiene que ser real: `overflow: hidden` frena al usuario, no al
     // desplazamiento programado, de modo que asignar `scrollTop` no probaria
     // nada. Se usa la rueda sobre el centro de la ventana, que es donde cae el
-    // dialogo.
+    // diálogo.
     let congela = null;
     if (abierto) {
       const antes = await pagina.evaluate(() => window.scrollY);
@@ -295,11 +295,11 @@ for (const tamano of TAMANOS) {
     if (congela) {
       comprobar(
         tamano.nombre,
-        'con un dialogo abierto la pagina de detras no se desplaza',
+        'con un diálogo abierto la página de detrás no se desplaza',
         congela.antes === congela.despues,
         `${congela.antes} -> ${congela.despues}`,
       );
-      comprobar(tamano.nombre, 'el dialogo se cierra y libera la pagina', congela.cerrado);
+      comprobar(tamano.nombre, 'el diálogo se cierra y libera la página', congela.cerrado);
     }
   }
 

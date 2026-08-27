@@ -194,7 +194,7 @@ pregunta de qué tipo es cada uno:
 const remuneracion = empleado.calcularRemuneracionMensual(horasAprobadas);
 ```
 
-Tres formulas distintas, cero condicionales. Añadir una modalidad es añadir una
+Tres fórmulas distintas, cero condicionales. Añadir una modalidad es añadir una
 clase.
 
 **2. Errores.** `ErrorDominio` declara `codigoHttp` abstracto. La capa HTTP no

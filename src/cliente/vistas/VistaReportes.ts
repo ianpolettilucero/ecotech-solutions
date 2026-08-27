@@ -1,5 +1,5 @@
 /**
- * Generacion de informes.
+ * Generación de informes.
  *
  * La pantalla no sabe que columnas tiene cada informe: las lee de `columnas` y
  * arma la tabla en el momento. Por eso anadir un informe nuevo al servidor no
@@ -54,7 +54,7 @@ interface RespuestaDepartamentos {
   conteoEmpleados: Record<string, number>;
 }
 
-/** Fila de la previsualizacion: la de totales se pinta destacada. */
+/** Fila de la previsualización: la de totales se pinta destacada. */
 interface FilaReporte {
   valores: Record<string, ValorCelda>;
   totales: boolean;
@@ -65,11 +65,11 @@ const NOMBRES_TIPO: Readonly<Record<TipoReporte, string>> = Object.freeze({
   departamentos: 'Departamentos',
   proyectos: 'Proyectos',
   horas: 'Horas',
-  nomina: 'Nomina',
+  nomina: 'Nómina',
 });
 
 /**
- * Da formato a una celda segun el tipo declarado por su columna.
+ * Da formato a una celda según el tipo declarado por su columna.
  *
  * El valor puede faltar (la fila de totales solo trae las columnas sumables) y
  * puede llegar con un tipo que no corresponde al declarado: en ambos casos se
@@ -85,7 +85,7 @@ function formatearCelda(valor: ValorCelda | undefined, tipo: ColumnaReporte['tip
     case 'numero':
       return typeof valor === 'number' ? formatearNumero(valor) : String(valor);
     case 'booleano':
-      return valor === true ? 'Si' : 'No';
+      return valor === true ? 'Sí' : 'No';
     default:
       return String(valor);
   }
@@ -131,7 +131,7 @@ export class VistaReportes extends Vista {
       elemento('p', {
         clase: 'texto-menor texto-tenue',
         texto:
-          'Previsualice el informe en pantalla y, cuando el resultado sea el esperado, descarguelo en el formato que necesite.',
+          'Previsualice el informe en pantalla y, cuando el resultado sea el esperado, descárguelo en el formato que necesite.',
       }),
     );
 
@@ -223,7 +223,7 @@ export class VistaReportes extends Vista {
     });
   }
 
-  /** La nomina solo se ofrece a quien puede verla: no basta con esconder el resultado. */
+  /** La nómina solo se ofrece a quien puede verla: no basta con esconder el resultado. */
   private opcionesTipo(): { valor: string; texto: string }[] {
     return TIPOS_REPORTE.filter(
       (tipo) => tipo !== 'nomina' || this.app.puede('reporte:nomina'),
@@ -241,7 +241,7 @@ export class VistaReportes extends Vista {
   }
 
   // ---------------------------------------------------------------------------
-  // Previsualizacion
+  // Previsualización
   // ---------------------------------------------------------------------------
 
   private async previsualizar(): Promise<void> {
@@ -257,7 +257,7 @@ export class VistaReportes extends Vista {
 
     vaciar(destino);
     if (!reporte) {
-      agregar(destino, estadoVacio('No se pudo generar la previsualizacion del informe.'));
+      agregar(destino, estadoVacio('No se pudo generar la previsualización del informe.'));
       return;
     }
     agregar(destino, this.pintarReporte(reporte));
@@ -330,7 +330,7 @@ export class VistaReportes extends Vista {
   }
 
   // ---------------------------------------------------------------------------
-  // Catalogos
+  // Catálogos
   // ---------------------------------------------------------------------------
 
   private async cargarDepartamentos(): Promise<DepartamentoDTO[]> {

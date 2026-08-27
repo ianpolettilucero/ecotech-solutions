@@ -1,10 +1,10 @@
 /**
- * Construccion del frontend estatico que `wrangler deploy` publica.
+ * Construcción del frontend estático que `wrangler deploy` pública.
  *
  * La salida vive en `dist/`, que es el directorio declarado en `wrangler.jsonc`
- * como almacen de assets: el Worker solo atiende `/api/*` y todo lo demas se
- * sirve desde aqui, con fallback de SPA a `index.html`. Este script es, por
- * tanto, el unico responsable de que `index.html`, `app.js` y `estilos.css`
+ * como almacén de assets: el Worker solo atiende `/api/*` y todo lo demás se
+ * sirve desde aquí, con fallback de SPA a `index.html`. Este script es, por
+ * tanto, el único responsable de que `index.html`, `app.js` y `estilos.css`
  * existan y sean coherentes entre si en el momento del despliegue.
  */
 
@@ -21,28 +21,28 @@ const DIR_CLIENTE = path.join(RAIZ, 'src', 'cliente');
 const SALIDA = 'dist';
 const DIR_SALIDA = path.join(RAIZ, SALIDA);
 
-/** Punto de entrada de la SPA; todo lo demas del cliente entra por sus imports. */
+/** Punto de entrada de la SPA; todo lo demás del cliente entra por sus imports. */
 const ENTRADA = path.join(DIR_CLIENTE, 'main.ts');
 
 /**
- * Configuracion de TypeScript que se le pasa a esbuild, de forma explicita.
+ * Configuración de TypeScript que se le pasa a esbuild, de forma explicita.
  *
  * El `tsconfig.json` de la raiz es un proyecto de solo referencias (`files: []`
  * + `references`) y esbuild no sigue las referencias de proyecto: si se dejara
- * autodescubrir la configuracion, encontraria ese archivo sin `compilerOptions`
- * y perderia `useDefineForClassFields: false`. Los campos de clase pasarian
- * entonces a semantica `[[Define]]`, que pisa con `undefined` lo que la clase
- * base ya habia asignado; con la jerarquia de entidades del dominio eso son
- * fallos en tiempo de ejecucion que `tsc --noEmit` no puede ver.
+ * autodescubrir la configuración, encontraria ese archivo sin `compilerOptions`
+ * y perdería `useDefineForClassFields: false`. Los campos de clase pasarian
+ * entonces a semántica `[[Define]]`, que pisa con `undefined` lo que la clase
+ * base ya había asignado; con la jerarquía de entidades del dominio eso son
+ * fallos en tiempo de ejecución que `tsc --noEmit` no puede ver.
  */
 const TSCONFIG = path.join(RAIZ, 'tsconfig.cliente.json');
 
 /** Archivos que se copian tal cual, sin pasar por el empaquetador. */
-// `_headers` aplica las cabeceras de seguridad a los archivos estaticos. Es
+// `_headers` aplica las cabeceras de seguridad a los archivos estáticos. Es
 // imprescindible: el Worker solo se invoca para /api/* (ver `run_worker_first`
-// en wrangler.jsonc), asi que las cabeceras de src/worker/http.ts NO llegan al
-// HTML ni al bundle. Sin este archivo, la unica pagina que ejecuta JavaScript
-// se serviria sin Content-Security-Policy.
+// en wrangler.jsonc), así que las cabeceras de src/worker/http.ts NO llegan al
+// HTML ni al bundle. Sin este archivo, la única página que ejecuta JavaScript
+// se serviría sin Content-Security-Policy.
 const ESTATICOS = ['index.html', 'estilos.css', '_headers'];
 
 /**
@@ -59,10 +59,10 @@ const VERSIONABLES = ['app.js', 'estilos.css'];
 const LONGITUD_HASH = 10;
 
 /**
- * Deja `dist/` vacio antes de cada build.
+ * Deja `dist/` vacío antes de cada build.
  *
  * Reutilizar el directorio conservaria archivos de builds anteriores que ya
- * nadie referencia; wrangler los subiria igualmente y quedarian servidos
+ * nadie referencia; wrangler los subiria igualmente y quedarían servidos
  * indefinidamente en el borde.
  */
 async function prepararSalida() {
@@ -86,7 +86,7 @@ async function empaquetarCliente() {
       legalComments: 'none',
     });
   } catch (error) {
-    // Sin bundle no hay aplicacion. Marcar el fallo y volver a lanzar corta la
+    // Sin bundle no hay aplicación. Marcar el fallo y volver a lanzar corta la
     // cadena `npm run build && wrangler deploy`: es preferible no desplegar a
     // publicar un index.html cuyo <script> apunta a un app.js inexistente.
     process.exitCode = 1;
@@ -112,10 +112,10 @@ function escaparRegExp(texto) {
  * Anade `?v=<hash>` a los atributos `src`/`href` que apuntan a `archivo`.
  *
  * El patron exige que el valor del atributo sea *exactamente* el archivo
- * (admitiendo el prefijo `./`) y termine en la misma comilla con la que abrio.
- * Un `replace` global sobre el nombre suelto tocaria tambien el texto visible,
- * los comentarios HTML o cualquier cadena de un script en linea que mencione
- * "app.js", corrompiendo el documento de formas dificiles de detectar.
+ * (admitiendo el prefijo `./`) y termine en la misma comilla con la que abrió.
+ * Un `replace` global sobre el nombre suelto tocaría también el texto visible,
+ * los comentarios HTML o cualquier cadena de un script en línea que mencione
+ * "app.js", corrompiendo el documento de formas difíciles de detectar.
  */
 function versionarReferencia(html, archivo, hash) {
   const patron = new RegExp(
@@ -149,7 +149,7 @@ async function versionarHtml() {
     const { html: actualizado, reemplazos } = versionarReferencia(html, nombre, hash);
 
     if (reemplazos === 0) {
-      // No es fatal, pero deja el asset sin invalidacion de cache: avisar es
+      // No es fatal, pero deja el asset sin invalidación de cache: avisar es
       // mejor que un despliegue silenciosamente servido desde la cache vieja.
       console.warn(`  aviso: index.html no referencia "${nombre}"; queda sin cache-busting`);
     }

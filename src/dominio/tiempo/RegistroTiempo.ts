@@ -19,22 +19,22 @@ export const HORAS_MAXIMAS_POR_REGISTRO = 12;
 export const HORAS_MAXIMAS_POR_DIA = 16;
 
 /**
- * Parte de horas: un empleado, un proyecto, un dia.
+ * Parte de horas: un empleado, un proyecto, un día.
  *
  * ## Trazabilidad
  *
  * El problema original era la "falta de trazabilidad en el registro de horas
- * trabajadas". Se ataca con un flujo de aprobacion explicito
+ * trabajadas". Se ataca con un flujo de aprobación explicito
  * (BORRADOR -> ENVIADO -> APROBADO | RECHAZADO) en lugar de una celda editable:
  *
- * - Mientras esta en BORRADOR el empleado lo corrige libremente.
+ * - Mientras está en BORRADOR el empleado lo corrige libremente.
  * - Al ENVIARLO queda congelado para el, y pasa a depender de un aprobador.
- * - APROBADO es lo unico que suma en la nomina y en los informes de costos.
+ * - APROBADO es lo único que suma en la nómina y en los informes de costos.
  * - RECHAZADO vuelve a manos del empleado con un motivo obligatorio, de modo que
  *   siempre queda escrito por que una hora no se pago.
  *
  * Un registro aprobado ya no se edita: para corregirlo hay que rechazarlo antes,
- * y ese rechazo queda en la auditoria. Es lo que impide que alguien reescriba el
+ * y ese rechazo queda en la auditoría. Es lo que impide que alguien reescriba el
  * pasado sin dejar rastro.
  */
 export class RegistroTiempo extends Entidad<EstadoRegistroTiempo> {
@@ -91,12 +91,12 @@ export class RegistroTiempo extends Entidad<EstadoRegistroTiempo> {
     return this._motivoRechazo;
   }
 
-  /** Solo las horas aprobadas cuentan para nomina e informes de costo. */
+  /** Solo las horas aprobadas cuentan para nómina e informes de costo. */
   computaParaNomina(): boolean {
     return this._estado === 'APROBADO';
   }
 
-  /** El empleado solo puede tocar lo que aun no envio o le rechazaron. */
+  /** El empleado solo puede tocar lo que aun no envío o le rechazaron. */
   puedeEditarlo(): boolean {
     return this._estado === 'BORRADOR' || this._estado === 'RECHAZADO';
   }
@@ -140,11 +140,11 @@ export class RegistroTiempo extends Entidad<EstadoRegistroTiempo> {
   aprobar(idAprobador: string): void {
     if (this._estado !== 'ENVIADO') {
       throw new ErrorReglaNegocio(
-        `Solo se aprueban registros enviados. Este esta en estado ${this._estado}.`,
+        `Solo se aprueban registros enviados. Este está en estado ${this._estado}.`,
       );
     }
     if (idAprobador === this._empleadoId) {
-      // Separacion de funciones: nadie valida sus propias horas.
+      // Separación de funciones: nadie valida sus propias horas.
       throw new ErrorReglaNegocio('Un empleado no puede aprobar sus propios registros de horas.');
     }
     this._estado = 'APROBADO';
@@ -156,12 +156,12 @@ export class RegistroTiempo extends Entidad<EstadoRegistroTiempo> {
   rechazar(idAprobador: string, motivo: string): void {
     if (this._estado !== 'ENVIADO' && this._estado !== 'APROBADO') {
       throw new ErrorReglaNegocio(
-        `Solo se rechazan registros enviados o aprobados. Este esta en estado ${this._estado}.`,
+        `Solo se rechazan registros enviados o aprobados. Este está en estado ${this._estado}.`,
       );
     }
     if (motivo.trim().length < 5) {
       throw new ErrorValidacion('El motivo de rechazo es obligatorio.', [
-        { campo: 'motivoRechazo', mensaje: 'Debe explicar el rechazo (minimo 5 caracteres).' },
+        { campo: 'motivoRechazo', mensaje: 'Debe explicar el rechazo (mínimo 5 caracteres).' },
       ]);
     }
     this._estado = 'RECHAZADO';
@@ -172,11 +172,11 @@ export class RegistroTiempo extends Entidad<EstadoRegistroTiempo> {
 
   override validar(): void {
     if (!/^\d{4}-\d{2}-\d{2}$/.test(this._fecha)) {
-      throw new ErrorValidacion('La fecha del registro no es valida.', [
+      throw new ErrorValidacion('La fecha del registro no es válida.', [
         { campo: 'fecha', mensaje: 'Debe tener el formato AAAA-MM-DD.' },
       ]);
     }
-    // No se pueden cargar horas por adelantado: seria imposible de auditar.
+    // No se pueden cargar horas por adelantado: sería imposible de auditar.
     if (this._fecha > new Date().toISOString().slice(0, 10)) {
       throw new ErrorValidacion('No se pueden registrar horas en una fecha futura.', [
         { campo: 'fecha', mensaje: 'No puede ser una fecha futura.' },
@@ -195,12 +195,12 @@ export class RegistroTiempo extends Entidad<EstadoRegistroTiempo> {
     }
     const descripcion = this._descripcion.trim();
     if (descripcion.length < 10) {
-      throw new ErrorValidacion('La descripcion de la tarea es demasiado breve.', [
+      throw new ErrorValidacion('La descripción de la tarea es demasiado breve.', [
         { campo: 'descripcion', mensaje: 'Describa la tarea con al menos 10 caracteres.' },
       ]);
     }
     if (descripcion.length > 500) {
-      throw new ErrorValidacion('La descripcion es demasiado larga.', [
+      throw new ErrorValidacion('La descripción es demasiado larga.', [
         { campo: 'descripcion', mensaje: 'No puede superar los 500 caracteres.' },
       ]);
     }
