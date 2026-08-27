@@ -23,6 +23,7 @@ estado() { c -o /dev/null -w '%{http_code}' "$@"; }
 echo "== Salud (publica) =="
 SALUD=$(c "$BASE/api/salud")
 verificar "GET /api/salud responde ok" "true" "$(echo "$SALUD" | jq -r .ok)"
+verificar "el sistema esta operativo" "operativo" "$(echo "$SALUD" | jq -r .datos.estado)"
 verificar "el sistema quedo sembrado" "true" "$(echo "$SALUD" | jq -r .datos.sembrado)"
 
 echo "== Sin sesion =="

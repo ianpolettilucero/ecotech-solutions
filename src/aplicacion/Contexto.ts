@@ -72,6 +72,15 @@ export class Contexto {
   private _usuarios?: RepositorioKV<Usuario, EstadoUsuario>;
   private _auditoria?: RepositorioKV<RegistroAuditoria, EstadoRegistroAuditoria>;
 
+  /**
+   * Diagnostico del ultimo fallo de siembra, si lo hubo.
+   *
+   * Se guarda en vez de propagarse porque una siembra rota no debe tumbar la
+   * sonda de estado: precisamente cuando el sistema esta mal es cuando hay que
+   * poder preguntarle que le pasa.
+   */
+  errorDeSiembra: string | null = null;
+
   constructor(
     readonly entorno: Entorno,
     /** `null` mientras la peticion no esta autenticada (login, salud, assets). */

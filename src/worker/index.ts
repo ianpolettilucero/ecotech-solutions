@@ -71,7 +71,20 @@ export default {
       // La siembra se ejecuta de forma perezosa: en Workers no hay un paso de
       // "post-despliegue" donde correr migraciones, y sin ella un despliegue
       // limpio no tendria ningun usuario con el que entrar. Es idempotente.
-      await new Semilla(ctx).ejecutarSiHaceFalta();
+      //
+      // Su fallo NO aborta la peticion. Antes si lo hacia, y el resultado era el
+      // peor posible: un problema de infraestructura devolvia 500 en *todos* los
+      // puntos, incluida la sonda de estado, que es justo la que hay que poder
+      // consultar cuando algo va mal. Ahora el fallo se anota y `GET /api/salud`
+      // lo explica; el resto de rutas fallara igual, pero por su cuenta y con su
+      // propio error, que es informacion util y no ruido.
+      try {
+        await new Semilla(ctx).ejecutarSiHaceFalta();
+      } catch (e) {
+        const detalle = e instanceof Error ? `${e.name}: ${e.message}` : String(e);
+        ctx.errorDeSiembra = detalle.slice(0, 300);
+        console.error('Fallo la siembra inicial:', e);
+      }
 
       const autenticacion = new ServicioAutenticacion(ctx);
       const token = ServicioAutenticacion.leerTokenDeCookie(peticion.headers.get('Cookie'));

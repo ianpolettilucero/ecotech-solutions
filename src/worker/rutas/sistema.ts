@@ -32,20 +32,41 @@ export function registrarRutasSistema(enrutador: Enrutador): void {
   enrutador.get(
     '/api/salud',
     async (api) => {
-      const sembrado = await api.ctx.almacen
-        .leer<{ hecho: boolean }>('sistema:sembrado')
-        .then((valor) => valor?.hecho === true)
-        .catch(() => false);
+      // Se comprueba el almacen por separado de la siembra: distinguir "KV no
+      // responde" de "KV responde pero esta vacio" es la mitad del diagnostico.
+      let almacenAccesible = true;
+      let errorAlmacen: string | null = null;
+      let sembrado = false;
+      try {
+        sembrado =
+          (await api.ctx.almacen.leer<{ hecho: boolean }>('sistema:sembrado'))?.hecho === true;
+      } catch (e) {
+        almacenAccesible = false;
+        errorAlmacen = (e instanceof Error ? `${e.name}: ${e.message}` : String(e)).slice(0, 300);
+      }
 
-      return json({
-        estado: 'operativo',
-        almacen: 'workers-kv',
-        sembrado,
-        cifradoConClaveDeDesarrollo: api.ctx.usaClaveDeDesarrollo,
-        advertencia: api.ctx.usaClaveDeDesarrollo
-          ? 'Defina el secret CLAVE_MAESTRA: los datos personales se estan cifrando con una clave publica.'
-          : null,
-      });
+      const sano = almacenAccesible && sembrado && api.ctx.errorDeSiembra === null;
+
+      return json(
+        {
+          estado: sano ? 'operativo' : 'degradado',
+          almacen: 'workers-kv',
+          almacenAccesible,
+          sembrado,
+          cifradoConClaveDeDesarrollo: api.ctx.usaClaveDeDesarrollo,
+          advertencia: api.ctx.usaClaveDeDesarrollo
+            ? 'Defina el secret CLAVE_MAESTRA: los datos personales se estan cifrando con una clave publica.'
+            : null,
+          // El detalle solo se publica mientras el sistema NO esta sembrado.
+          // En ese estado no hay ningun dato que proteger todavia, y a cambio se
+          // puede diagnosticar el despliegue desde fuera. Una vez sembrado, el
+          // detalle desaparece y queda solo en los registros del Worker.
+          diagnostico: sembrado
+            ? null
+            : { errorAlmacen, errorSiembra: api.ctx.errorDeSiembra },
+        },
+        sano ? 200 : 503,
+      );
     },
     { requiereSesion: false },
   );
