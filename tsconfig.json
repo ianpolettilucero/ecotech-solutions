@@ -1,0 +1,7 @@
+{
+  // Proyecto raiz: solo referencia a las dos configuraciones reales. El editor
+  // resuelve cada archivo con la que le corresponde.
+  "files": [],
+  "references": [{ "path": "./tsconfig.worker.json" }, { "path": "./tsconfig.cliente.json" },
+    { "path": "./tsconfig.tests.json" }]
+}

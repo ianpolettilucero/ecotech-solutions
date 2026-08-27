@@ -1,0 +1,20 @@
+# Cabeceras de los archivos estaticos.
+#
+# El Worker solo se invoca para /api/* (ver `run_worker_first` en
+# wrangler.jsonc), de modo que las cabeceras de seguridad que aplica
+# src/worker/http.ts NO llegan al HTML ni al bundle: esas respuestas las emite
+# directamente el almacen de assets. Sin este archivo, la pagina que de verdad
+# ejecuta JavaScript se servia sin Content-Security-Policy, que es justo donde
+# hace falta.
+#
+# Se mantienen deliberadamente iguales a las de CABECERAS_SEGURIDAD para que no
+# haya dos politicas distintas segun la ruta.
+
+/*
+  Content-Security-Policy: default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; form-action 'none'; base-uri 'none'; frame-ancestors 'none'
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Frame-Options: DENY
+  Permissions-Policy: geolocation=(), microphone=(), camera=(), payment=()
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
+  Cross-Origin-Opener-Policy: same-origin

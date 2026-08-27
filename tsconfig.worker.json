@@ -1,0 +1,17 @@
+{
+  // Lado servidor: runtime de Cloudflare Workers. SIN la libreria DOM, para que
+  // usar `document` o `window` en el Worker sea un error de compilacion y no un
+  // fallo en produccion.
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "lib": ["ES2022"],
+    "types": ["@cloudflare/workers-types"]
+  },
+  "include": [
+    "src/compartido/**/*.ts",
+    "src/dominio/**/*.ts",
+    "src/infraestructura/**/*.ts",
+    "src/aplicacion/**/*.ts",
+    "src/worker/**/*.ts"
+  ]
+}

@@ -1,0 +1,1254 @@
+/* ==========================================================================
+   EcoTech Solutions - hoja de estilos unica del cliente.
+   La CSP del Worker es `style-src 'self'` sin 'unsafe-inline', asi que aqui
+   vive TODO el estilo: no hay atributos `style` ni etiquetas <style> en el
+   HTML ni en el codigo que genera las vistas. Cualquier variacion visual se
+   expresa como clase o como variable CSS, nunca como estilo en linea.
+   Orden del archivo: tokens -> reset -> layout -> componentes -> utilidades.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. Tokens de tema
+   La paleta clara se define completa aqui; la media query de modo oscuro solo
+   reasigna variables. Asi ningun componente necesita reglas duplicadas por
+   tema y un color nuevo se cambia en un unico sitio.
+   -------------------------------------------------------------------------- */
+:root {
+  /* Informa al navegador para que los controles nativos (scrollbars, selects,
+     autocompletado) se pinten en el mismo tema que la aplicacion. */
+  color-scheme: light;
+  --fuente-base: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --fuente-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
+  --tamano-texto: 0.9375rem;
+  --tamano-texto-menor: 0.8125rem;
+  --tamano-texto-micro: 0.6875rem;
+
+  /* Verdes sobrios: el primario se usa en superficies grandes, asi que se
+     elige apagado para no cansar en jornadas largas de uso. */
+  --color-primario: #2f7d4f;
+  --color-primario-oscuro: #235f3c;
+  --color-primario-claro: #4a9b6a;
+  --color-primario-tenue: #e7f1ea;
+  --color-primario-contraste: #ffffff;
+  /* Enlaces y elemento de navegacion activo: en modo oscuro el verde
+     oscuro se hunde en el fondo, asi que el token cambia de extremo. */
+  --color-enlace: var(--color-primario-oscuro);
+
+  /* Neutros calidos: el fondo tira a hueso, no a gris azulado. */
+  --color-fondo: #f7f5f0;
+  --color-superficie: #ffffff;
+  --color-superficie-alterna: #f2efe8;
+  --color-superficie-hover: #ece8df;
+  --color-borde: #e1dbd0;
+  --color-borde-fuerte: #c8c0b1;
+  --color-texto: #23261f;
+  --color-texto-tenue: #6b6559;
+  --color-texto-inverso: #ffffff;
+  --color-exito: #2a7047;
+  --color-exito-fondo: #e6f2ea;
+  --color-aviso: #90650f;
+  --color-aviso-fondo: #faf0d8;
+  --color-peligro: #a93226;
+  --color-peligro-fondo: #fbe9e6;
+  --color-info: #26688d;
+  --color-info-fondo: #e5eff6;
+  --color-neutro-fondo: #edeae2;
+  --color-foco: #1c6ea4;
+  --color-fondo-modal: rgb(28 32 26 / 55%);
+  --sombra-1: 0 1px 2px rgb(28 32 26 / 6%), 0 1px 3px rgb(28 32 26 / 8%);
+  --sombra-2: 0 4px 14px rgb(28 32 26 / 10%);
+  --sombra-3: 0 20px 48px rgb(20 24 18 / 24%);
+  --esp-1: 0.25rem;
+  --esp-2: 0.5rem;
+  --esp-3: 0.75rem;
+  --esp-4: 1rem;
+  --esp-5: 1.5rem;
+  --esp-6: 2rem;
+  --esp-7: 3rem;
+  --radio-1: 4px;
+  --radio-2: 8px;
+  --radio-3: 14px;
+  --radio-redondo: 999px;
+  --ancho-lateral: 15.5rem;
+  --altura-cabecera: 3.75rem;
+  --altura-barra-inferior: 3.875rem;
+  --ancho-contenido: 84rem;
+  --transicion: 150ms ease;
+  --transicion-lenta: 260ms cubic-bezier(0.2, 0.8, 0.3, 1);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --color-primario: #4fa576;
+    --color-primario-oscuro: #3d8b61;
+    --color-primario-claro: #74c396;
+    --color-primario-tenue: #1e2c24;
+    --color-primario-contraste: #0e1510;
+    --color-enlace: var(--color-primario-claro);
+    --color-fondo: #17190f;
+    --color-superficie: #1e2118;
+    --color-superficie-alterna: #24271d;
+    --color-superficie-hover: #2b2f23;
+    --color-borde: #343829;
+    --color-borde-fuerte: #4a4f3c;
+    --color-texto: #eae7dc;
+    --color-texto-tenue: #a09a89;
+    --color-texto-inverso: #14170f;
+    --color-exito: #6bbf8e;
+    --color-exito-fondo: #1b2c21;
+    --color-aviso: #d9ab4c;
+    --color-aviso-fondo: #2e2716;
+    --color-peligro: #e08279;
+    --color-peligro-fondo: #33201d;
+    --color-info: #79b3d6;
+    --color-info-fondo: #1a2831;
+    --color-neutro-fondo: #272a20;
+    --color-foco: #8ec7ec;
+    --color-fondo-modal: rgb(6 8 5 / 70%);
+    --sombra-1: 0 1px 2px rgb(0 0 0 / 40%);
+    --sombra-2: 0 4px 14px rgb(0 0 0 / 45%);
+    --sombra-3: 0 20px 48px rgb(0 0 0 / 60%);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   2. Reset moderno
+   -------------------------------------------------------------------------- */
+*,
+*::before,
+*::after { box-sizing: border-box; }
+* { margin: 0; }
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+body {
+  min-block-size: 100dvh;
+  /* Ningun hijo puede ensanchar el documento: el desplazamiento horizontal es
+     siempre de un contenedor concreto (`.tabla-contenedor`), nunca de la
+     pagina entera. Se usa `clip` y no `hidden` porque `hidden` convertiria al
+     <body> en contenedor de desplazamiento y romperia el `position: sticky`
+     de la cabecera y de la barra lateral. */
+  max-inline-size: 100%;
+  overflow-x: clip;
+  font-family: var(--fuente-base);
+  font-size: var(--tamano-texto);
+  line-height: 1.5;
+  color: var(--color-texto);
+  background-color: var(--color-fondo);
+  -webkit-font-smoothing: antialiased;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 { font-weight: 650; line-height: 1.2; letter-spacing: -0.011em; text-wrap: balance; }
+h1 { font-size: 1.5rem; }
+h2 { font-size: 1.1875rem; }
+h3 { font-size: 1rem; }
+p,
+li,
+dd { overflow-wrap: break-word; }
+img,
+svg,
+video,
+canvas { display: block; max-inline-size: 100%; }
+input,
+button,
+textarea,
+select { font: inherit; color: inherit; }
+button { cursor: pointer; }
+a { color: var(--color-enlace); text-decoration-thickness: 1px; text-underline-offset: 0.15em; }
+ul[class],
+ol[class] { padding-inline-start: 0; list-style: none; }
+::selection { background-color: var(--color-primario-tenue); color: var(--color-texto); }
+
+/* Un anillo de foco unico y visible en cualquier superficie. Se aplica solo a
+   :focus-visible para no molestar al usuario de raton, pero nunca se elimina
+   el foco por completo: es la unica pista de navegacion por teclado. */
+:focus-visible { outline: 2px solid var(--color-foco); outline-offset: 2px; border-radius: var(--radio-1); }
+:focus:not(:focus-visible) { outline: none; }
+
+/* --------------------------------------------------------------------------
+   3. Estructura de la aplicacion
+   Rejilla de dos columnas: barra lateral fija + (cabecera sobre contenido).
+   `minmax(0, 1fr)` es imprescindible: sin el, una tabla ancha ensancharia la
+   pista de la rejilla y arrastraria el scroll horizontal al <body>.
+   -------------------------------------------------------------------------- */
+.aplicacion {
+  display: grid;
+  grid-template-columns: var(--ancho-lateral) minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr);
+  grid-template-areas:
+    'lateral cabecera'
+    'lateral contenido';
+  min-block-size: 100dvh;
+}
+.barra-lateral {
+  grid-area: lateral;
+  position: sticky;
+  inset-block-start: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-4);
+  block-size: 100dvh;
+  padding: var(--esp-4) var(--esp-3);
+  background-color: var(--color-superficie);
+  border-inline-end: 1px solid var(--color-borde);
+}
+/* El armazon de la SPA emite estos nombres para las piezas de la cabecera y
+   de la navegacion; se agrupan con los canonicos en lugar de duplicar reglas. */
+.marca,
+.barra-lateral-marca {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-3);
+  padding: var(--esp-2);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.marca-logotipo,
+.marca-icono {
+  inline-size: 2rem;
+  block-size: 2rem;
+  flex: none;
+  border-radius: var(--radio-2);
+  background-color: var(--color-primario);
+  display: grid;
+  place-items: center;
+  color: var(--color-primario-contraste);
+}
+.marca-texto { display: flex; flex-direction: column; line-height: 1.15; }
+.marca-sufijo {
+  font-size: var(--tamano-texto-micro);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-texto-tenue);
+}
+.navegacion,
+.nav { display: flex; flex-direction: column; gap: 2px; overflow-y: auto; flex: 1; }
+.navegacion-grupo {
+  padding: var(--esp-4) var(--esp-2) var(--esp-1);
+  font-size: var(--tamano-texto-micro);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-texto-tenue);
+}
+.enlace-nav,
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-3);
+  padding: var(--esp-2) var(--esp-3);
+  border-radius: var(--radio-2);
+  /* Los elementos de navegacion son <button>, no enlaces: sin este reseteo
+     arrastrarian el borde y el fondo nativos del control. */
+  border: none;
+  background: none;
+  inline-size: 100%;
+  text-align: start;
+  color: var(--color-texto);
+  text-decoration: none;
+  font-weight: 500;
+  transition: background-color var(--transicion), color var(--transicion);
+}
+.enlace-nav:hover,
+.nav-item:hover { background-color: var(--color-superficie-hover); }
+.enlace-nav.activo,
+.nav-item.activo {
+  background-color: var(--color-primario-tenue);
+  color: var(--color-enlace);
+  font-weight: 600;
+}
+.enlace-nav-icono,
+.nav-icono { inline-size: 1.25rem; text-align: center; flex: none; }
+.pie-lateral {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-3);
+  padding: var(--esp-3) var(--esp-2);
+  border-block-start: 1px solid var(--color-borde);
+  font-size: var(--tamano-texto-menor);
+  color: var(--color-texto-tenue);
+}
+.cabecera {
+  grid-area: cabecera;
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: var(--esp-4);
+  min-block-size: var(--altura-cabecera);
+  padding: var(--esp-3) var(--esp-5);
+  background-color: var(--color-superficie);
+  border-block-end: 1px solid var(--color-borde);
+}
+.titulo-pagina,
+.cabecera-titulo {
+  font-size: 1.125rem;
+  margin-inline-end: auto;
+  min-inline-size: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.acciones-cabecera,
+.cabecera-acciones { display: flex; align-items: center; gap: var(--esp-2); }
+.contenido {
+  grid-area: contenido;
+  /* Evita que un hijo indivisible (tabla, <pre>) expanda la pista. */
+  min-inline-size: 0;
+  inline-size: 100%;
+  max-inline-size: var(--ancho-contenido);
+  padding: var(--esp-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-5);
+}
+/* Envoltorio de la vista pintada dentro de `.contenido`: el armazon crea este
+   nodo y le cuelga el modulo entero, asi que la separacion vertical tiene que
+   repetirse aqui. Sin ella el `gap` de `.contenido` solo separaria a `.vista`
+   de nada, y las tarjetas del modulo quedarian pegadas unas a otras. */
+.vista {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-5);
+  /* Igual que en `.contenido`: una tabla ancha no debe estirar la columna. */
+  min-inline-size: 0;
+}
+/* Cabecera de modulo: rotulo a un lado, acciones al otro. Con `flex-wrap` los
+   botones bajan de linea antes que comprimir el titulo. */
+.vista-cabecera,
+.seccion-titulo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-4);
+  flex-wrap: wrap;
+}
+.vista-titulo { font-size: 1.25rem; min-inline-size: 0; }
+.subtitulo { color: var(--color-texto-tenue); font-size: var(--tamano-texto-menor); }
+
+/* Bajo 900px la barra lateral se convierte en barra inferior de iconos: la
+   navegacion queda al alcance del pulgar y libera el ancho completo para las
+   tablas, que es el contenido dominante del sistema. */
+@media (max-width: 899px) {
+  .aplicacion {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    grid-template-areas:
+      'cabecera'
+      'contenido'
+      'lateral';
+  }
+  .barra-lateral {
+    position: fixed;
+    inset: auto 0 0 0;
+    z-index: 30;
+    block-size: auto;
+    flex-direction: row;
+    align-items: center;
+    gap: 0;
+    padding: var(--esp-1) var(--esp-2);
+    padding-block-end: max(var(--esp-1), env(safe-area-inset-bottom));
+    border-inline-end: none;
+    border-block-start: 1px solid var(--color-borde);
+    box-shadow: var(--sombra-2);
+  }
+  .marca,
+  .navegacion-grupo,
+  .pie-lateral { display: none; }
+  .navegacion,
+  .nav {
+    flex-direction: row;
+    gap: var(--esp-1);
+    inline-size: 100%;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  :is(.navegacion, .nav)::-webkit-scrollbar { display: none; }
+  .enlace-nav,
+  .nav-item {
+    flex: 1 0 auto;
+    flex-direction: column;
+    gap: 2px;
+    justify-content: center;
+    min-inline-size: 4.5rem;
+    min-block-size: var(--altura-barra-inferior);
+    padding: var(--esp-2) var(--esp-1);
+    font-size: var(--tamano-texto-micro);
+    text-align: center;
+  }
+  .cabecera { padding-inline: var(--esp-4); }
+  .contenido {
+    padding: var(--esp-4);
+    /* Espacio para que la ultima fila no quede tapada por la barra inferior. */
+    padding-block-end: calc(var(--altura-barra-inferior) + var(--esp-5));
+    gap: var(--esp-4);
+  }
+  .vista { gap: var(--esp-4); }
+  .vista-titulo { font-size: 1.125rem; }
+  /* En una columna estrecha el titulo y su boton no caben en la misma linea:
+     las acciones bajan y ocupan el ancho disponible en vez de encogerse. */
+  /* Especificidad (0,2,0): gana a `.acciones` este donde este en el archivo. */
+  .vista-cabecera > .acciones { inline-size: 100%; }
+}
+
+/* --------------------------------------------------------------------------
+   4. Aviso sin JavaScript
+   Cubre la ventana entera para que el esqueleto de carga, que sin JS giraria
+   eternamente, no se vea por debajo.
+   -------------------------------------------------------------------------- */
+.aviso-sin-js {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: grid;
+  place-items: center;
+  padding: var(--esp-5);
+  background-color: var(--color-fondo);
+}
+.aviso-sin-js-tarjeta {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-3);
+  max-inline-size: 34rem;
+  padding: var(--esp-6);
+  background-color: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-3);
+  box-shadow: var(--sombra-2);
+}
+
+/* --------------------------------------------------------------------------
+   5. Carga
+   -------------------------------------------------------------------------- */
+.cargando {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--esp-4);
+  min-block-size: 60dvh;
+  padding: var(--esp-6);
+  color: var(--color-texto-tenue);
+}
+.girador {
+  inline-size: 2.25rem;
+  block-size: 2.25rem;
+  border: 3px solid var(--color-borde);
+  border-block-start-color: var(--color-primario);
+  border-radius: 50%;
+  animation: girar 800ms linear infinite;
+}
+.girador-menor { inline-size: 1rem; block-size: 1rem; border-width: 2px; }
+
+@keyframes girar {
+  to { transform: rotate(1turn); }
+}
+.cargando-texto { font-size: var(--tamano-texto-menor); }
+
+.avatar {
+  display: grid;
+  place-items: center;
+  inline-size: 2rem;
+  block-size: 2rem;
+  flex: none;
+  border-radius: 50%;
+  background-color: var(--color-primario-tenue);
+  color: var(--color-enlace);
+  font-size: var(--tamano-texto-micro);
+  font-weight: 700;
+}
+
+/* Ficha del usuario conectado en la cabecera. El correo se trunca porque los
+   corporativos son largos y no deben empujar a las acciones fuera de la vista. */
+.usuario-chip {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-2);
+  padding: var(--esp-1) var(--esp-2);
+  border-radius: var(--radio-2);
+  min-inline-size: 0;
+}
+.usuario-datos { display: flex; flex-direction: column; line-height: 1.2; min-inline-size: 0; }
+.usuario-email {
+  font-size: var(--tamano-texto-menor);
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.usuario-rol {
+  font-size: var(--tamano-texto-micro);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-texto-tenue);
+}
+.nav-texto { min-inline-size: 0; }
+
+/* --------------------------------------------------------------------------
+   6. Pantalla de acceso
+   -------------------------------------------------------------------------- */
+.pantalla-login {
+  display: grid;
+  place-items: center;
+  min-block-size: 100dvh;
+  padding: var(--esp-5);
+  /* Degradado muy sutil para que la tarjeta despegue del fondo sin recurrir a
+     una imagen: un asset mas seria otra peticion y otra entrada en la CSP. */
+  background-image: radial-gradient(circle at 50% 0%, var(--color-primario-tenue), transparent 60%);
+}
+.tarjeta-login {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-4);
+  inline-size: min(24rem, 100%);
+  padding: var(--esp-6);
+  background-color: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-3);
+  box-shadow: var(--sombra-2);
+}
+.login-marca { display: flex; align-items: center; gap: var(--esp-3); justify-content: center; }
+.login-titulo { text-align: center; font-size: 1.25rem; }
+.login-descripcion {
+  text-align: center;
+  font-size: var(--tamano-texto-menor);
+  color: var(--color-texto-tenue);
+  margin-block-start: calc(var(--esp-2) * -1);
+}
+.login-formulario { display: flex; flex-direction: column; gap: var(--esp-4); }
+.login-pie {
+  padding-block-start: var(--esp-3);
+  border-block-start: 1px solid var(--color-borde);
+  text-align: center;
+  font-size: var(--tamano-texto-micro);
+  color: var(--color-texto-tenue);
+}
+
+/* --------------------------------------------------------------------------
+   7. Tarjetas y rejillas
+   -------------------------------------------------------------------------- */
+.tarjeta {
+  background-color: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-3);
+  box-shadow: var(--sombra-1);
+  overflow: clip;
+}
+.tarjeta-cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-3);
+  flex-wrap: wrap;
+  padding: var(--esp-4) var(--esp-5);
+  border-block-end: 1px solid var(--color-borde);
+}
+.tarjeta-titulo { font-size: 1rem; }
+.tarjeta-cuerpo { padding: var(--esp-5); }
+.tarjeta-pie {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--esp-2);
+  padding: var(--esp-3) var(--esp-5);
+  border-block-start: 1px solid var(--color-borde);
+  background-color: var(--color-superficie-alterna);
+}
+
+/* Una tabla dentro de una tarjeta pega mejor a los bordes: el relleno del
+   cuerpo dejaria un marco que rompe la continuidad de la cabecera pegajosa.
+   Los navegadores sin `:has` solo pierden ese detalle estetico. */
+.tarjeta:has(.tabla) .tarjeta-cuerpo { padding: 0; }
+.rejilla {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(18rem, 100%), 1fr));
+  gap: var(--esp-4);
+}
+
+/* --------------------------------------------------------------------------
+   8. Botones
+   -------------------------------------------------------------------------- */
+.boton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--esp-2);
+  min-block-size: 2.375rem;
+  padding: var(--esp-2) var(--esp-4);
+  border: 1px solid transparent;
+  border-radius: var(--radio-2);
+  background-color: transparent;
+  font-size: var(--tamano-texto-menor);
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+  text-decoration: none;
+  transition: background-color var(--transicion), border-color var(--transicion),
+    color var(--transicion), box-shadow var(--transicion);
+}
+.boton:active { transform: translateY(1px); }
+.boton[disabled],
+.boton[aria-disabled='true'] { opacity: 0.55; cursor: not-allowed; transform: none; }
+
+/* Un boton que muestra su propio girador esta ejecutando la accion: se
+   neutraliza el puntero para no encadenar envios duplicados. */
+.boton:has(.girador) { pointer-events: none; }
+.boton-primario { background-color: var(--color-primario); color: var(--color-primario-contraste); }
+.boton-primario:hover:not([disabled]) {
+  background-color: var(--color-primario-oscuro);
+  background-color: color-mix(in srgb, var(--color-primario) 84%, black);
+}
+.boton-secundario {
+  background-color: var(--color-superficie);
+  border-color: var(--color-borde-fuerte);
+  color: var(--color-texto);
+}
+.boton-secundario:hover:not([disabled]) { background-color: var(--color-superficie-hover); }
+.boton-peligro { background-color: var(--color-peligro); color: #ffffff; }
+.boton-peligro:hover:not([disabled]) { background-color: color-mix(in srgb, var(--color-peligro) 84%, black); }
+.boton-fantasma { color: var(--color-texto-tenue); }
+.boton-fantasma:hover:not([disabled]) {
+  background-color: var(--color-superficie-hover);
+  color: var(--color-texto);
+}
+.boton-compacto,
+.boton-pequeno {
+  min-block-size: 1.875rem;
+  padding: var(--esp-1) var(--esp-3);
+  font-size: var(--tamano-texto-micro);
+}
+.boton-bloque { inline-size: 100%; }
+/* `.acciones` es el gancho que emiten las vistas para su fila de botones;
+   `.grupo-botones` es el mismo patron reutilizado suelto. Comparten regla para
+   que una fila de botones se vea igual venga de donde venga. */
+.acciones,
+.grupo-botones { display: flex; align-items: center; gap: var(--esp-2); flex-wrap: wrap; }
+
+/* --------------------------------------------------------------------------
+   9. Campos de formulario
+   -------------------------------------------------------------------------- */
+/* `.campo-filtro` es el mismo control con etiqueta, pero en la barra de
+   filtros; hereda cada regla de `.campo` en lugar de duplicarlas. */
+.campo,
+.campo-filtro { display: flex; flex-direction: column; gap: var(--esp-1); min-inline-size: 0; }
+.campo-etiqueta { font-size: var(--tamano-texto-menor); font-weight: 600; }
+.campo-obligatorio { color: var(--color-peligro); margin-inline-start: 2px; }
+:is(.campo, .campo-filtro) :is(input, select, textarea) {
+  inline-size: 100%;
+  min-block-size: 2.375rem;
+  padding: var(--esp-2) var(--esp-3);
+  background-color: var(--color-superficie);
+  border: 1px solid var(--color-borde-fuerte);
+  border-radius: var(--radio-2);
+  transition: border-color var(--transicion), box-shadow var(--transicion);
+}
+:is(.campo, .campo-filtro) textarea { min-block-size: 6rem; resize: vertical; }
+:is(.campo, .campo-filtro) :is(input, select, textarea):hover:not([disabled]) {
+  border-color: var(--color-primario-claro);
+}
+:is(.campo, .campo-filtro) :is(input, select, textarea):focus-visible {
+  border-color: var(--color-primario);
+  outline-offset: 0;
+}
+:is(.campo, .campo-filtro) :is(input, select, textarea)[disabled] {
+  background-color: var(--color-superficie-alterna);
+  color: var(--color-texto-tenue);
+  cursor: not-allowed;
+}
+.campo-ayuda { font-size: var(--tamano-texto-micro); color: var(--color-texto-tenue); }
+.campo-error {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-1);
+  font-size: var(--tamano-texto-micro);
+  font-weight: 600;
+  color: var(--color-peligro);
+}
+
+/* El error pinta el control sin que el JS tenga que tocar el input: basta con
+   insertar el mensaje dentro del campo. La segunda rama cubre a los navegadores
+   sin `:has`, porque el formulario si marca el contenedor con `.con-error`. */
+:is(.campo, .campo-filtro):has(.campo-error) :is(input, select, textarea),
+:is(.campo, .campo-filtro).con-error :is(input, select, textarea) {
+  border-color: var(--color-peligro);
+}
+:is(.campo, .campo-filtro).con-error .campo-etiqueta { color: var(--color-peligro); }
+.campo-casilla { flex-direction: row; align-items: center; gap: var(--esp-2); }
+.campo-casilla input {
+  inline-size: 1rem;
+  min-block-size: 1rem;
+  block-size: 1rem;
+  flex: none;
+  accent-color: var(--color-primario);
+}
+.formulario {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(16rem, 100%), 1fr));
+  gap: var(--esp-4);
+}
+.campo-ancho-total { grid-column: 1 / -1; }
+
+/* --------------------------------------------------------------------------
+   10. Barra de filtros
+   -------------------------------------------------------------------------- */
+.filtros {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--esp-3);
+  flex-wrap: wrap;
+  padding: var(--esp-4) var(--esp-5);
+  background-color: var(--color-superficie-alterna);
+  border-block-end: 1px solid var(--color-borde);
+}
+.filtros .campo,
+.filtros .campo-filtro { flex: 1 1 12rem; max-inline-size: 18rem; }
+.filtros-acciones { display: flex; align-items: center; gap: var(--esp-2); margin-inline-start: auto; }
+
+/* --------------------------------------------------------------------------
+   11. Tablas
+   El contenedor es el unico que desplaza. Sin el, una tabla ancha empujaria el
+   <body> y toda la interfaz se desplazaria en horizontal.
+   -------------------------------------------------------------------------- */
+.tabla-contenedor {
+  inline-size: 100%;
+  max-inline-size: 100%;
+  /* El eje horizontal es el que salva a la pagina: una tabla mas ancha que la
+     columna se desplaza aqui dentro y no empuja al <body>. El vertical va
+     tambien en `auto` porque la cabecera pegajosa se ancla al contenedor con
+     desplazamiento mas cercano, que debe ser este. El maximo solo actua cuando
+     la tabla es larga; las cortas se muestran enteras. */
+  overflow-x: auto;
+  overflow-y: auto;
+  max-block-size: min(70dvh, 40rem);
+  overscroll-behavior: contain;
+}
+.tabla {
+  inline-size: 100%;
+  /* Ancho minimo para que las celdas no se aplasten: por debajo de esto se
+     prefiere desplazar el contenedor antes que partir palabras en cada
+     columna, que es lo que haria ilegible una tabla de doce campos. */
+  min-inline-size: 44rem;
+  border-collapse: collapse;
+  font-size: var(--tamano-texto-menor);
+}
+/* Variante sin ancho minimo, para desgloses de pocas columnas dentro de una
+   tarjeta estrecha (el panel). Ahi el desplazamiento horizontal escondaria las
+   cifras, que son justamente lo que se va a mirar. */
+.tabla-compacta { min-inline-size: 0; }
+
+.tabla thead th {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 1;
+  padding: var(--esp-3) var(--esp-4);
+  background-color: var(--color-superficie-alterna);
+  border-block-end: 1px solid var(--color-borde-fuerte);
+  text-align: start;
+  font-weight: 650;
+  white-space: nowrap;
+  color: var(--color-texto-tenue);
+  text-transform: uppercase;
+  font-size: var(--tamano-texto-micro);
+  letter-spacing: 0.05em;
+}
+.tabla tbody td {
+  padding: var(--esp-3) var(--esp-4);
+  border-block-end: 1px solid var(--color-borde);
+  vertical-align: middle;
+}
+.tabla tbody tr:nth-child(even) {
+  background-color: var(--color-superficie-alterna);
+  background-color: color-mix(in srgb, var(--color-superficie-alterna) 55%, transparent);
+}
+.tabla tbody tr:hover { background-color: var(--color-superficie-hover); }
+.tabla tbody tr:last-child td { border-block-end: none; }
+.tabla tfoot td {
+  padding: var(--esp-3) var(--esp-4);
+  background-color: var(--color-superficie-alterna);
+  border-block-start: 1px solid var(--color-borde-fuerte);
+  font-weight: 650;
+}
+.tabla-ordenable th[aria-sort] { cursor: pointer; user-select: none; }
+.tabla-ordenable th[aria-sort='ascending']::after { content: ' \2191'; }
+.tabla-ordenable th[aria-sort='descending']::after { content: ' \2193'; }
+
+/* Los importes y las horas se leen comparando columnas: alineados a la derecha
+   y con cifras de ancho fijo para que los digitos queden en la misma vertical. */
+.celda-numero { text-align: end; font-variant-numeric: tabular-nums; }
+.celda-codigo {
+  font-family: var(--fuente-mono);
+  font-size: var(--tamano-texto-micro);
+  color: var(--color-texto-tenue);
+  /* Un legajo o un codigo de proyecto es un identificador indivisible: partirlo
+     en dos lineas lo vuelve ilegible y engorda la fila sin motivo. */
+  white-space: nowrap;
+}
+/* Descripciones y detalles libres: el unico contenido que puede ser largo. Se
+   le permite partir en varias lineas dentro de un ancho acotado, en vez de
+   estirar la columna y empujar al resto de campos fuera de la vista. */
+.celda-texto {
+  min-inline-size: 12rem;
+  max-inline-size: 28rem;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+/* La columna se encoge a lo que ocupen sus botones (`1%` es el idioma de las
+   tablas para "lo minimo posible"), pero los botones NO deben apilarse: con
+   `flex-wrap: wrap` heredado de `.acciones` cada fila crecia a tres lineas de
+   alto y el listado se volvia interminable. */
+.celda-acciones { inline-size: 1%; white-space: nowrap; text-align: end; }
+.celda-acciones .acciones,
+.celda-acciones .grupo-botones {
+  flex-wrap: nowrap;
+  justify-content: flex-end;
+}
+
+/* Columna de acciones anclada al borde derecho.
+
+   Una ficha de empleado tiene ocho columnas y una de proyecto diez: en una
+   pantalla de portatil la tabla no entra y el contenedor se desplaza en
+   horizontal, que es lo correcto (nunca se arrastra al <body>). El problema es
+   que asi la ultima columna, justo la de las acciones, quedaba fuera de la
+   vista: para pulsar "Editar" habia que descubrir primero que la tabla se
+   desplazaba. Anclada, siempre esta donde se la busca.
+
+   El fondo es obligatorio: sin el, las celdas que pasan por debajo se verian a
+   traves. Se repiten los colores de fila normal, alterna y sobrevuelo para que
+   la columna no rompa el rayado. */
+.tabla thead th.celda-acciones,
+.tabla tbody td.celda-acciones {
+  position: sticky;
+  inset-inline-end: 0;
+  z-index: 2;
+  background-color: var(--color-superficie);
+  /* Sombra hacia la izquierda: indica que hay contenido oculto detras. */
+  box-shadow: -6px 0 6px -6px rgb(0 0 0 / 0.18);
+}
+.tabla thead th.celda-acciones { z-index: 3; background-color: var(--color-superficie-alterna); }
+.tabla tbody tr:nth-child(even) td.celda-acciones {
+  background-color: color-mix(in srgb, var(--color-superficie-alterna) 55%, var(--color-superficie));
+}
+.tabla tbody tr:hover td.celda-acciones { background-color: var(--color-superficie-hover); }
+
+/* Cuando la tabla entra entera no hay nada detras que tapar, y la sombra seria
+   un adorno enganioso. `scroll-driven` no esta disponible en todos los motores,
+   asi que se acepta la sombra permanente como compromiso: es sutil y no estorba. */
+
+/* --------------------------------------------------------------------------
+   12. Paginacion
+   -------------------------------------------------------------------------- */
+.paginacion {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-3);
+  flex-wrap: wrap;
+  padding: var(--esp-3) var(--esp-5);
+  border-block-start: 1px solid var(--color-borde);
+  font-size: var(--tamano-texto-menor);
+  color: var(--color-texto-tenue);
+}
+.paginacion-controles { display: flex; align-items: center; gap: var(--esp-1); }
+.paginacion-pagina {
+  min-inline-size: 2.125rem;
+  min-block-size: 2.125rem;
+  padding: var(--esp-1) var(--esp-2);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-2);
+  background-color: var(--color-superficie);
+  font-size: var(--tamano-texto-menor);
+  font-variant-numeric: tabular-nums;
+}
+.paginacion-pagina:hover:not([disabled]) { background-color: var(--color-superficie-hover); }
+.paginacion-pagina[aria-current='page'] {
+  background-color: var(--color-primario);
+  border-color: var(--color-primario);
+  color: var(--color-primario-contraste);
+  font-weight: 650;
+}
+.paginacion-pagina[disabled] { opacity: 0.45; cursor: not-allowed; }
+
+/* --------------------------------------------------------------------------
+   13. Insignias de estado
+   -------------------------------------------------------------------------- */
+.insignia {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--esp-1);
+  padding: 2px var(--esp-2);
+  border: 1px solid transparent;
+  border-radius: var(--radio-redondo);
+  font-size: var(--tamano-texto-micro);
+  font-weight: 650;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  background-color: var(--color-neutro-fondo);
+  color: var(--color-texto-tenue);
+}
+.insignia::before {
+  content: '';
+  inline-size: 0.4375rem;
+  block-size: 0.4375rem;
+  border-radius: 50%;
+  background-color: currentcolor;
+  flex: none;
+}
+.insignia-exito {
+  background-color: var(--color-exito-fondo);
+  color: var(--color-exito);
+  border-color: color-mix(in srgb, var(--color-exito) 30%, transparent);
+}
+.insignia-aviso {
+  background-color: var(--color-aviso-fondo);
+  color: var(--color-aviso);
+  border-color: color-mix(in srgb, var(--color-aviso) 30%, transparent);
+}
+.insignia-peligro {
+  background-color: var(--color-peligro-fondo);
+  color: var(--color-peligro);
+  border-color: color-mix(in srgb, var(--color-peligro) 30%, transparent);
+}
+.insignia-info {
+  background-color: var(--color-info-fondo);
+  color: var(--color-info);
+  border-color: color-mix(in srgb, var(--color-info) 30%, transparent);
+}
+.insignia-neutro {
+  background-color: var(--color-neutro-fondo);
+  color: var(--color-texto-tenue);
+  border-color: var(--color-borde);
+}
+
+/* --------------------------------------------------------------------------
+   14. Metricas del panel y barra de progreso
+   -------------------------------------------------------------------------- */
+.rejilla-metricas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(13rem, 100%), 1fr));
+  gap: var(--esp-4);
+}
+.metrica {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-1);
+  padding: var(--esp-4) var(--esp-5);
+  background-color: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-3);
+  box-shadow: var(--sombra-1);
+  /* Franja lateral con el color de la metrica; las variantes solo cambian
+     --color-acento en lugar de repetir la regla completa. */
+  border-inline-start: 3px solid var(--color-acento, var(--color-primario));
+}
+/* El rotulo de la metrica: `.metrica-titulo` es el nombre que usan las vistas
+   nuevas y `.metrica-etiqueta` el que ya emiten las piezas comunes. */
+.metrica-titulo,
+.metrica-etiqueta {
+  font-size: var(--tamano-texto-micro);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-texto-tenue);
+}
+.metrica-valor {
+  font-size: 1.875rem;
+  font-weight: 700;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+.metrica-detalle { font-size: var(--tamano-texto-micro); color: var(--color-texto-tenue); }
+.metrica-aviso { --color-acento: var(--color-aviso); }
+.metrica-peligro { --color-acento: var(--color-peligro); }
+.metrica-info { --color-acento: var(--color-info); }
+.barra-progreso {
+  inline-size: 100%;
+  block-size: 0.5rem;
+  border-radius: var(--radio-redondo);
+  background-color: var(--color-neutro-fondo);
+  overflow: hidden;
+}
+.barra-progreso-relleno {
+  display: block;
+  block-size: 100%;
+  border-radius: inherit;
+  background-color: var(--color-acento, var(--color-primario));
+  transition: inline-size var(--transicion-lenta);
+}
+.barra-progreso-aviso { --color-acento: var(--color-aviso); }
+.barra-progreso-peligro { --color-acento: var(--color-peligro); }
+.barra-progreso-leyenda {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--esp-2);
+  font-size: var(--tamano-texto-micro);
+  color: var(--color-texto-tenue);
+  font-variant-numeric: tabular-nums;
+}
+
+/* --------------------------------------------------------------------------
+   15. Estado vacio y aviso destacado
+   -------------------------------------------------------------------------- */
+.vacio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--esp-2);
+  padding: var(--esp-7) var(--esp-5);
+  text-align: center;
+  color: var(--color-texto-tenue);
+}
+.vacio-icono { font-size: 2rem; line-height: 1; opacity: 0.5; }
+.vacio-titulo { font-size: 1rem; color: var(--color-texto); }
+.vacio-texto { max-inline-size: 32rem; font-size: var(--tamano-texto-menor); }
+
+/* Recuadro fijo dentro del contenido: permisos recortados, datos enmascarados
+   o credenciales de demostracion. Habla el mismo idioma que las insignias
+   -franja lateral del color del mensaje sobre un fondo tenue del mismo tono-
+   para que se lea como un aviso del sistema y no como una tarjeta mas. */
+.aviso-seguridad {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--esp-3);
+  padding: var(--esp-3) var(--esp-4);
+  background-color: var(--color-aviso-fondo);
+  border: 1px solid color-mix(in srgb, var(--color-aviso) 30%, transparent);
+  border-inline-start: 3px solid var(--color-aviso);
+  border-radius: var(--radio-2);
+  font-size: var(--tamano-texto-menor);
+}
+/* El glifo inicial ('!' o 'i') va dentro de un disco: asi se lee como icono y
+   no como el primer caracter del texto que viene detras. */
+.aviso-seguridad > span:first-child {
+  display: grid;
+  place-items: center;
+  inline-size: 1.375rem;
+  block-size: 1.375rem;
+  flex: none;
+  border-radius: 50%;
+  background-color: var(--color-aviso);
+  color: var(--color-texto-inverso);
+  font-size: var(--tamano-texto-micro);
+  font-weight: 700;
+  line-height: 1;
+}
+.aviso-seguridad .pila { flex: 1 1 auto; gap: var(--esp-1); min-inline-size: 0; }
+
+/* --------------------------------------------------------------------------
+   16. Modal
+   -------------------------------------------------------------------------- */
+.modal-fondo {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  padding: var(--esp-4);
+  background-color: var(--color-fondo-modal);
+  animation: aparecer 160ms ease;
+}
+.modal {
+  display: flex;
+  flex-direction: column;
+  inline-size: min(38rem, 100%);
+  /* El modal nunca supera la ventana: el cuerpo desplaza por dentro y la
+     cabecera y el pie con los botones quedan siempre visibles. */
+  max-block-size: min(90dvh, 46rem);
+  background-color: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-3);
+  box-shadow: var(--sombra-3);
+  animation: subir-modal 200ms cubic-bezier(0.2, 0.8, 0.3, 1);
+}
+.modal-ancho { inline-size: min(58rem, 100%); }
+.modal-cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-3);
+  padding: var(--esp-4) var(--esp-5);
+  border-block-end: 1px solid var(--color-borde);
+}
+.modal-titulo { font-size: 1.0625rem; }
+.modal-cuerpo {
+  padding: var(--esp-5);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-4);
+}
+.modal-pie {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--esp-2);
+  flex-wrap: wrap;
+  padding: var(--esp-3) var(--esp-5);
+  border-block-start: 1px solid var(--color-borde);
+  background-color: var(--color-superficie-alterna);
+}
+
+@keyframes aparecer {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes subir-modal {
+  from { opacity: 0; transform: translateY(12px) scale(0.98); }
+  to { opacity: 1; transform: none; }
+}
+
+/* --------------------------------------------------------------------------
+   17. Notificaciones (toasts)
+   El contenedor cubre una franja de la pantalla; `pointer-events: none` evita
+   que esa franja vacia intercepte clics sobre la interfaz que hay debajo.
+   -------------------------------------------------------------------------- */
+#notificaciones {
+  position: fixed;
+  inset-block-start: var(--esp-4);
+  inset-inline-end: var(--esp-4);
+  z-index: 70;
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-2);
+  inline-size: min(24rem, calc(100vw - 2rem));
+  pointer-events: none;
+}
+.notificacion {
+  pointer-events: auto;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--esp-3);
+  padding: var(--esp-3) var(--esp-4);
+  background-color: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-inline-start: 3px solid var(--color-acento, var(--color-info));
+  border-radius: var(--radio-2);
+  box-shadow: var(--sombra-2);
+  font-size: var(--tamano-texto-menor);
+  animation: entrar-notificacion 240ms cubic-bezier(0.2, 0.8, 0.3, 1);
+}
+.notificacion-exito { --color-acento: var(--color-exito); }
+.notificacion-aviso { --color-acento: var(--color-aviso); }
+/* Las vistas piden el aviso de fallo por cualquiera de los dos nombres. */
+.notificacion-peligro,
+.notificacion-error { --color-acento: var(--color-peligro); }
+.notificacion-info { --color-acento: var(--color-info); }
+.notificacion-contenido { display: flex; flex-direction: column; gap: 2px; flex: 1; min-inline-size: 0; }
+.notificacion-titulo { font-weight: 650; color: var(--color-acento, var(--color-texto)); }
+.notificacion-texto { color: var(--color-texto-tenue); }
+.notificacion-cerrar {
+  flex: none;
+  padding: 0 var(--esp-1);
+  border: none;
+  background: none;
+  color: var(--color-texto-tenue);
+  line-height: 1;
+  font-size: 1.125rem;
+}
+.notificacion-cerrar:hover { color: var(--color-texto); }
+.notificacion-saliente { animation: salir-notificacion 180ms ease forwards; }
+
+@keyframes entrar-notificacion {
+  from { opacity: 0; transform: translateX(1.5rem); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes salir-notificacion {
+  to { opacity: 0; transform: translateX(1.5rem); }
+}
+
+/* --------------------------------------------------------------------------
+   Ajustes de componente por debajo de 900px.
+   Van al final del archivo a proposito: estas reglas tienen la misma
+   especificidad que las base, asi que solo ganan si aparecen despues. Una
+   media query no anade especificidad; unicamente acota cuando se aplica.
+   -------------------------------------------------------------------------- */
+@media (max-width: 899px) {
+  /* Con una sola columna los rellenos generosos se comen el ancho util. */
+  .filtros { padding: var(--esp-3) var(--esp-4); }
+  .filtros .campo,
+  .filtros .campo-filtro { max-inline-size: none; }
+  .filtros-acciones { margin-inline-start: 0; inline-size: 100%; }
+  .tarjeta-cabecera,
+  .tarjeta-cuerpo,
+  .tarjeta-pie { padding-inline: var(--esp-4); }
+  .paginacion { padding-inline: var(--esp-4); }
+  .modal-cabecera,
+  .modal-cuerpo,
+  .modal-pie { padding-inline: var(--esp-4); }
+  /* El dialogo pasa a ocupar la ventana: en un movil una tarjeta centrada con
+     margenes deja el formulario en una columna demasiado estrecha. */
+  .modal-fondo { padding: var(--esp-2); }
+  .modal,
+  .modal-ancho { inline-size: 100%; max-block-size: calc(100dvh - var(--esp-4)); }
+  /* Los botones del pie se reparten el ancho en lugar de amontonarse. */
+  .modal-pie .boton { flex: 1 1 auto; }
+  /* La tabla ya no compite con la barra lateral: puede desplazarse a lo ancho
+     sin techo de altura, que en vertical es donde va justa la pantalla. */
+  .tabla-contenedor { max-block-size: none; }
+
+  /* En movil los avisos suben por encima de la barra inferior de navegacion. */
+  #notificaciones {
+    inset-block-start: auto;
+    inset-block-end: calc(var(--altura-barra-inferior) + var(--esp-3));
+    inset-inline: var(--esp-3);
+    inline-size: auto;
+  }
+
+  @keyframes entrar-notificacion {
+    from { opacity: 0; transform: translateY(1rem); }
+    to { opacity: 1; transform: none; }
+  }
+}
+
+/* --------------------------------------------------------------------------
+   18. Utilidades
+   -------------------------------------------------------------------------- */
+.oculto { display: none !important; }
+
+/* Visible solo para lectores de pantalla: se mantiene en el arbol de
+   accesibilidad, a diferencia de `display: none`. */
+.solo-lectores {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+.texto-menor { font-size: var(--tamano-texto-menor); }
+.texto-micro { font-size: var(--tamano-texto-micro); }
+.texto-tenue { color: var(--color-texto-tenue); }
+.texto-numerico { font-variant-numeric: tabular-nums; }
+.texto-mono { font-family: var(--fuente-mono); }
+.pila { display: flex; flex-direction: column; gap: var(--esp-3); }
+.fila { display: flex; align-items: center; gap: var(--esp-2); flex-wrap: wrap; }
+.fila-separada { justify-content: space-between; }
+.empujar { margin-inline-start: auto; }
+.separador { block-size: 1px; background-color: var(--color-borde); border: 0; }
+
+/* --------------------------------------------------------------------------
+   19. Movimiento reducido
+   Se anulan animaciones y transiciones en lugar de suprimir las reglas: los
+   estados finales (opacidad 1, sin desplazamiento) se aplican igualmente.
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .boton:active { transform: none; }
+}

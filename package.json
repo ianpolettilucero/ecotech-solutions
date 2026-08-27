@@ -1,0 +1,25 @@
+{
+  "name": "ecotech-solutions",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Sistema de Gestion Interna de EcoTech Solutions - empleados, departamentos, proyectos y registro de horas sobre Cloudflare Workers + Workers KV",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "npm run typecheck && node scripts/build.mjs",
+    "typecheck": "tsc -p tsconfig.worker.json && tsc -p tsconfig.cliente.json && tsc -p tsconfig.tests.json",
+    "build:test": "node scripts/build-tests.mjs",
+    "test": "npm run build:test && node --test build-tests/tests/*.test.js",
+    "dev": "wrangler dev",
+    "deploy": "npm run build && wrangler deploy"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^5.20260825.1",
+    "@types/node": "^26.4.0",
+    "esbuild": "^0.25.0",
+    "typescript": "^5.7.3",
+    "wrangler": "^4.0.0"
+  }
+}

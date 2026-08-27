@@ -1,0 +1,16 @@
+{
+  // Las pruebas corren en Node, no en el runtime de Workers, asi que necesitan
+  // los tipos de Node (`node:test`, `node:assert`) ademas de los de Cloudflare,
+  // que usan los modulos de dominio e infraestructura que ejercitan.
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "lib": ["ES2022"],
+    "types": ["node", "@cloudflare/workers-types"]
+  },
+  "include": [
+    "tests/**/*.ts",
+    "src/compartido/**/*.ts",
+    "src/dominio/**/*.ts",
+    "src/infraestructura/**/*.ts"
+  ]
+}

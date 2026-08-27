@@ -1,0 +1,12 @@
+{
+  // Lado navegador: libreria DOM y nada de tipos de Workers. Las definiciones
+  // de ambos entornos declaran globales homonimos con firmas incompatibles
+  // (por ejemplo `HTMLSelectElement.remove`), de modo que mezclarlos en un solo
+  // proyecto produce errores que no corresponden a ningun fallo real.
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "types": []
+  },
+  "include": ["src/compartido/**/*.ts", "src/cliente/**/*.ts"]
+}

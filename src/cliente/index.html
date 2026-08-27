@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>EcoTech Solutions - Sistema de Gestion Interna</title>
+    <meta name="description" content="Sistema de gestion interna de EcoTech Solutions: empleados, departamentos, proyectos y registro de horas.">
+    <!-- Herramienta interna tras autenticacion: no debe aparecer en buscadores
+         ni dejar previsualizaciones en los enlaces que se comparten. -->
+    <meta name="robots" content="noindex, nofollow">
+    <!-- Favicon incrustado como data URI: la CSP admite `img-src data:` y asi
+         no hay una peticion extra ni un 404 en cada carga en frio. La
+         almohadilla de cada color va como %23 porque dentro de una URL
+         abriria un fragmento. -->
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath fill='%232f7d4f' d='M28 4C14 4 5 12 5 21c0 4 2 7 5 8 9 3 19-7 18-25Z'/%3E%3Cpath fill='none' stroke='%23eef6f0' stroke-width='1.8' stroke-linecap='round' d='M25 7C18 11 13 18 10 28'/%3E%3C/svg%3E">
+    <link rel="stylesheet" href="estilos.css">
+    <!-- `type="module"` ya implica defer: el bundle se descarga en paralelo y se
+         ejecuta con el DOM construido, sin bloquear el pintado del esqueleto. -->
+    <script type="module" src="app.js"></script>
+  </head>
+  <body>
+    <!-- Punto de montaje unico. Lo que hay aqui dentro es un esqueleto de
+         carga que la aplicacion sustituye por completo al arrancar. -->
+    <div id="app">
+      <div class="cargando" role="status">
+        <span class="girador" aria-hidden="true"></span>
+        <p class="cargando-texto">Cargando el sistema de gestion...</p>
+      </div>
+    </div>
+
+    <!-- Region de avisos. Vive fuera de #app para que volver a pintar una vista
+         no la destruya y el lector de pantalla no pierda la region viva. -->
+    <div id="notificaciones" class="notificaciones" aria-live="polite" aria-atomic="false"></div>
+
+    <!-- Capa de dialogos. Fuera de #app y despues de las notificaciones para
+         que el apilado siga el orden del documento y no haga falta subir el
+         z-index de cada modal. -->
+    <div id="modales"></div>
+
+    <noscript>
+      <div class="aviso-sin-js">
+        <div class="aviso-sin-js-tarjeta">
+          <h1>Hace falta JavaScript</h1>
+          <p>
+            EcoTech Solutions es una aplicacion de pagina unica: la interfaz se
+            construye en el navegador y consulta la API interna bajo demanda, de
+            modo que sin JavaScript no hay nada que mostrar.
+          </p>
+          <p>
+            Activa JavaScript para este sitio y vuelve a cargar la pagina. Si la
+            politica de tu equipo lo bloquea, avisa a soporte interno.
+          </p>
+        </div>
+      </div>
+    </noscript>
+  </body>
+</html>

@@ -1,0 +1,31 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "ecotech-solutions",
+  "main": "src/worker/index.ts",
+  "compatibility_date": "2026-08-26",
+
+  // El Worker atiende /api/* ; el resto lo sirve el almacen de assets
+  // con fallback de SPA a index.html.
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application",
+    "run_worker_first": ["/api/*"]
+  },
+
+  // Persistencia sin base de datos relacional: almacen clave-valor.
+  "kv_namespaces": [
+    {
+      "binding": "ECOTECH_KV",
+      "id": "23f56c5aab26495994322da9c054565f"
+    }
+  ],
+
+  "vars": {
+    "ENTORNO": "produccion"
+  },
+
+  "observability": {
+    "enabled": true
+  }
+}
