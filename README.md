@@ -4,6 +4,9 @@ Sistema de gestión de empleados, departamentos, proyectos y registro de horas,
 construido con programación orientada a objetos y desplegado en **Cloudflare
 Workers** con **Workers KV** como almacén, sin base de datos relacional.
 
+**En producción:** <https://ecotech-solutions.ianypico.workers.dev>
+Estado del despliegue: <https://ecotech-solutions.ianypico.workers.dev/api/salud>
+
 > **Documentación completa en [`docs/`](docs/README.md).** El análisis del
 > dominio, la evaluación crítica de los modelos preliminares, el diagrama de
 > clases UML y la justificación de cada decisión de diseño están en los cuatro

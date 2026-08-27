@@ -104,7 +104,7 @@ export class ServicioAutenticacion {
 
     // Se verifica SIEMPRE una contrasena, exista el usuario o no. Sin este
     // senuelo, un email inexistente responderia en microsegundos y uno real
-    // tardaria los 210.000 ciclos de PBKDF2: la diferencia de tiempo permitiria
+    // tardaria los 100.000 ciclos de PBKDF2: la diferencia de tiempo permitiria
     // enumerar la plantilla completa de la empresa.
     const credenciales = usuario?.credencialesParaVerificar() ?? {
       hash: '0'.repeat(64),

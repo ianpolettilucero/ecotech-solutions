@@ -109,7 +109,7 @@ verdad, no dobles de prueba.
 ```bash
 npx wrangler dev            # en una terminal
 ./scripts/humo.sh           # en otra (usa http://127.0.0.1:8787 por defecto)
-./scripts/humo.sh https://ecotech-solutions.<subdominio>.workers.dev
+./scripts/humo.sh https://ecotech-solutions.ianypico.workers.dev
 ```
 
 Cubre, por bloques:
@@ -203,7 +203,7 @@ esperar la ventana o manipular el reloj.
 ## 11.6. Verificación tras un despliegue
 
 ```bash
-curl -s https://ecotech-solutions.<subdominio>.workers.dev/api/salud | jq
+curl -s https://ecotech-solutions.ianypico.workers.dev/api/salud | jq
 ```
 
 Debe responder:
@@ -233,7 +233,7 @@ Los dos campos que hay que mirar:
 Y a continuación, la prueba de humo completa contra la URL desplegada:
 
 ```bash
-./scripts/humo.sh https://ecotech-solutions.<subdominio>.workers.dev
+./scripts/humo.sh https://ecotech-solutions.ianypico.workers.dev
 ```
 
 > Ejecutarla contra un entorno con datos reales **crea un empleado de prueba** y

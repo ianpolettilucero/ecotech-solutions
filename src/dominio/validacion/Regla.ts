@@ -145,7 +145,7 @@ export class ReglaDocumento extends Regla<unknown, string> {
  * Requisito: "sistema de autenticacion robusto con contrasenas seguras".
  * Se exige longitud >= 12 y tres de las cuatro familias de caracteres, y se
  * rechazan las mas explotadas. El tope de 128 evita el DoS por PBKDF2 con
- * entradas gigantes (cada intento cuesta 210.000 iteraciones de CPU).
+ * entradas gigantes (cada intento cuesta 100.000 iteraciones de CPU).
  */
 export class ReglaContrasena extends Regla<unknown, string> {
   private static readonly PROHIBIDAS = new Set([

@@ -415,7 +415,7 @@ así que es una entidad con identidad y no una lista de identificadores.
 | Campo | Tipo | Nota |
 | --- | --- | --- |
 | `email` | `string` | Identificador de acceso. La búsqueda de login es un recorrido de la colección (`buscarUno`) |
-| `hashContrasena` | `string` | PBKDF2-HMAC-SHA256, 210 000 iteraciones, 256 bits en hexadecimal. **No es reversible**: no es cifrado, es derivación |
+| `hashContrasena` | `string` | PBKDF2-HMAC-SHA256, 100 000 iteraciones, 256 bits en hexadecimal. **No es reversible**: no es cifrado, es derivación |
 | `salContrasena` | `string` | 16 bytes en hexadecimal, únicos por usuario |
 | `rol` | `'ADMIN_RRHH' \| 'GERENTE' \| 'EMPLEADO' \| 'AUDITOR'` | Entrada de la matriz RBAC de `PoliticaAutorizacion` |
 | `empleadoId` | `string \| null` | Asociación **0..1**: hay empleados sin cuenta y cuentas sin empleado (el auditor externo sembrado no tiene ficha) |

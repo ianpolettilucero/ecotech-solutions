@@ -72,18 +72,18 @@ compromiso del propio runtime de Workers.
 
 ## 2. Autenticación
 
-### Contraseñas: PBKDF2-SHA256, 210.000 iteraciones
+### Contraseñas: PBKDF2-SHA256, 100.000 iteraciones
 
 `src/infraestructura/ServicioCripto.ts` define:
 
 ```ts
-private static readonly ITERACIONES_PBKDF2 = 210_000;
+private static readonly ITERACIONES_PBKDF2 = 100_000;
 private static readonly LONGITUD_SAL = 16;
 ```
 
 `hashearContrasena` genera 16 bytes de sal con `crypto.getRandomValues`, deriva
 256 bits con PBKDF2-HMAC-SHA256 y devuelve ambos en hexadecimal; se persisten en
-`EstadoUsuario.hashContrasena` y `EstadoUsuario.salContrasena`. Las 210.000
+`EstadoUsuario.hashContrasena` y `EstadoUsuario.salContrasena`. Las 100.000
 iteraciones son la referencia de OWASP para PBKDF2-HMAC-SHA256 y están elegidas
 para que probar una contraseña cueste tiempo de CPU medible: un atacante con el
 volcado de la tabla de usuarios paga ese coste por cada candidata **y por cada
@@ -198,7 +198,7 @@ sequenceDiagram
     else dentro del limite
         W->>R: buscarUno por email
         R-->>W: usuario o null
-        W->>W: PBKDF2 210.000 iteraciones sobre el hash real o el senuelo
+        W->>W: PBKDF2 100.000 iteraciones sobre el hash real o el senuelo
         alt cuenta bloqueada
             W->>K: asentar LOGIN_CUENTA_BLOQUEADA
             W-->>C: 401 Email o contrasena incorrectos
@@ -289,10 +289,10 @@ const contrasenaCorrecta = await this.ctx.cripto.verificarContrasena(
 
 El señuelo tiene la forma exacta de una credencial real —64 caracteres de hash,
 32 de sal— para que `verificarContrasena` recorra el mismo camino: decodificar la
-sal desde hexadecimal, ejecutar las 210.000 iteraciones de PBKDF2 y comparar en
+sal desde hexadecimal, ejecutar las 100.000 iteraciones de PBKDF2 y comparar en
 tiempo constante. El resultado es siempre `false`, pero el tiempo consumido es
 indistinguible del de una contraseña equivocada sobre una cuenta real. Sin el
-señuelo, la diferencia entre microsegundos y 210.000 ciclos de derivación sería
+señuelo, la diferencia entre microsegundos y 100.000 ciclos de derivación sería
 medible desde fuera con muy pocas muestras.
 
 La respuesta también es uniforme. Cuatro situaciones distintas colapsan en el
@@ -936,7 +936,7 @@ antes de poner el sistema en producción.
    envoltura por KMS ni separación de custodia: quien administre la cuenta de
    Cloudflare puede leerla.
 4. **PBKDF2 no es memoria-dura.** Argon2id o scrypt resistirían mejor el ataque
-   por fuerza bruta con GPU, pero WebCrypto en Workers no los ofrece. 210.000
+   por fuerza bruta con GPU, pero WebCrypto en Workers no los ofrece. 100.000
    iteraciones es lo razonable dentro de lo disponible.
 
 **Autenticación y sesiones**
@@ -982,6 +982,26 @@ antes de poner el sistema en producción.
     sus ocho horas.
 
 **Plataforma**
+
+14b. **PBKDF2 está por debajo de la recomendación de OWASP, y no por elección.**
+    OWASP aconseja 210.000 iteraciones para PBKDF2-HMAC-SHA256. El runtime de
+    Workers **rechaza** cualquier valor por encima de 100.000:
+    `NotSupportedError: Pbkdf2 failed: iteration counts above 100000 are not
+    supported`. El sistema usa por tanto el máximo que la plataforma admite.
+    Lo que compensa la diferencia no es el número, sino lo que lo rodea: el
+    bloqueo de cuenta a los cinco intentos, el limitador por IP y la política de
+    12 caracteres con tres familias. Un atacante que robara el almacén no se
+    encuentra un factor de trabajo despreciable, pero sí la mitad del
+    recomendado; si el proyecto creciera, el camino sería mover la verificación
+    a un servicio que admita Argon2id o scrypt, ninguno de los cuales expone
+    hoy WebCrypto en Workers.
+
+    Vale la pena registrar **cómo se detectó**, porque es una trampa de la
+    plataforma: Miniflare, el emulador que usa `wrangler dev`, **no aplica ese
+    límite**. Con 210.000 el sistema funcionaba entero en local y abortaba la
+    siembra en el primer arranque en producción, dejando toda la API en 500.
+    `tests/seguridad.test.ts` fija ahora el techo con una prueba para que nadie
+    vuelva a subirlo.
 
 15. **Dos fuentes para las mismas cabeceras.** `wrangler.jsonc` fija
     `run_worker_first: ["/api/*"]`, de modo que el Worker solo se invoca para la

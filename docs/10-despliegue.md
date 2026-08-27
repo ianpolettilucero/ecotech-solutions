@@ -88,7 +88,7 @@ producción:
 | Clave | Qué hace |
 |---|---|
 | `$schema` | Apunta al esquema JSON que trae el propio wrangler, para que el editor valide el archivo mientras se escribe. No afecta al despliegue |
-| `name` | Nombre del Worker. Determina el subdominio `ecotech-solutions.<subdominio>.workers.dev` y es el identificador con el que aparece en el panel. Cambiarlo crea un Worker nuevo, no renombra el existente |
+| `name` | Nombre del Worker. Determina el subdominio `ecotech-solutions.ianypico.workers.dev` y es el identificador con el que aparece en el panel. Cambiarlo crea un Worker nuevo, no renombra el existente |
 | `main` | Punto de entrada: `src/worker/index.ts`. Wrangler lo compila con esbuild en el momento del despliegue; el TypeScript del servidor no pasa por `scripts/build.mjs`, que solo construye el cliente |
 | `compatibility_date` | Fija la fecha de comportamiento del runtime. Congelarla es lo que garantiza que un despliegue de dentro de un año se comporte igual que el de hoy. Subirla es una decisión consciente, no algo que deba hacerse «para estar al día» |
 
@@ -363,7 +363,7 @@ dice si el sistema está sembrado y si el cifrado usa la clave de desarrollo, y
 nada más. No expone versiones, rutas internas ni conteos.
 
 ```bash
-curl -s https://ecotech-solutions.<subdominio>.workers.dev/api/salud
+curl -s https://ecotech-solutions.ianypico.workers.dev/api/salud
 ```
 
 Respuesta esperada de un despliegue sano —toda la API envuelve el resultado en

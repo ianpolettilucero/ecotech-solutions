@@ -38,6 +38,18 @@ describe('ServicioCripto: contrasenas', () => {
   it('rechaza una clave maestra demasiado corta', () => {
     assert.throws(() => new ServicioCripto('corta'));
   });
+
+  it('no supera el techo de iteraciones que impone Workers', async () => {
+    // El runtime de Cloudflare rechaza PBKDF2 por encima de 100.000 iteraciones
+    // con NotSupportedError. Miniflare NO aplica ese limite, asi que un valor
+    // mayor pasa en `wrangler dev` y aborta la siembra en el primer arranque en
+    // produccion. Esta prueba existe porque ya ocurrio.
+    assert.equal(ServicioCripto.MAXIMO_ITERACIONES_PBKDF2, 100_000);
+    const cripto = new ServicioCripto(CLAVE);
+    const { hash, sal } = await cripto.hashearContrasena('Contrasena#Segura1');
+    assert.equal(hash.length, 64);
+    assert.equal(sal.length, 32);
+  });
 });
 
 describe('ServicioCripto: cifrado de datos personales', () => {

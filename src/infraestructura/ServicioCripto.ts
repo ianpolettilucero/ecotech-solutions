@@ -68,8 +68,30 @@ export class ServicioCripto {
   private claveAes: CryptoKey | null = null;
   private claveHmac: CryptoKey | null = null;
 
-  /** Iteraciones PBKDF2. Referencia OWASP (2023) para PBKDF2-HMAC-SHA256. */
-  private static readonly ITERACIONES_PBKDF2 = 210_000;
+  /**
+   * Iteraciones de PBKDF2.
+   *
+   * OWASP recomienda 210.000 para PBKDF2-HMAC-SHA256, pero **el runtime de
+   * Cloudflare Workers rechaza cualquier valor por encima de 100.000**:
+   *
+   *   NotSupportedError: Pbkdf2 failed: iteration counts above 100000
+   *   are not supported (requested 210000)
+   *
+   * No es una eleccion, es el techo de la plataforma. Conviene saber que el
+   * emulador local (Miniflare) NO aplica ese limite: con 210.000 todo funciona
+   * en `wrangler dev` y revienta en el primer arranque en produccion. Este
+   * proyecto lo descubrio asi, y por eso `tests/seguridad.test.ts` fija el valor
+   * con una prueba: subirlo vuelve a romper el despliegue.
+   *
+   * Lo que compensa la diferencia frente a la recomendacion son los controles
+   * que la rodean, no el numero: bloqueo de cuenta a los cinco intentos,
+   * limitador por IP, y una politica de contrasena de 12 caracteres minimos con
+   * tres familias. El analisis esta en `docs/06-seguridad.md`.
+   */
+  private static readonly ITERACIONES_PBKDF2 = 100_000;
+
+  /** Techo que impone el runtime de Workers. Superarlo aborta en produccion. */
+  static readonly MAXIMO_ITERACIONES_PBKDF2 = 100_000;
   private static readonly LONGITUD_SAL = 16;
   private static readonly LONGITUD_IV = 12;
 

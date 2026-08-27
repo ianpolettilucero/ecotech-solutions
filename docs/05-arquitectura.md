@@ -420,7 +420,7 @@ y limita por operación, y una clave por empleado convertiría un listado en
 
 `ServicioCripto` deriva por HKDF una subclave distinta por propósito y las cachea
 en la instancia (`claveAes`, `claveHmac`), es decir una derivación por petición y
-propósito. PBKDF2 con `ITERACIONES_PBKDF2 = 210_000` solo interviene en el login y
+propósito. PBKDF2 con `ITERACIONES_PBKDF2 = 100_000` solo interviene en el login y
 en el cambio de contraseña; por eso `ESQUEMA_LOGIN` acota la contraseña a 128
 caracteres, para que nadie provoque un DoS por PBKDF2.
 
