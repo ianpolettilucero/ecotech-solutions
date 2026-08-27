@@ -1208,6 +1208,136 @@ ol[class] { padding-inline-start: 0; list-style: none; }
 }
 
 /* --------------------------------------------------------------------------
+   17b. Pantallas estrechas: la tabla deja de ser una tabla
+
+   Una ficha de empleado tiene ocho columnas y una de proyecto diez. En un
+   telefono de 390 px eso es una tabla de 1.300 px asomando por una ventana de
+   356: se veia el legajo, la columna de acciones anclada al borde, y nada mas.
+   El nombre de la persona quedaba fuera de la pantalla, de modo que la lista no
+   decia de quien era cada fila.
+
+   Por debajo de 900 px cada fila pasa a ser una ficha apilada y cada celda
+   muestra su etiqueta, que `Tabla.render` deja en `data-etiqueta`. Se lee en
+   vertical, que es como se sujeta un telefono, y no se pierde ninguna columna.
+
+   El corte es el mismo que el de la barra de navegacion a proposito: por debajo
+   de 900 px el sistema entero cambia de modo (menu abajo, listas en fichas), y
+   un unico umbral es mas facil de razonar y de mantener que dos. Una tablet en
+   vertical (768 px) tambien lo recibe, y hace falta: alli la tabla de proyectos
+   pide 1.320 px sobre 734 disponibles.
+
+   Nota de accesibilidad: al pasar la tabla a `display: block` se pierde su
+   semantica nativa, y la relacion entre cabecera y celda con ella. El par
+   etiqueta-valor se conserva visualmente mediante `::before`, que los lectores
+   de pantalla actuales si anuncian. Es el compromiso habitual de este patron;
+   la alternativa (mantener la tabla y desplazarla) deja el contenido
+   materialmente inaccesible en un movil, que es peor.
+   -------------------------------------------------------------------------- */
+@media (max-width: 899px) {
+  /* Ya no hay nada que desplazar en horizontal. */
+  .tabla-contenedor {
+    overflow-x: visible;
+    overflow-y: visible;
+    border: 0;
+    background-color: transparent;
+  }
+  .tabla,
+  .tabla-compacta {
+    display: block;
+    min-inline-size: 0;
+    border-collapse: separate;
+  }
+  /* La cabecera desaparece: su texto viaja ahora en cada celda. */
+  .tabla thead { display: none; }
+  .tabla tbody { display: block; }
+
+  .tabla tbody tr {
+    display: block;
+    padding: var(--esp-2) var(--esp-3);
+    margin-block-end: var(--esp-3);
+    background-color: var(--color-superficie);
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio-2);
+  }
+  /* El rayado de filas no aporta nada cuando cada fila ya es una ficha
+     separada, y ademas competiria con el fondo propio de la tarjeta. */
+  .tabla tbody tr:nth-child(even) { background-color: var(--color-superficie); }
+  .tabla tbody tr:last-child { margin-block-end: 0; }
+
+  .tabla tbody td {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--esp-3);
+    inline-size: auto;
+    padding: var(--esp-2) 0;
+    text-align: end;
+    white-space: normal;
+    border-block-end: 1px dashed var(--color-borde);
+  }
+  .tabla tbody tr td:last-child { border-block-end: 0; }
+
+  .tabla tbody td::before {
+    content: attr(data-etiqueta);
+    flex: 0 0 auto;
+    max-inline-size: 45%;
+    text-align: start;
+    font-size: var(--tamano-texto-micro);
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: var(--color-texto-tenue);
+  }
+  /* Una celda sin contenido solo aportaria una etiqueta huerfana. */
+  .tabla tbody td:empty { display: none; }
+
+  /* El anclaje al borde derecho es util cuando la tabla se desplaza; aqui solo
+     ocuparia espacio. Las acciones pasan a ser la ultima linea de la ficha. */
+  .tabla tbody td.celda-acciones,
+  .tabla thead th.celda-acciones {
+    position: static;
+    inline-size: auto;
+    box-shadow: none;
+    background-color: transparent;
+    justify-content: flex-end;
+    padding-block-start: var(--esp-3);
+  }
+  .tabla tbody td.celda-acciones::before { content: none; }
+  .celda-acciones .acciones,
+  .celda-acciones .grupo-botones { flex-wrap: wrap; }
+  .celda-acciones .boton { flex: 1 1 auto; justify-content: center; }
+
+  /* Las cifras dejan de ir a la derecha por su cuenta: ya lo hace la celda. */
+  .tabla tbody td.celda-numero { text-align: end; }
+
+  /* La cabecera de la aplicacion: el chip de usuario se comia el ancho y el
+     titulo de la vista acababa como "Empl...". En un movil el correo no aporta
+     (se sabe quien inicio sesion) y basta con el avatar, que sigue llevando al
+     perfil. */
+  .usuario-datos { display: none; }
+  .usuario-chip { padding: var(--esp-1); }
+  .cabecera { gap: var(--esp-2); }
+}
+
+/* Telefonos: las tarjetas de metrica caben de a dos.
+
+   El minimo de 13rem del panel se pensó para escritorio; en 390 px obliga a una
+   sola columna y convierte el resumen en seis pantallazos de scroll. Bajarlo a
+   9.5rem permite dos por fila y el panel entra casi entero de un vistazo, que es
+   justo para lo que sirve un panel. */
+@media (max-width: 560px) {
+  .rejilla-metricas {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--esp-3);
+  }
+  .metrica { padding: var(--esp-3); }
+  .metrica-valor { font-size: 1.5rem; }
+  .metrica-titulo { font-size: var(--tamano-texto-micro); }
+  /* Una etiqueta larga partida en tres lineas descuadra la fila de tarjetas. */
+  .metrica-detalle { font-size: var(--tamano-texto-micro); }
+}
+
+/* --------------------------------------------------------------------------
    18. Utilidades
    -------------------------------------------------------------------------- */
 .oculto { display: none !important; }

@@ -51,7 +51,16 @@ export class Tabla<T> {
     for (const fila of filas) {
       const tr = elemento('tr');
       for (const columna of this.columnas) {
-        const celda = elemento('td', { clase: columna.clase });
+        const celda = elemento('td', {
+          clase: columna.clase,
+          // En pantallas estrechas la tabla se reordena como una pila de fichas
+          // y cada celda tiene que decir de que columna viene, porque la
+          // cabecera deja de estar a la vista. El CSS lo pinta con `::before`
+          // desde este atributo. Es la unica forma de conservar el par
+          // etiqueta-valor sin duplicar el texto en el DOM ni obligar a cada
+          // vista a construir dos arboles distintos.
+          datos: { 'data-etiqueta': columna.titulo },
+        });
         // `agregar` resuelve los dos casos del contrato: una cadena se inserta
         // como nodo de texto (nunca como marcado) y un nodo se cuelga tal cual.
         agregar(celda, columna.celda(fila));

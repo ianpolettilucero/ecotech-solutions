@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 # Prueba de humo de la API contra `wrangler dev`.
 # Recorre el flujo real: login, CSRF, CRUD, reglas de negocio, permisos y descargas.
+#
+# REQUIERE ESTADO RECIEN SEMBRADO: entra con la contrasena inicial de las cuentas
+# de demostracion. Si otra prueba la rotó antes (la suite de interfaz lo hace),
+# todo fallara con 401. En local se parte de cero borrando `.wrangler/`.
 set -u
 BASE="${1:-http://127.0.0.1:8787}"
 GALLETAS=$(mktemp)

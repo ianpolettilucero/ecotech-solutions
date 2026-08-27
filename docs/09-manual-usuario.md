@@ -30,6 +30,21 @@ explica el código; para eso están [05 — Arquitectura](05-arquitectura.md) y
 
 ---
 
+## Uso en teléfono y tablet
+
+El sistema funciona igual en pantallas chicas, con dos diferencias visibles:
+
+- **El menú pasa abajo.** Por debajo de 900 px la barra lateral se convierte en
+  una barra inferior desplazable, al alcance del pulgar.
+- **Los listados dejan de ser tablas.** Una ficha de empleado tiene ocho
+  columnas y una de proyecto diez: en un teléfono eso obligaría a desplazarse de
+  lado para leer cada fila. Por debajo de 900 px cada fila se muestra como una
+  ficha apilada, con el nombre de cada campo a la izquierda y su valor a la
+  derecha, y los botones de acción al final. No se oculta ninguna columna.
+
+En el panel, las tarjetas de indicadores se reparten de a dos por fila en
+teléfono para que el resumen entre de un vistazo.
+
 ## 1. Ingreso al sistema
 
 La aplicación se abre en el navegador, en la dirección donde está publicado el
