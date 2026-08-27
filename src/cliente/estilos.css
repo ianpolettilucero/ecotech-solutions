@@ -494,7 +494,12 @@ ol[class] { padding-inline-start: 0; list-style: none; }
    -------------------------------------------------------------------------- */
 .pantalla-login {
   display: grid;
-  place-items: center;
+  /* `safe` es la diferencia entre centrar y recortar: cuando la tarjeta es mas
+     alta que la ventana, un `center` a secas empuja su borde superior por
+     encima del origen del contenedor, y esa zona NO se alcanza desplazandose.
+     Con `safe` el centrado se desactiva en cuanto habria desbordamiento y la
+     tarjeta se alinea al inicio, que si es accesible. */
+  place-items: safe center;
   min-block-size: 100dvh;
   padding: var(--esp-5);
   /* Degradado muy sutil para que la tarjeta despegue del fondo sin recurrir a
@@ -506,12 +511,69 @@ ol[class] { padding-inline-start: 0; list-style: none; }
   flex-direction: column;
   gap: var(--esp-4);
   inline-size: min(24rem, 100%);
+  /* CORRECCION IMPORTANTE.
+     Un elemento de rejilla nace con `min-inline-size: auto`, que equivale a su
+     ancho minimo intrinseco. Ese minimo gana sobre el `inline-size` declarado,
+     de modo que un texto indivisible lo bastante largo ensancha la tarjeta y la
+     saca de la pantalla. Aqui pasaba: los correos de demostracion
+     ("empleado@ecotech.com,") daban un min-content de 301 px cuando en un
+     telefono de 320 px solo hay 272 disponibles, y la tarjeta sobresalia por la
+     derecha. Ponerlo a 0 devuelve el mando al `inline-size`. */
+  min-inline-size: 0;
+  max-inline-size: 100%;
   padding: var(--esp-6);
   background-color: var(--color-superficie);
   border: 1px solid var(--color-borde);
   border-radius: var(--radio-3);
   box-shadow: var(--sombra-2);
 }
+/* Aviso plegable: `<details>` nativo, sin JavaScript. El marcador propio del
+   navegador se sustituye por una flecha propia para que herede el color del
+   aviso y gire al abrir. */
+.aviso-plegable summary {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-2);
+  font-weight: 600;
+  cursor: pointer;
+  list-style: none;
+  /* Objetivo tactil comodo aunque el texto sea corto. */
+  min-block-size: 2.25rem;
+}
+.aviso-plegable summary::-webkit-details-marker { display: none; }
+.aviso-plegable summary::after {
+  content: '';
+  inline-size: 0.5rem;
+  block-size: 0.5rem;
+  margin-inline-start: auto;
+  border-inline-end: 2px solid currentColor;
+  border-block-end: 2px solid currentColor;
+  transform: rotate(45deg);
+  transition: transform var(--transicion, 150ms) ease;
+}
+.aviso-plegable[open] summary::after { transform: rotate(-135deg); }
+.aviso-plegable > .pila { margin-block-start: var(--esp-3); }
+.aviso-icono {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 1.5rem;
+  block-size: 1.5rem;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background-color: var(--color-aviso, currentColor);
+  color: var(--color-superficie);
+  font-size: var(--tamano-texto-micro);
+  font-weight: 700;
+}
+
+/* `anywhere` (y no `break-word`) es lo que hace falta: es el unico valor que
+   ademas reduce el ancho minimo intrinseco, que es justo lo que empujaba la
+   tarjeta fuera de la pantalla. Afecta a correos, identificadores y rutas, que
+   es donde no hay espacios donde cortar. */
+.tarjeta-login,
+.aviso-seguridad { overflow-wrap: anywhere; }
+
 .login-marca { display: flex; align-items: center; gap: var(--esp-3); justify-content: center; }
 .login-titulo { text-align: center; font-size: 1.25rem; }
 .login-descripcion {
@@ -1273,6 +1335,11 @@ ol[class] { padding-inline-start: 0; list-style: none; }
     padding: var(--esp-2) 0;
     text-align: end;
     white-space: normal;
+    /* Un correo corporativo no tiene espacios donde cortar: sin esto la celda
+       "Email corporativo" se ensanchaba hasta sacar la ficha del contenedor en
+       pantallas de 320 px. Es la misma causa que sacaba la tarjeta de acceso
+       fuera de la pantalla. */
+    overflow-wrap: anywhere;
     border-block-end: 1px dashed var(--color-borde);
   }
   .tabla tbody tr td:last-child { border-block-end: 0; }
@@ -1344,6 +1411,43 @@ ol[class] { padding-inline-start: 0; list-style: none; }
      sigue siendo lo adecuado. */
   .tabla-compacta tbody { display: block; }
   .tabla-compacta tbody tr { margin-block-end: var(--esp-3); }
+}
+
+/* Muy estrecho (320-380 px): etiqueta arriba y valor debajo.
+
+   Con la etiqueta y el valor en la misma linea quedan ~150 px por lado, y un
+   correo o un nombre de departamento largo no entra ni partiendolo. Apilarlos
+   le da al valor el ancho completo de la ficha. */
+@media (max-width: 380px) {
+  .tabla tbody td {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 2px;
+    text-align: start;
+  }
+  .tabla tbody td::before { max-inline-size: none; }
+  .tabla tbody td.celda-numero { text-align: start; }
+  .tabla tbody td.celda-acciones { align-items: flex-end; }
+}
+
+/* Login en pantallas chicas o bajas.
+
+   La tarjeta media 761 px en un telefono de 568 px de alto y 569 en apaisado
+   sobre 390: se podia desplazar, pero obligaba a hacerlo antes de ver el boton.
+   Se recorta el relleno, que es de donde sale la mayor parte de ese alto, sin
+   tocar el tamanio de los campos (que son los objetivos tactiles). */
+@media (max-width: 400px) {
+  .pantalla-login { padding: var(--esp-3); }
+  .tarjeta-login { padding: var(--esp-4); gap: var(--esp-3); }
+}
+
+/* El alto es el eje critico en apaisado y con el teclado abierto, y no depende
+   del ancho: por eso la consulta va sobre `max-height` y no sobre el ancho. */
+@media (max-height: 640px) {
+  .pantalla-login { padding-block: var(--esp-3); }
+  .tarjeta-login { padding-block: var(--esp-4); gap: var(--esp-3); }
+  .login-marca { gap: var(--esp-2); }
+  .login-descripcion { margin-block-end: 0; }
 }
 
 /* Telefonos: las tarjetas de metrica caben de a dos.

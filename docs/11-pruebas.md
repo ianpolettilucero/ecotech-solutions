@@ -135,6 +135,44 @@ Cubre, por bloques:
 
 ---
 
+## 11.3b. Auditoría de diseño adaptable
+
+`scripts/responsive.mjs` recorre con Playwright la pantalla de acceso y los
+nueve módulos en seis tamaños —320×568, 375×667, 390×844, 844×390 (apaisado),
+768×1024 y 1440×900— y falla si encuentra alguno de estos defectos:
+
+- la página se desplaza en horizontal;
+- un elemento sobresale de su contenedor (el defecto que no se ve midiendo solo
+  contra la ventana);
+- la tarjeta de acceso queda cortada por arriba —el clásico de centrar con
+  `place-items: center` un contenido más alto que la ventana, cuya zona superior
+  **no** se alcanza desplazándose—;
+- el botón de ingresar cae fuera de la vista;
+- una tabla necesita desplazamiento lateral por debajo de 900 px, donde debería
+  estar en modo de fichas. Por encima de ese ancho no se comprueba: ahí el
+  desplazamiento dentro de `.tabla-contenedor` es el comportamiento buscado.
+
+```bash
+npx wrangler dev                                   # en una terminal
+npm run test:responsive                            # en otra
+npm run test:responsive -- https://mi-despliegue   # o contra una URL
+```
+
+Usa `playwright-core`, que **no** descarga navegadores al instalarse: ni el
+despliegue de Cloudflare ni una instalación limpia pagan 150 MB por una
+herramienta que solo se usa a mano. Hay que apuntarle a un Chromium existente
+con `PLAYWRIGHT_CHROMIUM=/ruta/a/chrome`, o dejar que lo busque en las rutas
+habituales del sistema. Con `CAPTURAS=/ruta` guarda una captura por pantalla y
+tamaño.
+
+Son 189 comprobaciones. Dos defectos reales salieron de aquí y no de la
+inspección visual: la tarjeta de acceso con un ancho mínimo intrínseco de 301 px
+en un teléfono de 320, y la celda «Email corporativo» ensanchando la ficha en el
+mismo tamaño. Los dos por la misma causa —texto sin puntos de corte— y ninguno
+visible por encima de 360 px.
+
+---
+
 ## 11.4. Qué NO está cubierto
 
 Con franqueza, porque un apartado de pruebas que solo enumera aciertos no sirve
@@ -149,11 +187,11 @@ ciego concurrente.
 **El Worker no tiene pruebas de integración automatizadas en CI.** La prueba de
 humo requiere un servidor levantado y se ejecuta a mano.
 
-**El cliente no tiene pruebas unitarias.** Se verificó con un navegador real
-(26 comprobaciones: login, cambio de contraseña, navegación por los nueve
-módulos, contenido de las tablas, modales, diseño adaptable, modo oscuro y
-recorte del menú por rol), pero ese guion no forma parte del repositorio ni se
-ejecuta en cada cambio.
+**El cliente no tiene pruebas unitarias.** Su verificación es de comportamiento,
+con un navegador real: 37 comprobaciones de flujo (login, cambio de contraseña,
+navegación por los nueve módulos, contenido de las tablas, modales, modo oscuro
+y recorte del menú por rol) y las 189 de `npm run test:responsive`. La segunda
+sí forma parte del repositorio; la primera todavía no.
 
 **No hay pruebas de concurrencia.** El modelo de "el último en escribir gana" de
 una colección de KV no está ejercitado con escrituras simultáneas. Es la

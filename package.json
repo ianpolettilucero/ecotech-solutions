@@ -13,12 +13,14 @@
     "build:test": "node scripts/build-tests.mjs",
     "test": "npm run build:test && node --test build-tests/tests/*.test.js",
     "dev": "wrangler dev",
-    "deploy": "npm run build && wrangler deploy"
+    "deploy": "npm run build && wrangler deploy",
+    "test:responsive": "node scripts/responsive.mjs"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^5.20260825.1",
     "@types/node": "^26.4.0",
     "esbuild": "^0.25.0",
+    "playwright-core": "^1.62.1",
     "typescript": "^5.7.3",
     "wrangler": "^4.0.0"
   }

@@ -34,7 +34,8 @@ consecuencias. El sistema ataca cada una con un mecanismo concreto:
 ```bash
 npm install
 npm run typecheck     # los tres proyectos: worker, cliente y pruebas
-npm test              # 80 pruebas unitarias
+npm test              # 81 pruebas unitarias
+npm run test:responsive  # 189 comprobaciones de diseno adaptable (requiere wrangler dev)
 npm run build         # compila el frontend a dist/
 npx wrangler dev      # entorno local en http://localhost:8787
 ```

@@ -133,20 +133,33 @@ export class VistaLogin extends Vista {
    * Es informacion de una demostracion, no de produccion: por eso se muestra
    * con el mismo estilo que el resto de avisos del sistema y se advierte que la
    * clave inicial caduca en el primer ingreso.
+   *
+   * Va dentro de un `<details>` plegado. Desplegado ocupa unos 250 px, que en un
+   * telefono de 568 px de alto empujaban el boton de ingresar fuera de la vista
+   * y obligaban a desplazarse antes de poder hacer nada. Plegado, la pantalla
+   * de acceso entra entera en cualquier telefono y las credenciales siguen a un
+   * toque de distancia. `<details>` es el elemento nativo para esto: aporta el
+   * comportamiento y la semantica de accesibilidad sin una linea de JavaScript.
    */
   private avisoDemostracion(): HTMLElement {
-    return div(
-      'aviso-seguridad',
-      elemento('span', { texto: 'i', datos: { 'aria-hidden': 'true' } }),
-      div(
-        'pila',
-        elemento('strong', { texto: 'Credenciales de demostracion' }),
-        elemento('p', { texto: `Usuarios: ${CUENTAS_DEMO.join(', ')}.` }),
-        elemento('p', { clase: 'texto-mono', texto: `Contrasena: ${CLAVE_DEMO}` }),
-        elemento('p', {
-          texto: 'La misma clave sirve para las cuatro cuentas y el sistema obliga a cambiarla en el primer ingreso.',
-        }),
-      ),
+    const contenido = div(
+      'pila',
+      elemento('p', { texto: `Usuarios: ${CUENTAS_DEMO.join(', ')}.` }),
+      elemento('p', { clase: 'texto-mono', texto: `Contrasena: ${CLAVE_DEMO}` }),
+      elemento('p', {
+        texto: 'La misma clave sirve para las cuatro cuentas y el sistema obliga a cambiarla en el primer ingreso.',
+      }),
     );
+
+    const plegable = elemento('details', { clase: 'aviso-plegable' });
+    const resumen = elemento(
+      'summary',
+      {},
+      elemento('span', { clase: 'aviso-icono', texto: 'i', datos: { 'aria-hidden': 'true' } }),
+      elemento('span', { texto: 'Credenciales de demostracion' }),
+    );
+    agregar(plegable, resumen, contenido);
+
+    return div('aviso-seguridad', plegable);
   }
 }
