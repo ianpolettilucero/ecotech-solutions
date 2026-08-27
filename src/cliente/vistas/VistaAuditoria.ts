@@ -20,6 +20,7 @@ import {
   filtros,
   selector,
 } from '../componentes/piezas.js';
+import type { NombreIcono } from '../dom.js';
 import { agregar, div, elemento, formatearFechaHora, vaciar } from '../dom.js';
 
 /** Entidades sobre las que el sistema deja asientos, con su rotulo legible. */
@@ -49,8 +50,8 @@ export class VistaAuditoria extends Vista {
     return 'Auditoría';
   }
 
-  override get icono(): string {
-    return 'T';
+  override get icono(): NombreIcono {
+    return 'escudo';
   }
 
   override get permisos(): Permiso[] {

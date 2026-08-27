@@ -3,12 +3,13 @@
  *
  * Es la única vista sin permisos declarados: cualquiera que entre al sistema
  * aterriza aquí. Por eso no muestra ni un dato de persona, solo agregados que
- * el servidor ya cálculo (`/api/panel`); si hiciera falta filtrar por rol lo
+ * el servidor ya calculó (`/api/panel`); si hiciera falta filtrar por rol lo
  * haría el servicio, no esta pantalla.
  */
 
 import type { MetricasPanelDTO, Permiso } from '../../compartido/tipos.js';
 import { ClienteApi } from '../ClienteApi.js';
+import type { NombreIcono } from '../dom.js';
 import { agregar, div, elemento, formatearNumero } from '../dom.js';
 import { Vista } from '../Vista.js';
 import { Tabla } from '../componentes/Tabla.js';
@@ -43,8 +44,8 @@ export class VistaPanel extends Vista {
     return 'Panel';
   }
 
-  override get icono(): string {
-    return '#';
+  override get icono(): NombreIcono {
+    return 'panel';
   }
 
   override get permisos(): Permiso[] {
@@ -110,30 +111,40 @@ export class VistaPanel extends Vista {
     const entero = (valor: number): string => formatearNumero(valor, 0);
     const horas = (valor: number): string => `${formatearNumero(valor, 2)} h`;
 
+    // Cada métrica lleva siempre el mismo tono y el mismo glifo: el color deja
+    // de ser adorno y pasa a identificar la ficha de un vistazo.
     return div(
       'rejilla-metricas',
-      tarjetaMetrica(
-        'Empleados activos',
-        entero(metricas.empleadosActivos),
-        `de ${entero(metricas.totalEmpleados)} totales`,
-      ),
-      tarjetaMetrica(
-        'Departamentos',
-        entero(metricas.totalDepartamentos),
-        'Unidades del organigrama',
-      ),
-      tarjetaMetrica('Proyectos en curso', entero(metricas.proyectosEnCurso), 'Trabajo abierto'),
-      tarjetaMetrica('Horas del mes en curso', horas(metricas.horasMesActual), 'Desde el día 1'),
-      tarjetaMetrica(
-        'Horas pendientes de aprobación',
-        horas(metricas.horasPendientesAprobacion),
-        'Enviadas y sin revisar',
-      ),
-      tarjetaMetrica(
-        'Empleados sin departamento',
-        entero(metricas.empleadosSinDepartamento),
-        'Fuera del organigrama',
-      ),
+      tarjetaMetrica('Empleados activos', entero(metricas.empleadosActivos), {
+        detalle: `de ${entero(metricas.totalEmpleados)} totales`,
+        tono: 'verde',
+        icono: 'personas',
+      }),
+      tarjetaMetrica('Departamentos', entero(metricas.totalDepartamentos), {
+        detalle: 'Unidades del organigrama',
+        tono: 'cian',
+        icono: 'edificio',
+      }),
+      tarjetaMetrica('Proyectos en curso', entero(metricas.proyectosEnCurso), {
+        detalle: 'Trabajo abierto',
+        tono: 'violeta',
+        icono: 'maletin',
+      }),
+      tarjetaMetrica('Horas del mes en curso', horas(metricas.horasMesActual), {
+        detalle: 'Desde el día 1',
+        tono: 'azul',
+        icono: 'reloj',
+      }),
+      tarjetaMetrica('Horas pendientes de aprobación', horas(metricas.horasPendientesAprobacion), {
+        detalle: 'Enviadas y sin revisar',
+        tono: 'ambar',
+        icono: 'bandeja',
+      }),
+      tarjetaMetrica('Empleados sin departamento', entero(metricas.empleadosSinDepartamento), {
+        detalle: 'Fuera del organigrama',
+        tono: 'rosa',
+        icono: 'brujula',
+      }),
     );
   }
 

@@ -3,7 +3,7 @@ import { ClienteApi, ErrorApi } from './ClienteApi.js';
 import { Vista, type AplicacionBase } from './Vista.js';
 import { Notificador } from './componentes/Notificador.js';
 import { Modal } from './componentes/Modal.js';
-import { agregar, div, elemento, vaciar } from './dom.js';
+import { agregar, div, elemento, icono, vaciar } from './dom.js';
 
 import { VistaLogin } from './vistas/VistaLogin.js';
 import { VistaPanel } from './vistas/VistaPanel.js';
@@ -169,7 +169,7 @@ export class Aplicacion implements AplicacionBase {
           titulo: vista.titulo,
           al: { click: () => this.navegar(vista.ruta) },
         },
-        elemento('span', { clase: 'nav-icono', texto: vista.icono }),
+        elemento('span', { clase: 'nav-icono' }, icono(vista.icono)),
         // Se pintan los dos rotulos y la hoja de estilos elige cual se ve
         // según el ancho. Alternar con JavaScript exigiría escuchar el cambio
         // de tamaño y volver a pintar el menú; así es una regla de CSS.
@@ -184,7 +184,7 @@ export class Aplicacion implements AplicacionBase {
       { clase: 'barra-lateral' },
       div(
         'barra-lateral-marca',
-        elemento('span', { clase: 'marca-icono', texto: 'E' }),
+        elemento('span', { clase: 'marca-icono' }, icono('hoja')),
         elemento('span', { clase: 'marca-texto', texto: 'EcoTech Solutions' }),
       ),
       nav,

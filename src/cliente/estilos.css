@@ -23,41 +23,75 @@
   --tamano-texto-menor: 0.8125rem;
   --tamano-texto-micro: 0.6875rem;
 
-  /* Verdes sobrios: el primario se usa en superficies grandes, así que se
-     elige apagado para no cansar en jornadas largas de uso. */
-  --color-primario: #2f7d4f;
-  --color-primario-oscuro: #235f3c;
-  --color-primario-claro: #4a9b6a;
-  --color-primario-tenue: #e7f1ea;
+  /* Verde esmeralda: la identidad sigue siendo la de una empresa de energía
+     limpia, pero saturado, no apagado. El tono que se usa como fondo con texto
+     blanco encima esta elegido por contraste (5,1:1 sobre blanco), no por
+     gusto: los claros viven en los degradados y en el modo oscuro, donde no
+     llevan texto encima. */
+  --color-primario: #0d7d5a;
+  --color-primario-oscuro: #0a6047;
+  --color-primario-claro: #2fc48f;
+  --color-primario-tenue: #ddf6ec;
   --color-primario-contraste: #ffffff;
-  /* Enlaces y elemento de navegación activo: en modo oscuro el verde
-     oscuro se hunde en el fondo, así que el token cambia de extremo. */
+  /* Cian: el segundo color de la marca, el que le pone el acento tecnológico.
+     El tono base tambien esta bajado hasta 4,7:1 para poder llevar texto. */
+  --color-secundario: #0a7f8e;
+  --color-secundario-claro: #22c9dd;
+  --color-secundario-tenue: #ddf4f7;
+  /* Familia de acentos. No decoran: identifican. Cada métrica del panel y cada
+     tipo de informe se queda siempre con el mismo, de modo que el color llega
+     a significar algo en lugar de ser ruido. */
+  --color-violeta: #6740e0;
+  --color-violeta-tenue: #ece7fd;
+  --color-azul: #1f6fd0;
+  --color-azul-tenue: #e3eefc;
+  --color-ambar: #a85b06;
+  --color-ambar-tenue: #fdefda;
+  --color-rosa: #be3455;
+  --color-rosa-tenue: #fce7ec;
+
   --color-enlace: var(--color-primario-oscuro);
 
-  /* Neutros calidos: el fondo tira a hueso, no a gris azulado. */
-  --color-fondo: #f7f5f0;
+  /* Neutros frios: pizarra en lugar de hueso. Es el fondo sobre el que un
+     verde y un cian saturados se leen como tecnología y no como rústico. */
+  --color-fondo: #f3f6fa;
   --color-superficie: #ffffff;
-  --color-superficie-alterna: #f2efe8;
-  --color-superficie-hover: #ece8df;
-  --color-borde: #e1dbd0;
-  --color-borde-fuerte: #c8c0b1;
-  --color-texto: #23261f;
-  --color-texto-tenue: #6b6559;
+  --color-superficie-alterna: #eef2f8;
+  --color-superficie-hover: #e4ebf4;
+  --color-borde: #dde4ee;
+  --color-borde-fuerte: #b6c2d4;
+  --color-texto: #0f172a;
+  --color-texto-tenue: #55637a;
   --color-texto-inverso: #ffffff;
-  --color-exito: #2a7047;
-  --color-exito-fondo: #e6f2ea;
-  --color-aviso: #90650f;
-  --color-aviso-fondo: #faf0d8;
-  --color-peligro: #a93226;
-  --color-peligro-fondo: #fbe9e6;
-  --color-info: #26688d;
-  --color-info-fondo: #e5eff6;
-  --color-neutro-fondo: #edeae2;
-  --color-foco: #1c6ea4;
-  --color-fondo-modal: rgb(28 32 26 / 55%);
-  --sombra-1: 0 1px 2px rgb(28 32 26 / 6%), 0 1px 3px rgb(28 32 26 / 8%);
-  --sombra-2: 0 4px 14px rgb(28 32 26 / 10%);
-  --sombra-3: 0 20px 48px rgb(20 24 18 / 24%);
+  --color-exito: #0d7d5a;
+  --color-exito-fondo: #ddf6ec;
+  --color-aviso: #a85b06;
+  --color-aviso-fondo: #fdefda;
+  --color-peligro: #be3455;
+  --color-peligro-fondo: #fce7ec;
+  --color-info: #1f6fd0;
+  --color-info-fondo: #e3eefc;
+  --color-neutro-fondo: #e8edf5;
+  --color-foco: #1f6fd0;
+  --color-fondo-modal: rgb(10 18 32 / 58%);
+
+  /* Degradados. Se declaran como tokens para que un componente nuevo herede la
+     misma diagonal y el mismo recorrido de color sin volver a inventarlos. */
+  --degradado-marca: linear-gradient(135deg, #0d7d5a 0%, #0a7f8e 52%, #1f6fd0 100%);
+  --degradado-primario: linear-gradient(135deg, #0d7d5a 0%, #0a7f8e 100%);
+  /* Fondo de la pantalla de acceso: tres manchas de color muy diluidas. Es lo
+     unico decorativo de la hoja, y esta donde no hay datos que leer. */
+  --fondo-acceso:
+    radial-gradient(58rem 40rem at 8% -12%, color-mix(in srgb, var(--color-primario) 20%, transparent), transparent 62%),
+    radial-gradient(46rem 34rem at 104% 6%, color-mix(in srgb, var(--color-secundario) 22%, transparent), transparent 64%),
+    radial-gradient(40rem 32rem at 58% 116%, color-mix(in srgb, var(--color-violeta) 14%, transparent), transparent 62%);
+
+  --sombra-1: 0 1px 2px rgb(15 23 42 / 5%), 0 1px 3px rgb(15 23 42 / 7%);
+  --sombra-2: 0 6px 20px rgb(15 23 42 / 10%);
+  --sombra-3: 0 24px 56px rgb(9 15 30 / 26%);
+  /* Sombra de color para lo que lleva degradado: una sombra gris debajo de un
+     boton verde lo apaga; una del propio color lo levanta. */
+  --sombra-primario: 0 6px 18px color-mix(in srgb, var(--color-primario) 30%, transparent);
   --esp-1: 0.25rem;
   --esp-2: 0.5rem;
   --esp-3: 0.75rem;
@@ -80,35 +114,55 @@
 @media (prefers-color-scheme: dark) {
   :root {
     color-scheme: dark;
-    --color-primario: #4fa576;
-    --color-primario-oscuro: #3d8b61;
-    --color-primario-claro: #74c396;
-    --color-primario-tenue: #1e2c24;
-    --color-primario-contraste: #0e1510;
+    /* En oscuro se invierte la regla: el texto encima de un color es oscuro,
+       de modo que los tonos suben de saturación en vez de bajar. */
+    --color-primario: #2fc48f;
+    --color-primario-oscuro: #1ea87a;
+    --color-primario-claro: #6be0b4;
+    --color-primario-tenue: #0f3629;
+    --color-primario-contraste: #04140d;
+    --color-secundario: #22c9dd;
+    --color-secundario-claro: #6fe5f2;
+    --color-secundario-tenue: #0c333a;
+    --color-violeta: #a48bff;
+    --color-violeta-tenue: #241d47;
+    --color-azul: #63a7f5;
+    --color-azul-tenue: #142942;
+    --color-ambar: #e5a33c;
+    --color-ambar-tenue: #35270f;
+    --color-rosa: #f0798f;
+    --color-rosa-tenue: #3a1a24;
     --color-enlace: var(--color-primario-claro);
-    --color-fondo: #17190f;
-    --color-superficie: #1e2118;
-    --color-superficie-alterna: #24271d;
-    --color-superficie-hover: #2b2f23;
-    --color-borde: #343829;
-    --color-borde-fuerte: #4a4f3c;
-    --color-texto: #eae7dc;
-    --color-texto-tenue: #a09a89;
-    --color-texto-inverso: #14170f;
-    --color-exito: #6bbf8e;
-    --color-exito-fondo: #1b2c21;
-    --color-aviso: #d9ab4c;
-    --color-aviso-fondo: #2e2716;
-    --color-peligro: #e08279;
-    --color-peligro-fondo: #33201d;
-    --color-info: #79b3d6;
-    --color-info-fondo: #1a2831;
-    --color-neutro-fondo: #272a20;
-    --color-foco: #8ec7ec;
-    --color-fondo-modal: rgb(6 8 5 / 70%);
-    --sombra-1: 0 1px 2px rgb(0 0 0 / 40%);
-    --sombra-2: 0 4px 14px rgb(0 0 0 / 45%);
-    --sombra-3: 0 20px 48px rgb(0 0 0 / 60%);
+    --color-fondo: #0a1120;
+    --color-superficie: #111b2e;
+    --color-superficie-alterna: #17233a;
+    --color-superficie-hover: #1e2c47;
+    --color-borde: #22334f;
+    --color-borde-fuerte: #3a4d70;
+    --color-texto: #e7eefa;
+    --color-texto-tenue: #94a4bf;
+    --color-texto-inverso: #0a1120;
+    --color-exito: #2fc48f;
+    --color-exito-fondo: #0f3629;
+    --color-aviso: #e5a33c;
+    --color-aviso-fondo: #35270f;
+    --color-peligro: #f0798f;
+    --color-peligro-fondo: #3a1a24;
+    --color-info: #63a7f5;
+    --color-info-fondo: #142942;
+    --color-neutro-fondo: #1b2942;
+    --color-foco: #63a7f5;
+    --color-fondo-modal: rgb(2 6 14 / 74%);
+    --degradado-marca: linear-gradient(135deg, #14a877 0%, #12a3b6 52%, #3f87e0 100%);
+    --degradado-primario: linear-gradient(135deg, #2fc48f 0%, #22c9dd 100%);
+    --fondo-acceso:
+      radial-gradient(58rem 40rem at 8% -12%, color-mix(in srgb, var(--color-primario) 16%, transparent), transparent 62%),
+      radial-gradient(46rem 34rem at 104% 6%, color-mix(in srgb, var(--color-secundario) 16%, transparent), transparent 64%),
+      radial-gradient(40rem 32rem at 58% 116%, color-mix(in srgb, var(--color-violeta) 14%, transparent), transparent 62%);
+    --sombra-1: 0 1px 2px rgb(0 0 0 / 45%);
+    --sombra-2: 0 6px 20px rgb(0 0 0 / 50%);
+    --sombra-3: 0 24px 56px rgb(0 0 0 / 64%);
+    --sombra-primario: 0 6px 18px color-mix(in srgb, var(--color-primario) 26%, transparent);
   }
 }
 
@@ -217,15 +271,21 @@ ol[class] { padding-inline-start: 0; list-style: none; }
 }
 .marca-logotipo,
 .marca-icono {
-  inline-size: 2rem;
-  block-size: 2rem;
+  inline-size: 2.125rem;
+  block-size: 2.125rem;
   flex: none;
   border-radius: var(--radio-2);
-  background-color: var(--color-primario);
+  /* El degradado de la marca vive aqui y en el boton principal; son los dos
+     unicos sitios de la interfaz donde el color es el protagonista. */
+  background-image: var(--degradado-marca);
+  box-shadow: var(--sombra-primario);
   display: grid;
   place-items: center;
-  color: var(--color-primario-contraste);
+  color: #ffffff;
+  font-weight: 800;
 }
+.marca-icono .icono { font-size: 1.25rem; }
+.avatar .icono { font-size: 1rem; }
 .marca-texto { display: flex; flex-direction: column; line-height: 1.15; }
 .marca-sufijo {
   font-size: var(--tamano-texto-micro);
@@ -270,8 +330,51 @@ ol[class] { padding-inline-start: 0; list-style: none; }
   color: var(--color-enlace);
   font-weight: 600;
 }
+/* Ademas del fondo, una barra del color de la marca. El fondo tenue solo se
+   distingue del blanco si la pantalla esta bien calibrada; la barra se ve
+   siempre, y es la que responde "en que seccion estoy". */
+.enlace-nav.activo::before,
+.nav-item.activo::before {
+  content: '';
+  position: absolute;
+  inset-block: 20%;
+  inset-inline-start: 0;
+  inline-size: 3px;
+  border-radius: var(--radio-redondo);
+  background-image: var(--degradado-primario);
+}
+.enlace-nav,
+.nav-item { position: relative; }
+.enlace-nav.activo .nav-icono,
+.nav-item.activo .nav-icono { color: var(--color-primario); }
 .enlace-nav-icono,
-.nav-icono { inline-size: 1.25rem; text-align: center; flex: none; }
+.nav-icono {
+  display: inline-flex;
+  inline-size: 1.25rem;
+  block-size: 1.25rem;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  color: var(--color-texto-tenue);
+  transition: color var(--transicion);
+}
+
+/* --------------------------------------------------------------------------
+   3b. Iconos
+   Trazo sobre caja de 24x24 que hereda el color de quien lo contiene. El
+   tamanio se controla con `font-size` para que un icono escale junto al texto
+   al que acompana sin una clase de tamanio por cada sitio. */
+.icono {
+  inline-size: 1em;
+  block-size: 1em;
+  flex: none;
+  /* El trazo se dibuja centrado sobre la linea; sin esto un icono dentro de un
+     boton se apoya en la linea base y queda medio pixel alto. */
+  vertical-align: -0.125em;
+}
+.nav-icono .icono { font-size: 1.25rem; }
+.metrica-marca .icono { font-size: 1.125rem; }
+.boton .icono { font-size: 1.05rem; }
 /* El rotulo abreviado solo existe para la barra inferior del teléfono. */
 .nav-texto-corto { display: none; }
 .pie-lateral {
@@ -293,8 +396,24 @@ ol[class] { padding-inline-start: 0; list-style: none; }
   gap: var(--esp-4);
   min-block-size: var(--altura-cabecera);
   padding: var(--esp-3) var(--esp-5);
+  /* Translucida sobre el contenido que pasa por debajo. El color de respaldo va
+     primero por si el navegador no admite `backdrop-filter`: sin el, la
+     cabecera se veria transparente y el texto se cruzaria con las filas. */
   background-color: var(--color-superficie);
+  background-color: color-mix(in srgb, var(--color-superficie) 82%, transparent);
+  backdrop-filter: saturate(180%) blur(12px);
   border-block-end: 1px solid var(--color-borde);
+}
+/* Hilo de color bajo la cabecera: el mismo recorrido verde-cian-azul de la
+   marca, de un pixel, que ata la pantalla a la identidad sin ocupar sitio. */
+.cabecera::after {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: -1px;
+  block-size: 2px;
+  background-image: var(--degradado-marca);
+  opacity: 0.85;
 }
 .titulo-pagina,
 .cabecera-titulo {
@@ -410,6 +529,16 @@ ol[class] { padding-inline-start: 0; list-style: none; }
   /* Rotulo abreviado: "Registro de horas" no entra en 4,5 rem. */
   .nav-texto { display: none; }
   .nav-texto-corto { display: block; }
+  /* La marca del acceso activo gira con la barra: arriba del icono, no a un
+     lado, que es donde el pulgar espera verla en una barra horizontal. */
+  .enlace-nav.activo::before,
+  .nav-item.activo::before {
+    inset-block: auto;
+    inset-block-start: 0;
+    inset-inline: 22%;
+    inline-size: auto;
+    block-size: 3px;
+  }
   .cabecera { padding-inline: var(--esp-4); }
   .contenido {
     padding: var(--esp-4);
@@ -486,10 +615,11 @@ ol[class] { padding-inline-start: 0; list-style: none; }
   block-size: 2rem;
   flex: none;
   border-radius: 50%;
-  background-color: var(--color-primario-tenue);
-  color: var(--color-enlace);
+  background-image: var(--degradado-marca);
+  color: #ffffff;
   font-size: var(--tamano-texto-micro);
   font-weight: 700;
+  box-shadow: var(--sombra-1);
 }
 
 /* Ficha del usuario conectado en la cabecera. El correo se trunca porque los
@@ -531,9 +661,9 @@ ol[class] { padding-inline-start: 0; list-style: none; }
   place-items: safe center;
   min-block-size: 100dvh;
   padding: var(--esp-5);
-  /* Degradado muy sutil para que la tarjeta despegue del fondo sin recurrir a
-     una imagen: un asset más sería otra petición y otra entrada en la CSP. */
-  background-image: radial-gradient(circle at 50% 0%, var(--color-primario-tenue), transparent 60%);
+  /* Tres manchas de color muy diluidas, declaradas como token. Sin imagen: un
+     asset más sería otra petición y otra entrada en la CSP. */
+  background-image: var(--fondo-acceso);
 }
 .tarjeta-login {
   display: flex;
@@ -554,7 +684,20 @@ ol[class] { padding-inline-start: 0; list-style: none; }
   background-color: var(--color-superficie);
   border: 1px solid var(--color-borde);
   border-radius: var(--radio-3);
-  box-shadow: var(--sombra-2);
+  box-shadow: var(--sombra-3);
+  /* Canto superior con el degradado de la marca. Va como `::before` y no como
+     `border-top` porque un borde de color no admite degradado sin recurrir a
+     `border-image`, que ademas pelearia con el radio de las esquinas. */
+  position: relative;
+  overflow: clip;
+}
+.tarjeta-login::before {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  inset-block-start: 0;
+  block-size: 4px;
+  background-image: var(--degradado-marca);
 }
 /* Aviso plegable: `<details>` nativo, sin JavaScript. El marcador propio del
    navegador se sustituye por una flecha propia para que herede el color del
@@ -689,10 +832,20 @@ ol[class] { padding-inline-start: 0; list-style: none; }
 /* Un botón que muestra su propio girador está ejecutando la acción: se
    neutraliza el puntero para no encadenar envíos duplicados. */
 .boton:has(.girador) { pointer-events: none; }
-.boton-primario { background-color: var(--color-primario); color: var(--color-primario-contraste); }
+.boton-primario {
+  background-image: var(--degradado-primario);
+  color: #ffffff;
+  box-shadow: var(--sombra-primario);
+}
+/* El hover oscurece el degradado entero, no un `background-color` que quedaria
+   tapado por la imagen de fondo. */
 .boton-primario:hover:not([disabled]) {
-  background-color: var(--color-primario-oscuro);
-  background-color: color-mix(in srgb, var(--color-primario) 84%, black);
+  background-image: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--color-primario) 84%, black) 0%,
+    color-mix(in srgb, var(--color-secundario) 84%, black) 100%
+  );
+  box-shadow: 0 8px 22px color-mix(in srgb, var(--color-primario) 38%, transparent);
 }
 .boton-secundario {
   background-color: var(--color-superficie);
@@ -714,6 +867,41 @@ ol[class] { padding-inline-start: 0; list-style: none; }
   font-size: var(--tamano-texto-micro);
 }
 .boton-bloque { inline-size: 100%; }
+
+/* Acciones de fila.
+   Con el tamanio normal, "Ver | Editar | Baja" pedia 251 px y la columna de
+   acciones, que va anclada al borde, tapaba la de Estado. Ademas, diez botones
+   rojos macizos uno debajo de otro convertian el listado en una pared roja: el
+   color de peligro solo debe destacar donde de verdad hay peligro, que es el
+   dialogo de confirmación, no la fila. Aqui van compactos y el destructivo va
+   perfilado: se sigue leyendo como peligro, sin gritar. */
+.celda-acciones .boton {
+  min-block-size: 1.875rem;
+  padding: var(--esp-1) var(--esp-3);
+  font-size: var(--tamano-texto-micro);
+}
+.celda-acciones .boton-peligro {
+  background-color: transparent;
+  border-color: color-mix(in srgb, var(--color-peligro) 45%, transparent);
+  color: var(--color-peligro);
+}
+.celda-acciones .boton-peligro:hover:not([disabled]) {
+  background-color: var(--color-peligro-fondo);
+  border-color: var(--color-peligro);
+}
+.celda-acciones .boton-primario {
+  background-image: none;
+  background-color: transparent;
+  border-color: color-mix(in srgb, var(--color-primario) 45%, transparent);
+  color: var(--color-enlace);
+  box-shadow: none;
+}
+.celda-acciones .boton-primario:hover:not([disabled]) {
+  background-image: none;
+  background-color: var(--color-primario-tenue);
+  border-color: var(--color-primario);
+  box-shadow: none;
+}
 /* `.acciones` es el gancho que emiten las vistas para su fila de botones;
    `.grupo-botones` es el mismo patron reutilizado suelto. Comparten regla para
    que una fila de botones se vea igual venga de donde venga. */
@@ -1024,17 +1212,63 @@ ol[class] { padding-inline-start: 0; list-style: none; }
   gap: var(--esp-4);
 }
 .metrica {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: var(--esp-1);
-  padding: var(--esp-4) var(--esp-5);
+  padding: var(--esp-5);
+  /* Un lavado del color de la métrica sobre la superficie. Al 6 % el texto
+     conserva todo su contraste y la ficha deja de ser un rectangulo blanco
+     más: de un vistazo se distingue "horas" de "personas" por el color. */
   background-color: var(--color-superficie);
+  background-image: linear-gradient(
+    160deg,
+    color-mix(in srgb, var(--color-acento, var(--color-primario)) 8%, transparent) 0%,
+    transparent 62%
+  );
   border: 1px solid var(--color-borde);
   border-radius: var(--radio-3);
   box-shadow: var(--sombra-1);
-  /* Franja lateral con el color de la métrica; las variantes solo cambian
-     --color-acento en lugar de repetir la regla completa. */
-  border-inline-start: 3px solid var(--color-acento, var(--color-primario));
+  overflow: clip;
+  transition: box-shadow var(--transicion), transform var(--transicion);
+}
+/* Franja superior con el color de la métrica. Las variantes solo cambian
+   --color-acento en lugar de repetir la regla completa. */
+.metrica::before {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  inset-block-start: 0;
+  block-size: 3px;
+  /* El degradado se escribe aqui y no como token en `:root`: un custom
+     property se sustituye en el elemento donde se DECLARA, de modo que un
+     `var(--color-acento)` dentro de un token de `:root` se resolveria alli
+     -donde no existe- y todas las fichas heredarian el mismo verde. */
+  background-image: linear-gradient(
+    90deg,
+    var(--color-acento, var(--color-primario)) 0%,
+    color-mix(in srgb, var(--color-acento, var(--color-primario)) 55%, var(--color-secundario-claro)) 100%
+  );
+}
+.metrica:hover {
+  box-shadow: var(--sombra-2);
+  transform: translateY(-1px);
+}
+/* Distintivo de la métrica: la inicial del rotulo dentro de una pastilla del
+   color de la ficha. No aporta información -el rotulo ya esta debajo-, pero da
+   un punto de color saturado que el lavado del fondo no puede dar sin comerse
+   el contraste del texto. */
+.metrica-marca {
+  display: grid;
+  place-items: center;
+  inline-size: 2rem;
+  block-size: 2rem;
+  margin-block-end: var(--esp-1);
+  border-radius: var(--radio-2);
+  background-color: color-mix(in srgb, var(--color-acento, var(--color-primario)) 14%, transparent);
+  color: var(--color-acento, var(--color-primario));
+  font-size: 1rem;
+  line-height: 1;
 }
 /* El rotulo de la métrica: `.metrica-titulo` es el nombre que usan las vistas
    nuevas y `.metrica-etiqueta` el que ya emiten las piezas comunes. */
@@ -1047,16 +1281,25 @@ ol[class] { padding-inline-start: 0; list-style: none; }
   color: var(--color-texto-tenue);
 }
 .metrica-valor {
-  font-size: 1.875rem;
-  font-weight: 700;
-  line-height: 1.1;
+  font-size: 2rem;
+  font-weight: 750;
+  line-height: 1.05;
   font-variant-numeric: tabular-nums;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
+  color: var(--color-acento, var(--color-texto));
 }
 .metrica-detalle { font-size: var(--tamano-texto-micro); color: var(--color-texto-tenue); }
+/* Tonos. Los tres primeros son los semanticos de siempre; los otros cuatro
+   existen para que las seis fichas del panel no repitan color. */
 .metrica-aviso { --color-acento: var(--color-aviso); }
 .metrica-peligro { --color-acento: var(--color-peligro); }
 .metrica-info { --color-acento: var(--color-info); }
+.metrica-verde { --color-acento: var(--color-primario); }
+.metrica-cian { --color-acento: var(--color-secundario); }
+.metrica-violeta { --color-acento: var(--color-violeta); }
+.metrica-azul { --color-acento: var(--color-azul); }
+.metrica-ambar { --color-acento: var(--color-ambar); }
+.metrica-rosa { --color-acento: var(--color-rosa); }
 .barra-progreso {
   inline-size: 100%;
   block-size: 0.5rem;
@@ -1068,7 +1311,11 @@ ol[class] { padding-inline-start: 0; list-style: none; }
   display: block;
   block-size: 100%;
   border-radius: inherit;
-  background-color: var(--color-acento, var(--color-primario));
+  background-image: linear-gradient(
+    90deg,
+    var(--color-acento, var(--color-primario)) 0%,
+    color-mix(in srgb, var(--color-acento, var(--color-primario)) 55%, var(--color-secundario-claro)) 100%
+  );
   transition: inline-size var(--transicion-lenta);
 }
 .barra-progreso-aviso { --color-acento: var(--color-aviso); }

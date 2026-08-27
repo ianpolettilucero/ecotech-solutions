@@ -13,6 +13,7 @@ import { ClienteApi, ErrorApi } from '../ClienteApi.js';
 import { Vista } from '../Vista.js';
 import { Formulario } from '../componentes/Formulario.js';
 import { boton, botonera, estadoVacio } from '../componentes/piezas.js';
+import type { NombreIcono } from '../dom.js';
 import { agregar, div, elemento, etiqueta, formatearFecha, formatearFechaHora } from '../dom.js';
 
 /** Forma de la respuesta de `GET /api/departamentos`. */
@@ -79,8 +80,8 @@ export class VistaPerfil extends Vista {
     return 'Perfil';
   }
 
-  override get icono(): string {
-    return 'U';
+  override get icono(): NombreIcono {
+    return 'usuario';
   }
 
   override get permisos(): Permiso[] {

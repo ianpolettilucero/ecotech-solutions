@@ -31,6 +31,7 @@ import {
   filtros,
   selector,
 } from '../componentes/piezas.js';
+import type { NombreIcono } from '../dom.js';
 import {
   agregar,
   div,
@@ -100,8 +101,8 @@ export class VistaReportes extends Vista {
     return 'Informes';
   }
 
-  override get icono(): string {
-    return 'R';
+  override get icono(): NombreIcono {
+    return 'grafico';
   }
 
   override get permisos(): Permiso[] {

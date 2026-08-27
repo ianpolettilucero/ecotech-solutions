@@ -1,3 +1,4 @@
+import type { NombreIcono } from './dom.js';
 import type { Permiso, SesionDTO } from '../compartido/tipos.js';
 
 /**
@@ -33,8 +34,8 @@ export abstract class Vista {
     return this.titulo;
   }
 
-  /** Glifo del menú (se pinta como texto, no como imagen). */
-  abstract get icono(): string;
+  /** Icono del menú, por nombre del juego que vive en `dom.ts`. */
+  abstract get icono(): NombreIcono;
 
   /** Basta con tener UNO de estos permisos para ver la vista. */
   abstract get permisos(): Permiso[];

@@ -12,7 +12,8 @@
 
 import type { Permiso, SesionDTO } from '../../compartido/tipos.js';
 import { ClienteApi, ErrorApi } from '../ClienteApi.js';
-import { agregar, div, elemento } from '../dom.js';
+import type { NombreIcono } from '../dom.js';
+import { agregar, div, elemento, icono } from '../dom.js';
 import { Vista } from '../Vista.js';
 import { Formulario } from '../componentes/Formulario.js';
 import type { CampoFormulario } from '../componentes/Formulario.js';
@@ -40,8 +41,8 @@ export class VistaLogin extends Vista {
     return 'Ingresar';
   }
 
-  override get icono(): string {
-    return 'L';
+  override get icono(): NombreIcono {
+    return 'hoja';
   }
 
   override get permisos(): Permiso[] {
@@ -115,7 +116,7 @@ export class VistaLogin extends Vista {
       'tarjeta-login',
       div(
         'login-marca',
-        elemento('span', { clase: 'marca-icono', texto: 'E' }),
+        elemento('span', { clase: 'marca-icono' }, icono('hoja')),
         elemento('h1', { clase: 'login-titulo', texto: 'EcoTech Solutions' }),
       ),
       elemento('p', { clase: 'login-descripcion', texto: 'Sistema de Gestión Interna' }),

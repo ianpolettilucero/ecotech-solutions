@@ -8,7 +8,8 @@
  * de algo, se cambia aquí y cambia en toda la aplicación.
  */
 
-import { agregar, claseInsignia, div, elemento, etiqueta } from '../dom.js';
+import { agregar, claseInsignia, div, elemento, etiqueta, icono } from '../dom.js';
+import type { NombreIcono } from '../dom.js';
 
 /** Milisegundos que espera el buscador antes de avisar del texto tecleado. */
 const RETARDO_BUSQUEDA = 300;
@@ -30,13 +31,49 @@ export function insignia(estado: string): HTMLElement {
   return elemento('span', { clase: claseInsignia(estado), texto: etiqueta(estado) });
 }
 
-/** Tarjeta de métrica del panel: rotulo, cifra grande y detalle opcional. */
-export function tarjetaMetrica(titulo: string, valor: string, detalle?: string): HTMLElement {
+/**
+ * Tono de una tarjeta de métrica.
+ *
+ * Los tres primeros son los semanticos de siempre (algo va bien, algo hay que
+ * mirar, algo esta mal). Los otros no significan nada por si mismos: existen
+ * para que un panel de seis fichas no sea seis rectangulos del mismo color, y
+ * cada métrica se queda siempre con el suyo, de modo que quien lo mira todos
+ * los días acaba reconociendo la ficha por el color antes que por el rotulo.
+ */
+export type TonoMetrica =
+  | 'verde'
+  | 'cian'
+  | 'violeta'
+  | 'azul'
+  | 'ambar'
+  | 'rosa'
+  | 'aviso'
+  | 'peligro'
+  | 'info';
+
+export interface OpcionesMetrica {
+  detalle?: string;
+  tono?: TonoMetrica;
+  /** Icono del distintivo, por nombre del juego de `dom.ts`. */
+  icono?: NombreIcono;
+}
+
+/** Tarjeta de métrica del panel: distintivo, rotulo, cifra grande y detalle. */
+export function tarjetaMetrica(
+  titulo: string,
+  valor: string,
+  opciones: OpcionesMetrica | string = {},
+): HTMLElement {
+  // Se admite la forma antigua (`tarjetaMetrica(titulo, valor, 'detalle')`)
+  // para no obligar a tocar cada llamada por un parametro opcional nuevo.
+  const opts: OpcionesMetrica = typeof opciones === 'string' ? { detalle: opciones } : opciones;
+  const clase = opts.tono ? `metrica metrica-${opts.tono}` : 'metrica';
   return div(
-    'metrica',
+    clase,
+    opts.icono ? elemento('span', { clase: 'metrica-marca' }, icono(opts.icono)) : null,
     elemento('span', { clase: 'metrica-etiqueta', texto: titulo }),
     elemento('strong', { clase: 'metrica-valor', texto: valor }),
-    detalle ? elemento('span', { clase: 'metrica-detalle', texto: detalle }) : null,
+    opts.detalle ? elemento('span', { clase: 'metrica-detalle', texto: opts.detalle }) : null,
   );
 }
 

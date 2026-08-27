@@ -33,6 +33,7 @@ import {
   selector,
   tarjetaMetrica,
 } from '../componentes/piezas.js';
+import type { NombreIcono } from '../dom.js';
 import {
   agregar,
   div,
@@ -83,8 +84,8 @@ export class VistaHoras extends Vista {
     return 'Horas';
   }
 
-  override get icono(): string {
-    return 'H';
+  override get icono(): NombreIcono {
+    return 'reloj';
   }
 
   override get permisos(): Permiso[] {
@@ -245,21 +246,21 @@ export class VistaHoras extends Vista {
 
     agregar(
       destino,
-      tarjetaMetrica(
-        'Horas del periodo',
-        `${formatearNumero(VistaHoras.sumar(registros), 2)} h`,
-        `${registros.length} registro(s)`,
-      ),
-      tarjetaMetrica(
-        'Horas aprobadas',
-        `${formatearNumero(VistaHoras.sumar(aprobados), 2)} h`,
-        `${aprobados.length} registro(s)`,
-      ),
-      tarjetaMetrica(
-        'Horas pendientes',
-        `${formatearNumero(VistaHoras.sumar(pendientes), 2)} h`,
-        `${pendientes.length} registro(s) a la espera de aprobación`,
-      ),
+      tarjetaMetrica('Horas del periodo', `${formatearNumero(VistaHoras.sumar(registros), 2)} h`, {
+        detalle: `${registros.length} registro(s)`,
+        tono: 'azul',
+        icono: 'reloj',
+      }),
+      tarjetaMetrica('Horas aprobadas', `${formatearNumero(VistaHoras.sumar(aprobados), 2)} h`, {
+        detalle: `${aprobados.length} registro(s)`,
+        tono: 'verde',
+        icono: 'visto',
+      }),
+      tarjetaMetrica('Horas pendientes', `${formatearNumero(VistaHoras.sumar(pendientes), 2)} h`, {
+        detalle: `${pendientes.length} registro(s) a la espera de aprobación`,
+        tono: 'ambar',
+        icono: 'arena',
+      }),
     );
   }
 

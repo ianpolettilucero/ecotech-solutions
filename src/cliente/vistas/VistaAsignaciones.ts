@@ -32,6 +32,7 @@ import {
   insignia,
   selector,
 } from '../componentes/piezas.js';
+import type { NombreIcono } from '../dom.js';
 import {
   agregar,
   div,
@@ -67,8 +68,8 @@ export class VistaAsignaciones extends Vista {
   }
 
 
-  override get icono(): string {
-    return 'A';
+  override get icono(): NombreIcono {
+    return 'enlace';
   }
 
   override get permisos(): Permiso[] {

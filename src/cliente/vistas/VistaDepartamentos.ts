@@ -13,6 +13,7 @@
 
 import type { DepartamentoDTO, EmpleadoDTO, Permiso } from '../../compartido/tipos.js';
 import { ClienteApi, ErrorApi } from '../ClienteApi.js';
+import type { NombreIcono } from '../dom.js';
 import { agregar, div, elemento, formatearNumero, vaciar } from '../dom.js';
 import { Vista } from '../Vista.js';
 import { Formulario } from '../componentes/Formulario.js';
@@ -59,8 +60,8 @@ export class VistaDepartamentos extends Vista {
   }
 
 
-  override get icono(): string {
-    return 'D';
+  override get icono(): NombreIcono {
+    return 'edificio';
   }
 
   override get permisos(): Permiso[] {

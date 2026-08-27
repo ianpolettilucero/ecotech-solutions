@@ -20,6 +20,7 @@ import type {
 } from '../../compartido/tipos.js';
 import { TIPOS_CONTRATO } from '../../compartido/tipos.js';
 import { ClienteApi, ErrorApi } from '../ClienteApi.js';
+import type { NombreIcono } from '../dom.js';
 import {
   agregar,
   div,
@@ -109,8 +110,8 @@ export class VistaEmpleados extends Vista {
     return 'Empleados';
   }
 
-  override get icono(): string {
-    return 'E';
+  override get icono(): NombreIcono {
+    return 'personas';
   }
 
   override get permisos(): Permiso[] {
