@@ -1303,6 +1303,12 @@ ol[class] { padding-inline-start: 0; list-style: none; }
     padding-block-start: var(--esp-3);
   }
   .tabla tbody td.celda-acciones::before { content: none; }
+  /* El fondo propio de la columna anclada (que en escritorio evita que las
+     celdas se transparenten por debajo) sobrevivia aqui como una banda de color
+     al pie de las fichas pares. Se anula con la misma especificidad (0,4,1) que
+     las reglas de escritorio, y despues de ellas en el archivo. */
+  .tabla tbody tr:nth-child(even) td.celda-acciones,
+  .tabla tbody tr:hover td.celda-acciones { background-color: transparent; }
   .celda-acciones .acciones,
   .celda-acciones .grupo-botones { flex-wrap: wrap; }
   .celda-acciones .boton { flex: 1 1 auto; justify-content: center; }
@@ -1317,6 +1323,27 @@ ol[class] { padding-inline-start: 0; list-style: none; }
   .usuario-datos { display: none; }
   .usuario-chip { padding: var(--esp-1); }
   .cabecera { gap: var(--esp-2); }
+}
+
+/* Tablet en vertical: las fichas se reparten de a dos.
+
+   Entre 600 y 900 px cada ficha ocupa el ancho completo y deja la mitad vacia
+   entre la etiqueta y su valor, con lo que un listado de diez empleados se
+   convierte en una tirada larga de scroll. En dos columnas entra el doble por
+   pantalla sin que ninguna ficha quede estrecha. Por debajo de 600 px no se
+   aplica: ahi una sola columna es lo correcto. */
+@media (min-width: 600px) and (max-width: 899px) {
+  .tabla tbody {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--esp-3);
+    align-items: start;
+  }
+  .tabla tbody tr { margin-block-end: 0; }
+  /* El desglose del panel vive en una tarjeta estrecha: alli una sola columna
+     sigue siendo lo adecuado. */
+  .tabla-compacta tbody { display: block; }
+  .tabla-compacta tbody tr { margin-block-end: var(--esp-3); }
 }
 
 /* Telefonos: las tarjetas de metrica caben de a dos.
