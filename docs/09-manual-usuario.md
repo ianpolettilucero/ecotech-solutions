@@ -9,7 +9,7 @@ explica el código; para eso están [05 — Arquitectura](05-arquitectura.md) y
 
 - [1. Ingreso al sistema](#1-ingreso-al-sistema)
   - [1.1 Credenciales de demostración](#11-credenciales-de-demostración)
-  - [1.2 Cambio obligatorio de contraseña](#12-cambio-obligatorio-de-contraseña)
+  - [1.2 Cambio de contraseña](#12-cambio-de-contraseña)
   - [1.3 Bloqueos, expiración y cierre de sesión](#13-bloqueos-expiración-y-cierre-de-sesión)
 - [2. Los cuatro roles](#2-los-cuatro-roles)
   - [2.1 Qué módulo ve cada rol](#21-qué-módulo-ve-cada-rol)
@@ -81,13 +81,14 @@ con datos reales. En un despliegue de producción se define el secreto
 `CLAVE_ADMIN_INICIAL` antes del primer arranque y esa contraseña es la que se
 siembra en su lugar; véase [10 — Despliegue](10-despliegue.md).
 
-> **El sistema obliga a cambiar la contraseña en el primer ingreso.** Las cuatro
-> cuentas se siembran con la marca `debeCambiarContrasena`. Mientras esa marca
-> siga puesta, la aplicación desvía cualquier navegación a **Mi perfil** y avisa
-> «Debe cambiar la contraseña inicial antes de continuar.». No se puede usar
-> ningún otro módulo hasta rotarla.
+> **Se entra directo, sin paso intermedio.** Las cuatro cuentas se siembran con
+> `debeCambiarContrasena` en `false`: el sistema recomienda cambiar la
+> contraseña desde **Mi perfil**, porque la sembrada es pública, pero no lo
+> impone. La capacidad de forzar el cambio sigue existiendo en el modelo
+> (`Usuario.cambiarCredenciales` acepta `forzarCambio`); lo que cambió es que la
+> siembra ya no la usa.
 
-### 1.2 Cambio obligatorio de contraseña
+### 1.2 Cambio de contraseña
 
 En **Mi perfil → Cambiar contraseña** hay tres campos: la contraseña actual, la
 nueva y su repetición. La repetición no viaja al servidor: es un control de la

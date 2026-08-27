@@ -68,7 +68,7 @@ export class Aplicacion implements AplicacionBase {
     ClienteApi.alExpirarSesion = () => {
       this._sesion = null;
       ClienteApi.fijarTokenCsrf(null);
-      Notificador.aviso('La sesión expiro. Vuelva a ingresar.');
+      Notificador.aviso('La sesión expiró. Vuelva a ingresar.');
       void this.recargar();
     };
 
@@ -121,14 +121,6 @@ export class Aplicacion implements AplicacionBase {
       const contenedor = div('pantalla-login');
       this.raiz.appendChild(contenedor);
       await this.vistaLogin.render(contenedor);
-      return;
-    }
-
-    // Obliga a rotar la contraseña sembrada antes de dejar operar. Se hace en el
-    // cliente por comodidad; el servidor no depende de esto para nada crítico.
-    if (this._sesion.usuario.debeCambiarContrasena && this.rutaActual() !== 'perfil') {
-      Notificador.aviso('Debe cambiar la contraseña inicial antes de continuar.');
-      this.navegar('perfil');
       return;
     }
 

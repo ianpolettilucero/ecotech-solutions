@@ -231,10 +231,10 @@ npx wrangler secret put CLAVE_ADMIN_INICIAL
 
 Si no se define, `src/aplicacion/Semilla.ts` usa la constante
 `CLAVE_ADMIN_POR_DEFECTO`, que es `EcoTech#2026Admin` y está publicada en el
-repositorio. En los dos casos las cuentas quedan marcadas con
-`debeCambiarContrasena`, de modo que el sistema obliga a rotarla en el primer
-ingreso; definir el secreto evita además la ventana en la que la contraseña
-sembrada es pública.
+repositorio. En los dos casos se entra directo: las cuentas se siembran con
+`debeCambiarContrasena` en `false` y el cambio de contraseña es opcional, desde
+**Mi perfil**. Definir el secreto es entonces lo único que cierra la ventana en
+la que la contraseña sembrada es pública.
 
 El valor tiene que cumplir la política de contraseñas del sistema si quiere
 poder reutilizarse: 12 caracteres como mínimo y tres familias de caracteres.

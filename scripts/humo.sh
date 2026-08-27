@@ -51,7 +51,7 @@ SESION=$(c -X POST -H 'Content-Type: application/json' \
 verificar "login correcto" "true" "$(echo "$SESION" | jq -r .ok)"
 CSRF=$(echo "$SESION" | jq -r .datos.tokenCsrf)
 verificar "rol devuelto" "ADMIN_RRHH" "$(echo "$SESION" | jq -r .datos.usuario.rol)"
-verificar "obliga a cambiar la clave inicial" "true" "$(echo "$SESION" | jq -r .datos.usuario.debeCambiarContrasena)"
+verificar "se entra sin cambio de clave obligatorio" "false" "$(echo "$SESION" | jq -r .datos.usuario.debeCambiarContrasena)"
 verificar "cookie __Host- instalada" "1" "$(grep -c '__Host-ecotech_sesion' "$GALLETAS")"
 
 echo "== CSRF =="

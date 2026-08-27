@@ -145,9 +145,9 @@ export class VistaLogin extends Vista {
     const contenido = div(
       'pila',
       elemento('p', { texto: `Usuarios: ${CUENTAS_DEMO.join(', ')}.` }),
-      elemento('p', { clase: 'texto-mono', texto: `Contrasena: ${CLAVE_DEMO}` }),
+      elemento('p', { clase: 'texto-mono', texto: `Contraseña: ${CLAVE_DEMO}` }),
       elemento('p', {
-        texto: 'La misma clave sirve para las cuatro cuentas y el sistema obliga a cambiarla en el primer ingreso.',
+        texto: 'La misma clave sirve para las cuatro cuentas. Se entra directo; cambiarla es opcional y se hace desde Mi perfil.',
       }),
     );
 

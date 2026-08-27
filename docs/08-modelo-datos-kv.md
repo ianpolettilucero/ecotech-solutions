@@ -420,7 +420,7 @@ así que es una entidad con identidad y no una lista de identificadores.
 | `rol` | `'ADMIN_RRHH' \| 'GERENTE' \| 'EMPLEADO' \| 'AUDITOR'` | Entrada de la matriz RBAC de `PoliticaAutorizacion` |
 | `empleadoId` | `string \| null` | Asociación **0..1**: hay empleados sin cuenta y cuentas sin empleado (el auditor externo sembrado no tiene ficha) |
 | `activo` | `boolean` | La baja del empleado desactiva su cuenta en cascada |
-| `debeCambiarContrasena` | `boolean` | Lo pone la siembra. **Solo lo hace cumplir el cliente** (`src/cliente/Aplicacion.ts`); la API no lo comprueba |
+| `debeCambiarContrasena` | `boolean` | La siembra lo deja en `false`. **Nadie lo hace cumplir**: solo enciende una recomendación en Mi perfil |
 | `ultimoAcceso` | `string \| null` | ISO. Lo fija `registrarAccesoExitoso` |
 | `intentosFallidos` | `number` | Se reinicia a 0 al bloquear y al acertar |
 | `bloqueadoHasta` | `string \| null` | ISO. 15 minutos tras 5 fallos. Temporal a propósito: un bloqueo permanente sería una denegación de servicio contra el empleado |

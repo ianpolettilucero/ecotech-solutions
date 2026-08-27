@@ -334,7 +334,7 @@ evitar el DoS por PBKDF2.
   "ok": true,
   "datos": {
     "usuario": { "id": "…", "email": "admin@ecotech.com", "rol": "ADMIN_RRHH",
-                 "empleadoId": "…", "activo": true, "debeCambiarContrasena": true,
+                 "empleadoId": "…", "activo": true, "debeCambiarContrasena": false,
                  "ultimoAcceso": "…", "creadoEn": "…", "actualizadoEn": "…" },
     "permisos": ["empleado:leer", "empleado:leer_sensible", "…"],
     "empleado": { },
@@ -1417,9 +1417,10 @@ como quedó.
   cuentas solo se crean en la siembra (`src/aplicacion/Semilla.ts`) y no hay
   forma de dar de alta una cuenta, cambiar un rol o vincular un empleado desde
   la API.
-- **`debeCambiarContrasena` no lo hace cumplir el servidor.** El flag viaja en
-  el DTO y es `src/cliente/Aplicacion.ts` quien redirige al perfil; una petición
-  hecha con curl opera con normalidad sin haber rotado la contraseña sembrada.
+- **`debeCambiarContrasena` no lo hace cumplir nadie.** El flag viaja en el DTO
+  y la siembra lo deja en `false`; lo único que provoca cuando está en `true` es
+  una recomendación en **Mi perfil**. Ninguna capa impide operar con la
+  contraseña sembrada.
 - **No hay endpoints de reactivación.** `Departamento.reactivar`,
   `Usuario.reactivar` y `AsignacionProyecto.reactivar` existen en el dominio,
   pero ningún servicio ni ruta los invoca: una baja lógica o una asignación

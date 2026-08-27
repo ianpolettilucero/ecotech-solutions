@@ -117,7 +117,7 @@ Cubre, por bloques:
 | Bloque | Ejemplos de lo que verifica |
 |---|---|
 | Salud y acceso anónimo | La sonda responde; los recursos protegidos devuelven 401; una ruta inexistente devuelve 404 |
-| Autenticación | Clave incorrecta y correo inexistente devuelven **el mismo** 401; el login correcto instala la cookie `__Host-`; obliga a cambiar la clave inicial |
+| Autenticación | Clave incorrecta y correo inexistente devuelven **el mismo** 401; el login correcto instala la cookie `__Host-`; se entra sin cambio de clave obligatorio |
 | CSRF | Sin token, con token inválido y desde otro origen devuelven 403 |
 | Datos sembrados | 10 empleados, 5 departamentos, 6 proyectos y horas cargadas |
 | Cifrado y permisos | El listado enmascara los datos personales; el detalle los descifra para RRHH |

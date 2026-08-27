@@ -140,7 +140,7 @@ export class VistaPerfil extends Vista {
         elemento('p', {
           clase: 'texto-menor',
           texto:
-            'Su contraseña es la inicial que se le entregó. Cámbiela ahora: mientras siga siendo la sembrada, no podrá usar el resto de los módulos.',
+            'Su contraseña sigue siendo la inicial, que es pública. Conviene cambiarla desde aquí, pero puede usar el sistema mientras tanto.',
         }),
       );
     }

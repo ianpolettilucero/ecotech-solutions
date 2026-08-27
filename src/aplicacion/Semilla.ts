@@ -418,8 +418,11 @@ export class Semilla {
           rol: cuenta.rol,
           empleadoId: cuenta.empleado?.id ?? null,
           activo: true,
-          // Obliga a rotar la clave publicada antes de operar.
-          debeCambiarContrasena: true,
+          // No se obliga a rotarla: es un sistema de demostración y el paso
+          // intermedio dejaba fuera a quien solo quiere entrar y mirar. La
+          // capacidad sigue existiendo en `Usuario` (`cambiarCredenciales`
+          // acepta `forzarCambio`), simplemente no se usa al sembrar.
+          debeCambiarContrasena: false,
           ultimoAcceso: null,
           intentosFallidos: 0,
           bloqueadoHasta: null,

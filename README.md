@@ -54,9 +54,10 @@ departamentos, diez empleados, seis proyectos y seis semanas de partes de horas)
 | `empleado@ecotech.com` | Empleado | Cargar sus propias horas y consultar el organigrama |
 | `auditor@ecotech.com` | Auditoría | Solo lectura, incluida la traza de auditoría |
 
-Contraseña inicial: `EcoTech#2026Admin` — el sistema obliga a cambiarla en el
-primer ingreso. En un despliegue real se define el secreto
-`CLAVE_ADMIN_INICIAL` y esta contraseña nunca llega a usarse.
+Contraseña: `EcoTech#2026Admin`, la misma para las cuatro cuentas. Se entra
+directo; cambiarla es opcional y se hace desde **Mi perfil**. En un despliegue
+real se define el secreto `CLAVE_ADMIN_INICIAL` y esta contraseña nunca llega a
+usarse.
 
 > **Antes de usarlo con datos reales**, defina el secreto `CLAVE_MAESTRA`
 > (mínimo 32 caracteres). Sin él, los datos personales se cifran con una clave

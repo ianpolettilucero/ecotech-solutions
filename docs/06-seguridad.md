@@ -910,7 +910,7 @@ maestra trivialmente corta.
 `empleado@` y `auditor@ecotech.com`— todas con la misma contraseña
 (`CLAVE_ADMIN_INICIAL` o, en su defecto,
 `CLAVE_ADMIN_POR_DEFECTO = 'EcoTech#2026Admin'`) y con `debeCambiarContrasena` a
-`true`. La constante es pública a propósito: su única función es permitir el
+`false`. La constante es pública a propósito: su única función es permitir el
 primer acceso.
 
 ---
@@ -943,11 +943,13 @@ antes de poner el sistema en producción.
 
 5. **No hay segundo factor.** Ninguna forma de TOTP, WebAuthn ni códigos de
    respaldo. Una contraseña comprometida da acceso completo al rol de esa cuenta.
-6. **El cambio de contraseña inicial solo se fuerza en el cliente.**
-   `src/cliente/Aplicacion.ts` redirige a `perfil` cuando `debeCambiarContrasena`
-   es `true`, y su propio comentario lo admite: *"Se hace en el cliente por
-   comodidad; el servidor no depende de esto para nada crítico"*. Un cliente que
-   hable directamente con la API puede operar con la contraseña sembrada.
+6. **No se fuerza el cambio de la contraseña inicial.** La siembra deja
+   `debeCambiarContrasena` en `false` y ninguna capa lo hace cumplir: el flag
+   sigue en el modelo y viaja en la sesión, pero solo sirve para que el perfil
+   muestre una recomendación. Cualquiera que conozca la contraseña publicada
+   opera con ella indefinidamente. Es una concesión deliberada a la usabilidad
+   de una demostración; en un despliegue real se define `CLAVE_ADMIN_INICIAL` y
+   se vuelve a poner el flag en `true` en `Semilla.ts`.
 7. **Las credenciales de demostración son públicas** y compartidas por las cuatro
    cuentas. Si se despliega sin definir `CLAVE_ADMIN_INICIAL`, cualquiera que
    conozca el repositorio entra como `ADMIN_RRHH`.

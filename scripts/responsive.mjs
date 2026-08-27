@@ -208,7 +208,9 @@ for (const tamano of TAMANOS) {
   comprobar(tamano.nombre, 'inicia sesión', dentro);
 
   if (dentro) {
-    // El sistema exige rotar la clave sembrada antes de dejar navegar.
+    // Ya no se exige rotar la clave al entrar. El paso se conserva porque el
+    // formulario aparece igual si se apunta a un despliegue anterior, cuyos
+    // usuarios sembrados si vienen marcados para rotarla.
     if ((await pagina.locator('[name="contrasenaActual"]').count()) > 0) {
       await pagina.fill('[name="contrasenaActual"]', CLAVE_SEMBRADA);
       await pagina.fill('[name="contrasenaNueva"]', CLAVE_ROTADA);
