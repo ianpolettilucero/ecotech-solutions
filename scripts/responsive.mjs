@@ -10,7 +10,9 @@
  *  - la tarjeta de acceso queda cortada por arriba (el clasico de centrar con
  *    `place-items: center` un contenido mas alto que la ventana),
  *  - el boton principal cae fuera de la vista,
- *  - una tabla necesita desplazamiento lateral pese al modo de fichas.
+ *  - una tabla necesita desplazamiento lateral pese al modo de fichas,
+ *  - la barra de navegacion inferior muestra menos de cuatro accesos,
+ *  - la pagina de detras se desplaza mientras hay un dialogo abierto.
  *
  * Se usa `playwright-core` a proposito: no descarga navegadores al instalarse,
  * de modo que ni el despliegue de Cloudflare ni una instalacion limpia pagan
@@ -119,6 +121,42 @@ function medir() {
   };
 }
 
+/**
+ * Estado de la barra de navegacion.
+ *
+ * Por debajo de 900 px la barra lateral pasa a ser una barra inferior. Se
+ * comprueba lo que de verdad la hace utilizable: que la marca no ocupe sitio
+ * en ella y que se vean varios accesos a la vez. Las dos cosas fallaron: la
+ * regla que oculta la marca nombraba `.marca` mientras el armazon emite
+ * `.barra-lateral-marca`, y cada acceso heredaba el `inline-size: 100%` de la
+ * barra vertical, de modo que medida uno el ancho entero de la pantalla.
+ */
+function medirNavegacion() {
+  const barra = document.querySelector('.barra-lateral');
+  if (!barra) return null;
+  const caja = barra.getBoundingClientRect();
+  const marca = barra.querySelector('.barra-lateral-marca, .marca');
+  const accesos = [...barra.querySelectorAll('.nav-item, .enlace-nav')];
+  const dentroDeLaBarra = accesos.filter((a) => {
+    const c = a.getBoundingClientRect();
+    return c.left >= caja.left - 1 && c.right <= caja.right + 1;
+  });
+  const activo = barra.querySelector('.nav-item.activo, .enlace-nav.activo');
+  const cajaActivo = activo ? activo.getBoundingClientRect() : null;
+  const anchoMayor = accesos.reduce((m, a) => Math.max(m, a.getBoundingClientRect().width), 0);
+  return {
+    total: accesos.length,
+    visibles: dentroDeLaBarra.length,
+    // Proporcion del ancho de la barra que ocupa el acceso mas ancho. Este es
+    // el numero que delataba el defecto: valia 1 (un acceso = toda la barra).
+    proporcionMayor: caja.width > 0 ? anchoMayor / caja.width : 0,
+    marcaVisible: marca ? getComputedStyle(marca).display !== 'none' : false,
+    activoALaVista: cajaActivo
+      ? cajaActivo.left >= caja.left - 1 && cajaActivo.right <= caja.right + 1
+      : false,
+  };
+}
+
 const navegador = await chromium.launch({
   executablePath: rutaDelNavegador(),
   args: ['--no-sandbox'],
@@ -194,6 +232,74 @@ for (const tamano of TAMANOS) {
       if (CAPTURAS) {
         await pagina.screenshot({ path: `${CAPTURAS}/${tamano.nombre}-${modulo}.png`, fullPage: true });
       }
+
+      // La barra inferior solo existe por debajo de 900 px; por encima la
+      // navegacion es una columna y estas medidas no aplican.
+      if (tamano.ancho < 900) {
+        const n = await pagina.evaluate(medirNavegacion);
+        if (n) {
+          comprobar(tamano.nombre, `${modulo}: la marca no ocupa la barra inferior`, !n.marcaVisible);
+          // Un tercio de la barra por acceso deja siempre tres enteros y el
+          // cuarto asomando, que es la senal de que la barra se desplaza.
+          comprobar(
+            tamano.nombre,
+            `${modulo}: ningun acceso acapara la barra inferior`,
+            n.proporcionMayor <= 0.34,
+            `el mayor ocupa el ${Math.round(n.proporcionMayor * 100)}%`,
+          );
+          comprobar(
+            tamano.nombre,
+            `${modulo}: la barra inferior muestra varios accesos`,
+            n.visibles >= Math.min(3, n.total),
+            `${n.visibles} de ${n.total}`,
+          );
+          comprobar(tamano.nombre, `${modulo}: el acceso activo esta a la vista`, n.activoALaVista);
+        }
+      }
+    }
+
+    // --- El dialogo congela la pagina de detras -----------------------------
+    // Sin esto el arrastre se encadenaba al documento: la lista de detras se
+    // movia sola y al cerrar el dialogo el usuario aparecia en otro sitio.
+    await pagina.goto(`${BASE}/#/empleados`, { waitUntil: 'domcontentloaded' });
+    await pagina.waitForTimeout(1300);
+    const abierto = await pagina.evaluate(async () => {
+      const abrir = [...document.querySelectorAll('.contenido button')].find((b) =>
+        /^Ver$/.test((b.textContent || '').trim()),
+      );
+      if (!abrir) return false;
+      abrir.click();
+      await new Promise((r) => setTimeout(r, 400));
+      return Boolean(document.querySelector('.modal'));
+    });
+    // El gesto tiene que ser real: `overflow: hidden` frena al usuario, no al
+    // desplazamiento programado, de modo que asignar `scrollTop` no probaria
+    // nada. Se usa la rueda sobre el centro de la ventana, que es donde cae el
+    // dialogo.
+    let congela = null;
+    if (abierto) {
+      const antes = await pagina.evaluate(() => window.scrollY);
+      await pagina.mouse.move(tamano.ancho / 2, tamano.alto / 2);
+      for (let i = 0; i < 6; i += 1) {
+        await pagina.mouse.wheel(0, 240);
+        await pagina.waitForTimeout(60);
+      }
+      const despues = await pagina.evaluate(() => window.scrollY);
+      const cerrado = await pagina.evaluate(async () => {
+        document.querySelector('.modal-cabecera button')?.click();
+        await new Promise((r) => setTimeout(r, 300));
+        return !document.querySelector('.modal');
+      });
+      congela = { antes, despues, cerrado };
+    }
+    if (congela) {
+      comprobar(
+        tamano.nombre,
+        'con un dialogo abierto la pagina de detras no se desplaza',
+        congela.antes === congela.despues,
+        `${congela.antes} -> ${congela.despues}`,
+      );
+      comprobar(tamano.nombre, 'el dialogo se cierra y libera la pagina', congela.cerrado);
     }
   }
 

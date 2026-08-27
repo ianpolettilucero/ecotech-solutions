@@ -58,6 +58,10 @@ export class VistaDepartamentos extends Vista {
     return 'Departamentos';
   }
 
+  override get tituloCorto(): string {
+    return 'Areas';
+  }
+
   override get icono(): string {
     return 'D';
   }

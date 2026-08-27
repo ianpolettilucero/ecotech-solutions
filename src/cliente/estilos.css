@@ -119,7 +119,16 @@
 *::before,
 *::after { box-sizing: border-box; }
 * { margin: 0; }
-html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  /* El hueco de la barra de desplazamiento se reserva siempre. Sirve para dos
+     cosas: al pasar de una vista corta a una larga la pagina ya no se corre de
+     lado, y sobre todo el dialogo puede congelar el desplazamiento del fondo
+     (`overflow: hidden` sobre <html>) sin que la interfaz de detras salte. En
+     un movil, donde la barra flota sobre el contenido, no reserva nada. */
+  scrollbar-gutter: stable;
+}
 body {
   min-block-size: 100dvh;
   /* Ningun hijo puede ensanchar el documento: el desplazamiento horizontal es
@@ -263,6 +272,8 @@ ol[class] { padding-inline-start: 0; list-style: none; }
 }
 .enlace-nav-icono,
 .nav-icono { inline-size: 1.25rem; text-align: center; flex: none; }
+/* El rotulo abreviado solo existe para la barra inferior del telefono. */
+.nav-texto-corto { display: none; }
 .pie-lateral {
   display: flex;
   align-items: center;
@@ -357,7 +368,15 @@ ol[class] { padding-inline-start: 0; list-style: none; }
     border-block-start: 1px solid var(--color-borde);
     box-shadow: var(--sombra-2);
   }
+  /* La marca desaparece en la barra inferior. Hay que nombrar los dos alias
+     igual que en la regla de escritorio: el armazon emite
+     `barra-lateral-marca`, de modo que ocultar solo `.marca` no ocultaba nada
+     y el logotipo con el texto "EcoTech Solutions" se quedaba dentro de la
+     barra fija, comiendose mas de la mitad del ancho. Los nueve accesos
+     quedaban apretados en la franja sobrante y solo se veia el primero: el
+     menu era, en la practica, inservible en un telefono. */
   .marca,
+  .barra-lateral-marca,
   .navegacion-grupo,
   .pie-lateral { display: none; }
   .navegacion,
@@ -371,7 +390,14 @@ ol[class] { padding-inline-start: 0; list-style: none; }
   :is(.navegacion, .nav)::-webkit-scrollbar { display: none; }
   .enlace-nav,
   .nav-item {
-    flex: 1 0 auto;
+    /* `inline-size: auto` es imprescindible: la barra vertical de escritorio
+       le da `inline-size: 100%`, y con `flex-basis: auto` ese 100% se resolvia
+       contra la barra inferior. Cada acceso media el ancho entero de la
+       pantalla, de modo que solo se veia uno y los otros ocho quedaban a
+       2.700 px de desplazamiento lateral: el menu del telefono mostraba una
+       sola seccion. */
+    flex: 0 0 auto;
+    inline-size: auto;
     flex-direction: column;
     gap: 2px;
     justify-content: center;
@@ -381,6 +407,9 @@ ol[class] { padding-inline-start: 0; list-style: none; }
     font-size: var(--tamano-texto-micro);
     text-align: center;
   }
+  /* Rotulo abreviado: "Registro de horas" no entra en 4,5 rem. */
+  .nav-texto { display: none; }
+  .nav-texto-corto { display: block; }
   .cabecera { padding-inline: var(--esp-4); }
   .contenido {
     padding: var(--esp-4);
@@ -1140,6 +1169,10 @@ ol[class] { padding-inline-start: 0; list-style: none; }
 .modal-cuerpo {
   padding: var(--esp-5);
   overflow-y: auto;
+  /* El gesto que llega al final del formulario se queda aqui en lugar de
+     encadenarse al documento. `Modal` ademas congela el fondo mientras el
+     dialogo esta abierto; esto cubre el rebote dentro del propio cuerpo. */
+  overscroll-behavior-y: contain;
   display: flex;
   flex-direction: column;
   gap: var(--esp-4);
@@ -1466,6 +1499,13 @@ ol[class] { padding-inline-start: 0; list-style: none; }
   .metrica-titulo { font-size: var(--tamano-texto-micro); }
   /* Una etiqueta larga partida en tres lineas descuadra la fila de tarjetas. */
   .metrica-detalle { font-size: var(--tamano-texto-micro); }
+}
+
+/* Pero no a cualquier precio: por debajo de 360 px cada ficha del panel se
+   queda en 138 px y la cifra ("307,75 h") parte en dos lineas, que es lo unico
+   que una metrica no puede permitirse. Ahi vuelve a una sola columna. */
+@media (max-width: 359px) {
+  .rejilla-metricas { grid-template-columns: minmax(0, 1fr); }
 }
 
 /* --------------------------------------------------------------------------

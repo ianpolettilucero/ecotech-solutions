@@ -79,6 +79,10 @@ export class VistaHoras extends Vista {
     return 'Registro de horas';
   }
 
+  override get tituloCorto(): string {
+    return 'Horas';
+  }
+
   override get icono(): string {
     return 'H';
   }

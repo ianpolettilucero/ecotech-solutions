@@ -21,6 +21,18 @@ export abstract class Vista {
   /** Titulo que se muestra en la cabecera y en el menu. */
   abstract get titulo(): string;
 
+  /**
+   * Rotulo del menu cuando la navegacion es la barra inferior del telefono.
+   *
+   * Alli cada acceso mide 4,5 rem: "Registro de horas" no entra, y recortarlo
+   * con puntos suspensivos deja rotulos que no se distinguen entre si. Por
+   * defecto es el titulo completo; solo lo redefinen las vistas cuyo nombre es
+   * largo.
+   */
+  get tituloCorto(): string {
+    return this.titulo;
+  }
+
   /** Glifo del menu (se pinta como texto, no como imagen). */
   abstract get icono(): string;
 

@@ -178,7 +178,11 @@ export class Aplicacion implements AplicacionBase {
           al: { click: () => this.navegar(vista.ruta) },
         },
         elemento('span', { clase: 'nav-icono', texto: vista.icono }),
+        // Se pintan los dos rotulos y la hoja de estilos elige cual se ve
+        // segun el ancho. Alternar con JavaScript exigiria escuchar el cambio
+        // de tamanio y volver a pintar el menu; asi es una regla de CSS.
         elemento('span', { clase: 'nav-texto', texto: vista.titulo }),
+        elemento('span', { clase: 'nav-texto-corto', texto: vista.tituloCorto }),
       );
       nav.appendChild(boton);
     }
@@ -231,6 +235,16 @@ export class Aplicacion implements AplicacionBase {
     const aplicacion = div('aplicacion');
     agregar(aplicacion, barraLateral, cabecera, elemento('main', { clase: 'contenido' }));
     this.raiz.appendChild(aplicacion);
+
+    // En el telefono la navegacion es una barra inferior que no muestra las
+    // nueve secciones a la vez, y cada vez que se pinta el armazon vuelve al
+    // principio. Se centra la seccion activa para que siempre se vea donde
+    // esta uno. En escritorio la barra es vertical y no desborda a lo ancho,
+    // de modo que asignar `scrollLeft` no tiene ningun efecto.
+    const activo = nav.querySelector<HTMLElement>('.nav-item.activo');
+    if (activo) {
+      nav.scrollLeft = activo.offsetLeft - (nav.clientWidth - activo.offsetWidth) / 2;
+    }
   }
 
   private async cerrarSesion(): Promise<void> {

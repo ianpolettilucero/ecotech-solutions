@@ -44,6 +44,8 @@ export class Modal {
   /** Enganche interno de `confirmar` para resolver su promesa al cerrar. */
   private static alCerrarInterno: (() => void) | null = null;
   private static contador = 0;
+  /** Valor de `overflow` que tenia `<html>` antes de bloquear el fondo. */
+  private static desplazamientoPrevio: string | null = null;
 
   static abrir(opciones: OpcionesModal): void {
     Modal.cerrar();
@@ -159,12 +161,20 @@ export class Modal {
     Modal.actual = { fondo, enfocadoAntes, alTeclear };
     agregar(Modal.raiz(), fondo);
 
+    Modal.bloquearFondo();
+
     // El foco entra en el dialogo al abrirlo. En un modal destructivo se posa
     // en Cancelar: pulsar Intro sin leer no debe borrar nada.
     const preferido =
       cuerpo.querySelector<HTMLElement>(SELECTOR_ENFOCABLE) ??
       (opciones.peligro ? botonCancelar : botonAceptar);
-    preferido.focus();
+    // `preventScroll` es imprescindible: el dialogo es `position: fixed`, de
+    // modo que esta siempre en la parte alta de la ventana. Sin esta bandera el
+    // navegador desplaza el documento hasta el origen para "revelar" el campo
+    // enfocado, y la lista de detras salta al principio. En un telefono, donde
+    // un listado en fichas mide miles de pixeles, el salto era de la pantalla
+    // entera y al cerrar el dialogo se habia perdido el sitio.
+    preferido.focus({ preventScroll: true });
   }
 
   static cerrar(): void {
@@ -176,6 +186,9 @@ export class Modal {
     if (actual) {
       document.removeEventListener('keydown', actual.alTeclear, true);
       actual.fondo.remove();
+      // Se libera antes de devolver el foco: con el documento aun bloqueado el
+      // navegador no podria desplazarse hasta el boton de origen.
+      Modal.liberarFondo();
       // Devolver el foco es lo que permite seguir con el teclado donde se
       // estaba; sin esto vuelve al principio del documento.
       if (actual.enfocadoAntes?.isConnected) actual.enfocadoAntes.focus();
@@ -203,6 +216,37 @@ export class Modal {
       });
       Modal.alCerrarInterno = () => resolver(aceptado);
     });
+  }
+
+  /**
+   * Congela el desplazamiento de la pagina que queda detras del dialogo.
+   *
+   * En un telefono el cuadro ocupa la pantalla completa, asi que practicamente
+   * cualquier arrastre cae sobre el. Sin bloquear, el gesto se encadena al
+   * documento: la lista de detras se desplazaba mientras el dialogo parecia
+   * quieto, y al cerrarlo el usuario aparecia en otro punto de la lista. En
+   * escritorio el efecto pasa desapercibido porque la rueda actua sobre lo que
+   * hay bajo el puntero; en un movil todo gesto es un desplazamiento.
+   *
+   * Se bloquea `<html>` y no `<body>`: el segundo lleva `overflow-x: clip`
+   * justo para no convertirse en contenedor de desplazamiento, que romperia el
+   * `position: sticky` de la cabecera y de la barra lateral.
+   */
+  private static bloquearFondo(): void {
+    if (Modal.desplazamientoPrevio !== null) return;
+    const raiz = document.documentElement;
+    Modal.desplazamientoPrevio = raiz.style.overflow;
+    // El hueco de la barra de desplazamiento esta reservado siempre en la hoja
+    // de estilos (`scrollbar-gutter: stable`), de modo que ocultarla aqui no
+    // corre el contenido hacia un lado.
+    raiz.style.overflow = 'hidden';
+  }
+
+  /** Devuelve el desplazamiento de la pagina a como estaba antes de abrir. */
+  private static liberarFondo(): void {
+    if (Modal.desplazamientoPrevio === null) return;
+    document.documentElement.style.overflow = Modal.desplazamientoPrevio;
+    Modal.desplazamientoPrevio = null;
   }
 
   /**

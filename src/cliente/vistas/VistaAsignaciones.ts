@@ -66,6 +66,10 @@ export class VistaAsignaciones extends Vista {
     return 'Asignaciones';
   }
 
+  override get tituloCorto(): string {
+    return 'Asignar';
+  }
+
   override get icono(): string {
     return 'A';
   }

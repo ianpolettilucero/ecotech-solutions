@@ -75,6 +75,10 @@ export class VistaPerfil extends Vista {
     return 'Mi perfil';
   }
 
+  override get tituloCorto(): string {
+    return 'Perfil';
+  }
+
   override get icono(): string {
     return 'U';
   }
