@@ -366,7 +366,7 @@ function pagina({ titulo, descripcion, cuerpo, indice, documentos, actual }) {
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <title>${escapar(titulo)} · Guía de Aprobación TI3021</title>
+    <title>${escapar(/Gu[íi]a de Aprobaci[óo]n/i.test(titulo) ? titulo : `${titulo} · Guía de Aprobación TI3021`)}</title>
     <meta name="description" content="${escapar(descripcion)}">
     <meta name="robots" content="noindex, nofollow">
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath fill='%230d7d5a' d='M28 4C14 4 5 12 5 21c0 4 2 7 5 8 9 3 19-7 18-25Z'/%3E%3Cpath fill='none' stroke='%23eef6f0' stroke-width='1.8' stroke-linecap='round' d='M25 7C18 11 13 18 10 28'/%3E%3C/svg%3E">
