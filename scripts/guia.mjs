@@ -487,6 +487,7 @@ function validar(nombre, md, diagramas, destinos) {
       const destino = enlace[1].split('#')[0];
       if (destino === '') continue;
       if (/^(https?:|mailto:)/.test(destino)) continue;
+      if (destino.endsWith('.docx')) continue;
       if (destino.endsWith('.md') && !destino.startsWith('python/')) {
         fallos.push(`${nombre}:${n} enlace interno a "${destino}"; en la web es .html`);
       }
@@ -579,5 +580,17 @@ export async function construirGuia(dirSalida) {
   }
 
   await copyFile(path.join(RAIZ, 'src', 'cliente', 'guia.css'), path.join(destino, 'guia.css'));
+
+  // El esqueleto del informe viaja con la guia: es el entregable que el
+  // estudiante abre en Word, y un enlace a el desde la web solo sirve si el
+  // archivo esta publicado al lado.
+  for (const adjunto of ['esqueleto-informe.docx']) {
+    try {
+      await copyFile(path.join(DIR_GUIA, adjunto), path.join(destino, adjunto));
+    } catch {
+      console.warn(`  aviso: falta ${adjunto} en guia-de-aprobacion/`);
+    }
+  }
+
   return fuentes.length;
 }

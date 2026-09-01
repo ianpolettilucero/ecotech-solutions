@@ -63,6 +63,7 @@ el informe.
 
 | Documento | Para qué sirve |
 |---|---|
+| [00 · Empieza aquí](00-empieza-aqui.html) | **Si estás trabado, entra por aquí.** Las siete relaciones entre clases resueltas, con su tipo y su multiplicidad, y qué se escribe en cada apartado del informe. |
 | [01 · Qué pide la evaluación](01-que-pide-la-evaluacion.html) | El checklist maestro. Todos los mínimos numéricos que se cuentan al corregir, con la cita textual de la guía. |
 | [02 · Ambigüedades y riesgos](02-ambiguedades-y-riesgos.html) | Lo que la guía deja abierto a dos lecturas, cómo conviene resolverlo, y el plan B si el docente lo interpreta al revés. |
 
@@ -91,6 +92,7 @@ errores que hunden · para aprender más.
 
 ### Anexos
 
+- [`esqueleto-informe.docx`](esqueleto-informe.docx) — **la plantilla oficial con el cuerpo ya estructurado**: 22 apartados, cada uno con un recuadro que dice qué escribir y qué mínimo exige la guía. Escribes encima y borras el recuadro.
 - [`python/modelo.py`](python/modelo.py) — el modelo UML traducido a Python, ejecutable con `python3 modelo.py`. Demuestra la viabilidad técnica en Python que pide el Paso 4.
 - [`diagramas/`](diagramas) — los siete diagramas SVG de esta guía. Se generan con `node scripts/diagramas.mjs`.
 
@@ -107,6 +109,10 @@ modelo antes de tener el análisis, no tienes con qué contrastar.
 **Si te queda una semana.** Ve directo a [11 · Plan de cuatro
 semanas](11-plan-de-cuatro-semanas.html), sección "Si vas tarde". Está el orden
 de prioridad real: qué se puede recortar sin perder criterios enteros y qué no.
+
+**Si no entiendes por dónde empezar.** [00 · Empieza aquí](00-empieza-aqui.html)
+resuelve las dos cosas concretas que suelen atascar: las relaciones entre las
+clases y qué se escribe en cada apartado. Es corto.
 
 **Si vas a defender mañana.** [08 · La defensa
 oral](08-defensa-oral.html), y de ahí las preguntas sobre agregación contra
