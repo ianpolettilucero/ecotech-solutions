@@ -64,6 +64,7 @@ el informe.
 | Documento | Para qué sirve |
 |---|---|
 | [00 · Empieza aquí](00-empieza-aqui.html) | **Si estás trabado, entra por aquí.** Las siete relaciones entre clases resueltas, con su tipo y su multiplicidad, y qué se escribe en cada apartado del informe. |
+| [12 · Ejemplo resuelto](12-ejemplo-resuelto.html) | **El informe entero, escrito.** La versión más corta que cumple todos los mínimos: 9 páginas. Para ver qué densidad tiene que tener cada apartado. |
 | [01 · Qué pide la evaluación](01-que-pide-la-evaluacion.html) | El checklist maestro. Todos los mínimos numéricos que se cuentan al corregir, con la cita textual de la guía. |
 | [02 · Ambigüedades y riesgos](02-ambiguedades-y-riesgos.html) | Lo que la guía deja abierto a dos lecturas, cómo conviene resolverlo, y el plan B si el docente lo interpreta al revés. |
 
@@ -109,6 +110,10 @@ modelo antes de tener el análisis, no tienes con qué contrastar.
 **Si te queda una semana.** Ve directo a [11 · Plan de cuatro
 semanas](11-plan-de-cuatro-semanas.html), sección "Si vas tarde". Está el orden
 de prioridad real: qué se puede recortar sin perder criterios enteros y qué no.
+
+**Si no sabes qué densidad debe tener cada apartado.** [12 · Ejemplo
+resuelto](12-ejemplo-resuelto.html) es el informe completo escrito en su versión
+más corta posible, con una tabla final que cuenta cada mínimo contra su apartado.
 
 **Si no entiendes por dónde empezar.** [00 · Empieza aquí](00-empieza-aqui.html)
 resuelve las dos cosas concretas que suelen atascar: las relaciones entre las
