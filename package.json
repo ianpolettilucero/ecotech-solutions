@@ -14,7 +14,9 @@
     "test": "npm run build:test && node --test build-tests/tests/*.test.js",
     "dev": "wrangler dev",
     "deploy": "npm run build && wrangler deploy",
-    "test:responsive": "node scripts/responsive.mjs"
+    "test:responsive": "node scripts/responsive.mjs",
+    "guia": "node scripts/diagramas.mjs && node scripts/build.mjs",
+    "diagramas": "node scripts/diagramas.mjs"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^5.20260825.1",

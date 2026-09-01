@@ -9,6 +9,7 @@
  */
 
 import * as esbuild from 'esbuild';
+import { construirGuia } from './guia.mjs';
 import { createHash } from 'node:crypto';
 import { copyFile, mkdir, readFile, readdir, rm, stat, writeFile } from 'node:fs/promises';
 import path from 'node:path';
@@ -195,4 +196,11 @@ await prepararSalida();
 await empaquetarCliente();
 await copiarEstaticos();
 const hashes = await versionarHtml();
+// La guia de aprobacion se publica junto al sistema, en /guia/. Se genera
+// desde el Markdown de `guia-de-aprobacion/`, que es la unica fuente: el mismo
+// material se lee en GitHub sin pasar por aqui.
+const documentosGuia = await construirGuia(DIR_SALIDA);
 await imprimirResumen(hashes);
+if (documentosGuia > 0) {
+  console.log(`  guia de aprobacion: ${documentosGuia} documentos en ${SALIDA}/guia/`);
+}

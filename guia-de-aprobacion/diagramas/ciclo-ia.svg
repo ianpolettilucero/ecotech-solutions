@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 956 340" width="956" height="340" role="img" aria-label="Ciclo de uso crítico de IA: análisis propio, prompt, generación, crítica y refinamiento">
+  <title>Ciclo de uso crítico de IA: análisis propio, prompt, generación, crítica y refinamiento</title>
+  <text x="470" y="28" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="700" fill="#0f172a" text-anchor="middle">El ciclo que la guía evalúa en el Paso 3</text>
+  <rect x="24" y="56" width="162" height="122" rx="9" fill="#ddf6ec" stroke="#0d7d5a" stroke-width="1.5"/>
+  <circle cx="41" cy="73" r="10.5" fill="#0d7d5a"/>
+  <text x="41" y="77.5" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" font-weight="700" fill="#ffffff" text-anchor="middle">1</text>
+  <text x="58" y="77.5" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5" font-weight="650" fill="#065f46">Tu análisis</text>
+  <text x="37" y="97" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" fill="#475569">Primero el tuyo.</text>
+  <text x="37" y="113" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" fill="#475569">Es el patrón de</text>
+  <text x="37" y="129" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" fill="#475569">comparación.</text>
+  <path d="M 188 117 L 206 117" fill="none" stroke="#64748b" stroke-width="1.5"/>
+  <path d="M 195.8,121.1 L 206,117 L 195.8,112.9" fill="none" stroke="#64748b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="210" y="56" width="162" height="122" rx="9" fill="#ece7fd" stroke="#6740e0" stroke-width="1.5"/>
+  <circle cx="227" cy="73" r="10.5" fill="#6740e0"/>
+  <text x="227" y="77.5" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" font-weight="700" fill="#ffffff" text-anchor="middle">2</text>
+  <text x="244" y="77.5" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5" font-weight="650" fill="#4c1d95">Prompt a la IA</text>
+  <text x="223" y="97" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" fill="#475569">Documentado</text>
+  <text x="223" y="113" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" fill="#475569">literalmente:</text>
+  <text x="223" y="129" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" fill="#475569">contexto + formato.</text>
+  <path d="M 374 117 L 392 117" fill="none" stroke="#64748b" stroke-width="1.5"/>
+  <path d="M 381.8,121.1 L 392,117 L 381.8,112.9" fill="none" stroke="#64748b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="396" y="56" width="162" height="122" rx="9" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.5"/>
+  <circle cx="413" cy="73" r="10.5" fill="#94a3b8"/>
+  <text x="413" y="77.5" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" font-weight="700" fill="#ffffff" text-anchor="middle">3</text>
+  <text x="430" y="77.5" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5" font-weight="650" fill="#334155">Modelo generado</text>
+  <text x="409" y="97" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" fill="#475569">Se guarda tal cual</text>
+  <text x="409" y="113" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" fill="#475569">salió, con errores</text>
+  <text x="409" y="129" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" fill="#475569">y todo.</text>
+  <path d="M 560 117 L 578 117" fill="none" stroke="#64748b" stroke-width="1.5"/>
+  <path d="M 567.8,121.1 L 578,117 L 567.8,112.9" fill="none" stroke="#64748b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="582" y="56" width="162" height="122" rx="9" fill="#fce7ec" stroke="#be3455" stroke-width="1.5"/>
+  <circle cx="599" cy="73" r="10.5" fill="#be3455"/>
+  <text x="599" y="77.5" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" font-weight="700" fill="#ffffff" text-anchor="middle">4</text>
+  <text x="616" y="77.5" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5" font-weight="650" fill="#9f1239">Crítica técnica</text>
+  <text x="595" y="97" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" fill="#475569">4+ hallazgos</text>
+  <text x="595" y="113" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" fill="#475569">clasificados por</text>
+  <text x="595" y="129" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" fill="#475569">aspecto.</text>
+  <path d="M 746 117 L 764 117" fill="none" stroke="#64748b" stroke-width="1.5"/>
+  <path d="M 753.8,121.1 L 764,117 L 753.8,112.9" fill="none" stroke="#64748b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="768" y="56" width="162" height="122" rx="9" fill="#ddf4f7" stroke="#0a7f8e" stroke-width="1.5"/>
+  <circle cx="785" cy="73" r="10.5" fill="#0a7f8e"/>
+  <text x="785" y="77.5" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" font-weight="700" fill="#ffffff" text-anchor="middle">5</text>
+  <text x="802" y="77.5" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5" font-weight="650" fill="#0a6472">Modelo refinado</text>
+  <text x="781" y="97" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" fill="#475569">Tu decisión, no</text>
+  <text x="781" y="113" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" fill="#475569">la de la IA.</text>
+  <path d="M 105 180 L 105 212 L 850 212 L 850 180" fill="none" stroke="#6740e0" stroke-width="1.5"/>
+  <path d="M 854.1,190.2 L 850,180 L 845.9,190.2" fill="none" stroke="#6740e0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="478" y="230" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" font-weight="600" fill="#6740e0" text-anchor="middle">Segunda iteración: el prompt mejora porque ya sabes qué falló. La guía pide DOS.</text>
+  <path d="M 24 252 L 920 252 L 932 264 L 932 315 L 24 315 Z" fill="#fce7ec" stroke="#be3455" stroke-width="1.2"/>
+  <path d="M 920 252 L 920 264 L 932 264" fill="none" stroke="#be3455" stroke-width="1.2"/>
+  <text x="34" y="269" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11" fill="#9f1239">Lo que hunde esta parte: entregar el diagrama de la IA sin tocarlo. La guía lo dice sin rodeos: "La entrega de resultados generados</text>
+  <text x="34" y="284" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11" fill="#9f1239">exclusivamente por IA, sin análisis ni ajustes, será considerada insuficiente". El valor evaluable NO es el diagrama: es la distancia</text>
+  <text x="34" y="299" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11" fill="#9f1239">entre lo que la IA propuso y lo que tú entregaste, y tu capacidad de explicar por qué.</text>
+</svg>

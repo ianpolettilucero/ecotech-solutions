@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 412" width="860" height="412" role="img" aria-label="Multiplicidades de UML: notación, significado y ejemplo">
+  <title>Multiplicidades de UML: notación, significado y ejemplo</title>
+  <text x="430" y="28" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="700" fill="#0f172a" text-anchor="middle">Multiplicidades: dónde se escriben y qué significan</text>
+  <rect x="130" y="62" width="170" height="28" rx="4" fill="#ffffff" stroke="#0a7f8e" stroke-width="1.5"/>
+  <rect x="130" y="62" width="170" height="28" rx="4" fill="#ddf4f7" stroke="none"/>
+  <rect x="130" y="84" width="170" height="6" fill="#ddf4f7" stroke="none"/>
+  <text x="215" y="81" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="700" fill="#0a6472" text-anchor="middle">Departamento</text>
+  <line x1="130" y1="90" x2="300" y2="90" stroke="#0a7f8e" stroke-width="1.5"/>
+  <rect x="560" y="62" width="170" height="28" rx="4" fill="#ffffff" stroke="#0d7d5a" stroke-width="1.5"/>
+  <rect x="560" y="62" width="170" height="28" rx="4" fill="#ddf6ec" stroke="none"/>
+  <rect x="560" y="84" width="170" height="6" fill="#ddf6ec" stroke="none"/>
+  <text x="645" y="81" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="700" fill="#065f46" text-anchor="middle">Empleado</text>
+  <line x1="560" y1="90" x2="730" y2="90" stroke="#0d7d5a" stroke-width="1.5"/>
+  <path d="M 300 76 L 560 76" fill="none" stroke="#64748b" stroke-width="1.5"/>
+  <text x="322" y="69" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="600" fill="#334155" text-anchor="middle">1</text>
+  <text x="534" y="69" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="600" fill="#334155" text-anchor="middle">0..*</text>
+  <text x="430" y="100" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" fill="#475569" text-anchor="middle">agrupa a</text>
+  <path d="M 262 116 L 586 116 L 598 128 L 598 194 L 262 194 Z" fill="#fdefda" stroke="#a85b06" stroke-width="1.2"/>
+  <path d="M 586 116 L 586 128 L 598 128" fill="none" stroke="#a85b06" stroke-width="1.2"/>
+  <text x="272" y="133" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11" fill="#92400e">La multiplicidad de un extremo describe</text>
+  <text x="272" y="148" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11" fill="#92400e">CUÁNTOS objetos de ESE lado ve un objeto</text>
+  <text x="272" y="163" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11" fill="#92400e">del otro. Se lee: "un departamento agrupa</text>
+  <text x="272" y="178" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11" fill="#92400e">a cero o más empleados".</text>
+  <rect x="60" y="212" width="770" height="30" rx="6" fill="#ffffff" stroke="#e2e8f0"/>
+  <text x="78" y="232" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" font-weight="700" fill="#6740e0">1</text>
+  <text x="230" y="232" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#0f172a">exactamente uno</text>
+  <text x="410" y="232" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" fill="#475569">un empleado tiene un contrato</text>
+  <rect x="60" y="246" width="770" height="30" rx="6" fill="#f8fafc" stroke="#e2e8f0"/>
+  <text x="78" y="266" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" font-weight="700" fill="#6740e0">0..1</text>
+  <text x="230" y="266" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#0f172a">ninguno o uno</text>
+  <text x="410" y="266" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" fill="#475569">un empleado puede no tener jefe</text>
+  <rect x="60" y="280" width="770" height="30" rx="6" fill="#ffffff" stroke="#e2e8f0"/>
+  <text x="78" y="300" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" font-weight="700" fill="#6740e0">1..*</text>
+  <text x="230" y="300" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#0f172a">uno o más</text>
+  <text x="410" y="300" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" fill="#475569">un proyecto tiene al menos una persona</text>
+  <rect x="60" y="314" width="770" height="30" rx="6" fill="#f8fafc" stroke="#e2e8f0"/>
+  <text x="78" y="334" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" font-weight="700" fill="#6740e0">*  ó  0..*</text>
+  <text x="230" y="334" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#0f172a">cero o más</text>
+  <text x="410" y="334" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" fill="#475569">un departamento puede estar vacío</text>
+  <rect x="60" y="348" width="770" height="30" rx="6" fill="#ffffff" stroke="#e2e8f0"/>
+  <text x="78" y="368" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" font-weight="700" fill="#6740e0">2..5</text>
+  <text x="230" y="368" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#0f172a">un rango cerrado</text>
+  <text x="410" y="368" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" fill="#475569">un comité de dos a cinco miembros</text>
+</svg>

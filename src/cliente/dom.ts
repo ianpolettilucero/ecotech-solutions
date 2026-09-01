@@ -22,6 +22,8 @@ export interface Atributos {
   para?: string;
   marcador?: string;
   titulo?: string;
+  /** Destino de un enlace. Solo lo usa `<a>`. */
+  destino?: string;
   deshabilitado?: boolean;
   requerido?: boolean;
   /** Atributos `data-*` y ARIA sueltos. */
@@ -39,6 +41,7 @@ export function elemento<K extends keyof HTMLElementTagNameMap>(
   if (atributos.texto !== undefined) nodo.textContent = atributos.texto;
   if (atributos.id) nodo.id = atributos.id;
   if (atributos.titulo) nodo.title = atributos.titulo;
+  if (atributos.destino && nodo instanceof HTMLAnchorElement) nodo.href = atributos.destino;
   if (atributos.tipo && 'type' in nodo) (nodo as HTMLInputElement).type = atributos.tipo;
   if (atributos.valor !== undefined && 'value' in nodo) {
     (nodo as HTMLInputElement).value = atributos.valor;

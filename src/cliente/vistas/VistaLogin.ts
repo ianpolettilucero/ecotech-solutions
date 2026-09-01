@@ -122,10 +122,31 @@ export class VistaLogin extends Vista {
       elemento('p', { clase: 'login-descripcion', texto: 'Sistema de Gestión Interna' }),
       nodo,
       this.avisoDemostracion(),
+      this.enlaceGuia(),
     );
 
     agregar(contenedor, tarjeta);
     formulario.enfocar();
+  }
+
+  /**
+   * Enlace a la Guía de Aprobación.
+   *
+   * Va en la pantalla de acceso y no dentro de la aplicación a propósito: la
+   * guía es material de estudio público que no exige sesión, y quien la busca
+   * normalmente no viene a usar el sistema. Es un enlace normal a `/guia/`, que
+   * el almacén de assets sirve como sitio estático aparte de la SPA.
+   */
+  private enlaceGuia(): HTMLElement {
+    return elemento(
+      'a',
+      { clase: 'enlace-guia', destino: '/guia/' },
+      elemento('span', { clase: 'enlace-guia-rotulo', texto: 'Guía de Aprobación' }),
+      elemento('span', {
+        clase: 'enlace-guia-detalle',
+        texto: 'TI3021 · Unidad 1 · Modelado Orientado a Objetos',
+      }),
+    );
   }
 
   /**

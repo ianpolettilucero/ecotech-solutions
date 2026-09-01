@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 300" width="960" height="300" role="img" aria-label="Anatomía de una clase UML: nombre, atributos y métodos con su visibilidad">
+  <title>Anatomía de una clase UML: nombre, atributos y métodos con su visibilidad</title>
+  <rect x="300" y="60" width="300" height="160" rx="4" fill="#ffffff" stroke="#0d7d5a" stroke-width="1.5"/>
+  <rect x="300" y="60" width="300" height="28" rx="4" fill="#ddf6ec" stroke="none"/>
+  <rect x="300" y="82" width="300" height="6" fill="#ddf6ec" stroke="none"/>
+  <text x="450" y="79" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="700" fill="#065f46" text-anchor="middle">Empleado</text>
+  <line x1="300" y1="88" x2="600" y2="88" stroke="#0d7d5a" stroke-width="1.5"/>
+  <text x="310" y="104" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11" fill="#334155">- id: str</text>
+  <text x="310" y="120" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11" fill="#334155">- nombre: str</text>
+  <text x="310" y="136" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11" fill="#334155"># salarioBase: float</text>
+  <text x="310" y="152" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11" fill="#334155">+ activo: bool</text>
+  <line x1="300" y1="162" x2="600" y2="162" stroke="#0d7d5a" stroke-width="1.5"/>
+  <text x="310" y="178" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11" fill="#334155">+ calcularSueldo(): float</text>
+  <text x="310" y="194" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11" fill="#334155">+ asignarA(d: Departamento)</text>
+  <text x="310" y="210" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11" fill="#334155">- validar(): None</text>
+  <text x="450" y="30" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="700" fill="#0f172a" text-anchor="middle">Los tres compartimentos de una clase</text>
+  <path d="M 290 74 L 270 74" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="6 4"/>
+  <path d="M 280.2,69.9 L 270,74 L 280.2,78.1" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="262" y="78" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" fill="#475569" text-anchor="end">Nombre. En cursiva si es abstracta.</text>
+  <path d="M 290 108 L 270 108" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="6 4"/>
+  <path d="M 280.2,103.9 L 270,108 L 280.2,112.1" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="262" y="112" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" fill="#475569" text-anchor="end">Atributos: visibilidad, nombre y tipo.</text>
+  <path d="M 290 196 L 270 196" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="6 4"/>
+  <path d="M 280.2,191.9 L 270,196 L 280.2,200.1" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="262" y="200" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" fill="#475569" text-anchor="end">Métodos: firma y tipo de retorno.</text>
+  <path d="M 620 62 L 908 62 L 920 74 L 920 170 L 620 170 Z" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.2"/>
+  <path d="M 908 62 L 908 74 L 920 74" fill="none" stroke="#94a3b8" stroke-width="1.2"/>
+  <text x="630" y="79" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11" fill="#334155">Visibilidad, la notación exacta:</text>
+  <text x="630" y="94" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11" fill="#334155">   -  privado      # protegido</text>
+  <text x="630" y="109" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11" fill="#334155">   +  público      ~ de paquete</text>
+  <text x="630" y="124" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11" fill="#334155"></text>
+  <text x="630" y="139" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11" fill="#334155">El error más común es omitirla del todo,</text>
+  <text x="630" y="154" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11" fill="#334155">o poner "private" en vez del signo.</text>
+  <path d="M 620 200 L 908 200 L 920 212 L 920 278 L 620 278 Z" fill="#fdefda" stroke="#a85b06" stroke-width="1.2"/>
+  <path d="M 908 200 L 908 212 L 920 212" fill="none" stroke="#a85b06" stroke-width="1.2"/>
+  <text x="630" y="217" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11" fill="#92400e">Un atributo o método estático se</text>
+  <text x="630" y="232" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11" fill="#92400e">subraya. Uno abstracto va en cursiva.</text>
+  <text x="630" y="247" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11" fill="#92400e">Son los dos detalles que casi ninguna</text>
+  <text x="630" y="262" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11" fill="#92400e">IA dibuja bien.</text>
+</svg>

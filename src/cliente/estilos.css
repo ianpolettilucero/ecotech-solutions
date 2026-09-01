@@ -746,6 +746,28 @@ ol[class] { padding-inline-start: 0; list-style: none; }
 .tarjeta-login,
 .aviso-seguridad { overflow-wrap: anywhere; }
 
+/* Enlace a la guia de estudio, al pie de la tarjeta de acceso. Discreto a
+   proposito: quien viene a entrar al sistema no deberia tropezar con el, y
+   quien viene a estudiar lo encuentra donde mira primero. */
+.enlace-guia {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--esp-3) var(--esp-4);
+  border: 1px dashed var(--color-borde-fuerte);
+  border-radius: var(--radio-2);
+  text-decoration: none;
+  color: var(--color-texto-tenue);
+  transition: border-color var(--transicion), background-color var(--transicion);
+}
+.enlace-guia:hover {
+  border-color: var(--color-primario);
+  border-style: solid;
+  background-color: var(--color-primario-tenue);
+}
+.enlace-guia-rotulo { font-size: var(--tamano-texto-menor); font-weight: 650; color: var(--color-enlace); }
+.enlace-guia-detalle { font-size: var(--tamano-texto-micro); }
+
 .login-marca { display: flex; align-items: center; gap: var(--esp-3); justify-content: center; }
 .login-titulo { text-align: center; font-size: 1.25rem; }
 .login-descripcion {

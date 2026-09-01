@@ -1,0 +1,605 @@
+/* ==========================================================================
+   Guía de Aprobación TI3021 - hoja de estilos del sitio de estudio.
+
+   Vive aparte de `estilos.css` a propósito: la guía es material didáctico
+   estático, no la aplicación, y comparte con ella la identidad visual pero no
+   el armazón. Repetir los tokens de color aquí evita que el sitio de estudio
+   arrastre las 66 KiB de la hoja de la SPA por unas pocas variables.
+
+   La CSP del sitio es `style-src 'self'` sin 'unsafe-inline': aquí vive TODO
+   el estilo, no hay ni un atributo `style` en el HTML que genera scripts/guia.mjs.
+   ========================================================================== */
+
+:root {
+  color-scheme: light;
+  --fuente: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
+
+  --primario: #0d7d5a;
+  --primario-claro: #2fc48f;
+  --primario-tenue: #ddf6ec;
+  --secundario: #0a7f8e;
+  --violeta: #6740e0;
+  --violeta-tenue: #ece7fd;
+  --azul: #1f6fd0;
+  --azul-tenue: #e3eefc;
+  --ambar: #a85b06;
+  --ambar-tenue: #fdefda;
+  --rosa: #be3455;
+  --rosa-tenue: #fce7ec;
+
+  --fondo: #f3f6fa;
+  --superficie: #ffffff;
+  --superficie-alterna: #eef2f8;
+  --borde: #dde4ee;
+  --texto: #0f172a;
+  --texto-tenue: #55637a;
+
+  --degradado: linear-gradient(135deg, #0d7d5a 0%, #0a7f8e 52%, #1f6fd0 100%);
+  --sombra-1: 0 1px 2px rgb(15 23 42 / 5%), 0 1px 3px rgb(15 23 42 / 7%);
+  --sombra-2: 0 6px 20px rgb(15 23 42 / 10%);
+
+  --ancho-indice: 17rem;
+  --ancho-sumario: 15rem;
+  --alto-cabecera: 3.5rem;
+  --radio: 12px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --primario: #2fc48f;
+    --primario-claro: #6be0b4;
+    --primario-tenue: #0f3629;
+    --secundario: #22c9dd;
+    --violeta: #a48bff;
+    --violeta-tenue: #241d47;
+    --azul: #63a7f5;
+    --azul-tenue: #142942;
+    --ambar: #e5a33c;
+    --ambar-tenue: #35270f;
+    --rosa: #f0798f;
+    --rosa-tenue: #3a1a24;
+    --fondo: #0a1120;
+    --superficie: #111b2e;
+    --superficie-alterna: #17233a;
+    --borde: #22334f;
+    --texto: #e7eefa;
+    --texto-tenue: #94a4bf;
+    --degradado: linear-gradient(135deg, #14a877 0%, #12a3b6 52%, #3f87e0 100%);
+    --sombra-1: 0 1px 2px rgb(0 0 0 / 45%);
+    --sombra-2: 0 6px 20px rgb(0 0 0 / 50%);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Reset
+   -------------------------------------------------------------------------- */
+*,
+*::before,
+*::after { box-sizing: border-box; }
+* { margin: 0; }
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  scroll-behavior: smooth;
+  /* El sumario enlaza a anclas dentro de la página; sin este margen el título
+     de destino queda justo debajo de la cabecera fija y parece que no saltó. */
+  scroll-padding-block-start: calc(var(--alto-cabecera) + 1rem);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}
+
+body {
+  min-block-size: 100dvh;
+  max-inline-size: 100%;
+  overflow-x: clip;
+  font-family: var(--fuente);
+  font-size: 1rem;
+  line-height: 1.65;
+  color: var(--texto);
+  background-color: var(--fondo);
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: var(--primario); text-underline-offset: 0.15em; }
+a:hover { color: var(--secundario); }
+
+:focus-visible {
+  outline: 2px solid var(--azul);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+
+img, svg { max-inline-size: 100%; }
+
+/* Enlace de salto: invisible hasta que el tabulador lo alcanza. Es la única
+   forma de que quien navega con teclado no tenga que recorrer los trece
+   documentos del índice en cada página. */
+.saltar-al-contenido {
+  position: absolute;
+  inset-block-start: -3rem;
+  inset-inline-start: var(--esp, 1rem);
+  z-index: 50;
+  padding: 0.5rem 1rem;
+  background-color: var(--superficie);
+  border: 1px solid var(--borde);
+  border-radius: 8px;
+  transition: inset-block-start 150ms ease;
+}
+.saltar-al-contenido:focus { inset-block-start: 0.5rem; }
+
+/* --------------------------------------------------------------------------
+   Cabecera
+   -------------------------------------------------------------------------- */
+.cabecera-guia {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  min-block-size: var(--alto-cabecera);
+  padding-inline: 1.25rem;
+  background-color: var(--superficie);
+  background-color: color-mix(in srgb, var(--superficie) 84%, transparent);
+  backdrop-filter: saturate(180%) blur(12px);
+  border-block-end: 1px solid var(--borde);
+}
+.cabecera-guia::after {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: -1px;
+  block-size: 2px;
+  background-image: var(--degradado);
+}
+
+.marca-guia {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-inline-size: 0;
+  color: inherit;
+  text-decoration: none;
+}
+.marca-guia-icono {
+  display: grid;
+  place-items: center;
+  inline-size: 2.125rem;
+  block-size: 2.125rem;
+  flex: none;
+  border-radius: 8px;
+  background-image: var(--degradado);
+  color: #ffffff;
+}
+.marca-guia-icono svg { inline-size: 1.25rem; block-size: 1.25rem; }
+.marca-guia-texto { display: flex; flex-direction: column; line-height: 1.2; min-inline-size: 0; }
+.marca-guia-texto strong { font-size: 0.9375rem; letter-spacing: -0.01em; }
+.marca-guia-texto span {
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--texto-tenue);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.enlace-sistema {
+  flex: none;
+  padding: 0.4rem 0.85rem;
+  border: 1px solid var(--borde);
+  border-radius: 999px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  text-decoration: none;
+  color: var(--texto-tenue);
+  background-color: var(--superficie);
+}
+.enlace-sistema:hover { border-color: var(--primario); color: var(--primario); }
+
+/* --------------------------------------------------------------------------
+   Armazón de tres columnas
+   -------------------------------------------------------------------------- */
+.armazon-guia {
+  display: grid;
+  grid-template-columns: var(--ancho-indice) minmax(0, 1fr);
+  gap: 0;
+  max-inline-size: 90rem;
+  margin-inline: auto;
+}
+
+.indice-guia {
+  position: sticky;
+  inset-block-start: var(--alto-cabecera);
+  align-self: start;
+  max-block-size: calc(100dvh - var(--alto-cabecera));
+  overflow-y: auto;
+  padding: 1.5rem 0.75rem 3rem 1.25rem;
+  border-inline-end: 1px solid var(--borde);
+}
+.indice-titulo {
+  padding-inline-start: 0.65rem;
+  margin-block-end: 0.5rem;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--texto-tenue);
+}
+.indice-guia ul { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 1px; }
+.indice-guia a {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  padding: 0.45rem 0.65rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  line-height: 1.35;
+  color: var(--texto-tenue);
+  text-decoration: none;
+}
+.indice-guia a:hover { background-color: var(--superficie-alterna); color: var(--texto); }
+.indice-guia .activo a {
+  background-color: var(--primario-tenue);
+  color: var(--primario);
+  font-weight: 650;
+}
+.nav-numero {
+  flex: none;
+  inline-size: 1.5rem;
+  font-variant-numeric: tabular-nums;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--texto-tenue);
+}
+.indice-guia .activo .nav-numero { color: var(--primario); }
+
+.contenido-guia {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--ancho-sumario);
+  gap: 2.5rem;
+  align-items: start;
+  padding: 2.5rem 2rem 5rem;
+}
+
+/* El sumario de la página va en la segunda columna pero antes en el orden del
+   documento, para que un lector de pantalla lo encuentre al principio. */
+.sumario {
+  grid-column: 2;
+  grid-row: 1;
+  position: sticky;
+  inset-block-start: calc(var(--alto-cabecera) + 2rem);
+  padding-inline-start: 1rem;
+  border-inline-start: 1px solid var(--borde);
+  font-size: 0.8125rem;
+}
+.sumario-titulo {
+  margin-block-end: 0.5rem;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--texto-tenue);
+}
+.sumario ul { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 0.3rem; }
+.sumario a { color: var(--texto-tenue); text-decoration: none; line-height: 1.35; display: block; }
+.sumario a:hover { color: var(--primario); }
+.sumario .nivel-3 { padding-inline-start: 0.85rem; font-size: 0.78rem; }
+
+.prosa { grid-column: 1; grid-row: 1; min-inline-size: 0; max-inline-size: 52rem; }
+
+/* --------------------------------------------------------------------------
+   Prosa
+   -------------------------------------------------------------------------- */
+.prosa h1 {
+  font-size: clamp(1.75rem, 1.3rem + 2vw, 2.375rem);
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+  margin-block-end: 1.25rem;
+}
+.prosa h2 {
+  font-size: 1.4rem;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  margin-block: 2.75rem 0.9rem;
+  padding-block-end: 0.5rem;
+  border-block-end: 1px solid var(--borde);
+}
+.prosa h3 {
+  font-size: 1.125rem;
+  letter-spacing: -0.01em;
+  margin-block: 2rem 0.6rem;
+}
+.prosa h4 {
+  font-size: 1rem;
+  margin-block: 1.5rem 0.4rem;
+  color: var(--texto-tenue);
+}
+.prosa h5 { font-size: 0.9375rem; margin-block: 1.25rem 0.35rem; }
+
+.prosa p { margin-block-end: 1rem; }
+.prosa ul,
+.prosa ol { margin-block-end: 1rem; padding-inline-start: 1.35rem; display: flex; flex-direction: column; gap: 0.4rem; }
+.prosa li { padding-inline-start: 0.2rem; }
+.prosa li > ul,
+.prosa li > ol { margin-block: 0.4rem 0; }
+.prosa strong { font-weight: 680; }
+.prosa hr { border: 0; border-block-start: 1px solid var(--borde); margin-block: 2.5rem; }
+
+.prosa code {
+  padding: 0.12em 0.38em;
+  border-radius: 5px;
+  background-color: var(--superficie-alterna);
+  border: 1px solid var(--borde);
+  font-family: var(--mono);
+  font-size: 0.86em;
+  overflow-wrap: anywhere;
+}
+
+.bloque-codigo {
+  position: relative;
+  margin-block-end: 1.25rem;
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+  background-color: var(--superficie);
+  box-shadow: var(--sombra-1);
+  overflow: clip;
+}
+.codigo-lenguaje {
+  display: block;
+  padding: 0.4rem 1rem;
+  border-block-end: 1px solid var(--borde);
+  background-color: var(--superficie-alterna);
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--texto-tenue);
+}
+.bloque-codigo pre {
+  margin: 0;
+  padding: 1rem;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+}
+.bloque-codigo code {
+  padding: 0;
+  border: 0;
+  background: none;
+  font-size: 0.82rem;
+  line-height: 1.6;
+  white-space: pre;
+}
+
+blockquote {
+  margin-block-end: 1.25rem;
+  padding: 0.1rem 0 0.1rem 1.1rem;
+  border-inline-start: 3px solid var(--borde);
+  color: var(--texto-tenue);
+}
+blockquote p:last-child { margin-block-end: 0; }
+
+/* --------------------------------------------------------------------------
+   Tablas
+   -------------------------------------------------------------------------- */
+.tabla-envoltorio {
+  margin-block-end: 1.5rem;
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+  background-color: var(--superficie);
+  box-shadow: var(--sombra-1);
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+}
+.tabla-envoltorio table { border-collapse: collapse; inline-size: 100%; font-size: 0.875rem; }
+.tabla-envoltorio th {
+  position: sticky;
+  inset-block-start: 0;
+  padding: 0.7rem 0.9rem;
+  background-color: var(--superficie-alterna);
+  border-block-end: 1px solid var(--borde);
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--texto-tenue);
+  text-align: start;
+  white-space: nowrap;
+}
+.tabla-envoltorio td {
+  padding: 0.7rem 0.9rem;
+  border-block-end: 1px solid var(--borde);
+  vertical-align: top;
+}
+.tabla-envoltorio tr:last-child td { border-block-end: 0; }
+.tabla-envoltorio .centro { text-align: center; }
+.tabla-envoltorio .derecha { text-align: end; }
+.tabla-envoltorio td code { white-space: nowrap; }
+
+/* --------------------------------------------------------------------------
+   Avisos
+   -------------------------------------------------------------------------- */
+.aviso {
+  --acento: var(--azul);
+  --acento-fondo: var(--azul-tenue);
+  margin-block-end: 1.5rem;
+  padding: 1rem 1.15rem;
+  border: 1px solid color-mix(in srgb, var(--acento) 30%, transparent);
+  border-inline-start: 3px solid var(--acento);
+  border-radius: var(--radio);
+  background-color: var(--acento-fondo);
+}
+.aviso-titulo {
+  margin-block-end: 0.5rem;
+  font-size: 0.7rem;
+  font-weight: 750;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--acento);
+}
+.aviso > :last-child { margin-block-end: 0; }
+.aviso code { background-color: color-mix(in srgb, var(--acento) 10%, transparent); }
+
+.aviso-clave { --acento: var(--primario); --acento-fondo: var(--primario-tenue); }
+.aviso-aviso { --acento: var(--ambar); --acento-fondo: var(--ambar-tenue); }
+.aviso-ambiguedad { --acento: var(--violeta); --acento-fondo: var(--violeta-tenue); }
+.aviso-avanzado { --acento: var(--secundario); --acento-fondo: color-mix(in srgb, var(--secundario) 10%, transparent); }
+.aviso-trampa { --acento: var(--rosa); --acento-fondo: var(--rosa-tenue); }
+.aviso-ejemplo { --acento: var(--texto-tenue); --acento-fondo: var(--superficie-alterna); }
+
+/* --------------------------------------------------------------------------
+   Diagramas
+
+   Los SVG se incrustan sobre un panel claro fijo, en los dos temas. Un diagrama
+   con texto oscuro sobre el fondo oscuro de la página seria ilegible, y teñirlo
+   con filtros ensucia los colores que distinguen unas cajas de otras. Es el
+   mismo compromiso que adoptan GitHub o Notion.
+   -------------------------------------------------------------------------- */
+.diagrama {
+  margin-block: 1.75rem;
+  padding: 1.25rem;
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+  background-color: #ffffff;
+  box-shadow: var(--sombra-1);
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+}
+.diagrama svg { display: block; margin-inline: auto; block-size: auto; }
+.diagrama figcaption {
+  margin-block-start: 0.9rem;
+  padding-block-start: 0.75rem;
+  border-block-start: 1px solid #e2e8f0;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: #475569;
+  text-align: center;
+}
+.diagrama-ausente { color: var(--rosa); font-size: 0.875rem; text-align: center; }
+
+/* --------------------------------------------------------------------------
+   Anterior / siguiente
+   -------------------------------------------------------------------------- */
+.saltos {
+  grid-column: 1;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(16rem, 100%), 1fr));
+  gap: 1rem;
+  margin-block-start: 3.5rem;
+  padding-block-start: 2rem;
+  border-block-start: 1px solid var(--borde);
+  max-inline-size: 52rem;
+}
+.salto {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 0.9rem 1.1rem;
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+  background-color: var(--superficie);
+  text-decoration: none;
+  color: var(--texto);
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+.salto:hover { border-color: var(--primario); box-shadow: var(--sombra-2); color: var(--texto); }
+.salto span {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--texto-tenue);
+}
+.salto strong { font-size: 0.9375rem; font-weight: 620; line-height: 1.3; }
+.salto-siguiente { text-align: end; }
+
+/* --------------------------------------------------------------------------
+   Adaptación a pantallas menores
+
+   Dos cortes. Bajo 1100 px desaparece el sumario de la página (la columna
+   derecha), que es lo primero que sobra. Bajo 900 px el índice de documentos
+   deja de ser una barra lateral fija y pasa a ser una tira desplegada arriba:
+   en un teléfono, una columna de 17 rem no deja sitio para el texto, que es a
+   lo que se viene.
+   -------------------------------------------------------------------------- */
+@media (max-width: 1100px) {
+  .contenido-guia { grid-template-columns: minmax(0, 1fr); }
+  .sumario { display: none; }
+}
+
+@media (max-width: 899px) {
+  .armazon-guia { grid-template-columns: minmax(0, 1fr); }
+  .indice-guia {
+    position: static;
+    max-block-size: none;
+    padding: 1rem;
+    border-inline-end: 0;
+    border-block-end: 1px solid var(--borde);
+    background-color: var(--superficie);
+  }
+  .indice-guia ul {
+    flex-direction: row;
+    gap: 0.4rem;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+    padding-block-end: 0.25rem;
+  }
+  .indice-guia ul::-webkit-scrollbar { display: none; }
+  .indice-guia li { flex: 0 0 auto; }
+  .indice-guia a {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.1rem;
+    inline-size: 5.5rem;
+    padding: 0.5rem 0.4rem;
+    border: 1px solid var(--borde);
+    font-size: 0.7rem;
+    text-align: center;
+    line-height: 1.2;
+  }
+  .indice-guia .activo a { border-color: var(--primario); }
+  .nav-numero { inline-size: auto; }
+  .contenido-guia { padding: 1.75rem 1.15rem 4rem; }
+  .prosa h2 { margin-block-start: 2rem; }
+  /* Una tabla ancha en un teléfono se desplaza dentro de su envoltorio; el
+     tamaño menor hace que quepan más columnas antes de tener que hacerlo. */
+  .tabla-envoltorio table { font-size: 0.8125rem; }
+  .tabla-envoltorio th,
+  .tabla-envoltorio td { padding: 0.55rem 0.7rem; }
+}
+
+@media (max-width: 560px) {
+  body { font-size: 0.9375rem; }
+  .contenido-guia { padding-inline: 0.9rem; }
+  .cabecera-guia { padding-inline: 0.9rem; }
+  .marca-guia-texto span { display: none; }
+  .diagrama { padding: 0.75rem; }
+}
+
+/* --------------------------------------------------------------------------
+   Impresión
+
+   La guía se estudia también en papel. Se quitan las dos barras de navegación,
+   que en papel no llevan a ninguna parte, y se deja la prosa a ancho completo.
+   -------------------------------------------------------------------------- */
+@media print {
+  .cabecera-guia,
+  .indice-guia,
+  .sumario,
+  .saltos,
+  .saltar-al-contenido { display: none; }
+  .armazon-guia,
+  .contenido-guia { display: block; padding: 0; }
+  .prosa { max-inline-size: none; }
+  body { background: #ffffff; color: #000000; font-size: 11pt; }
+  .prosa h2, .prosa h3 { break-after: avoid; }
+  .diagrama, .tabla-envoltorio, .aviso { break-inside: avoid; }
+}
